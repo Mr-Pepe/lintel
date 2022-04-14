@@ -10,8 +10,9 @@ from configparser import NoOptionError, NoSectionError, RawConfigParser
 from functools import reduce
 from re import compile as re
 
+from .conventions import CONVENTION_NAMES, Convention
 from .utils import __version__, log
-from .violations import ErrorRegistry, conventions
+from .violations import ErrorRegistry
 
 try:
     import toml
@@ -189,7 +190,7 @@ class ConfigurationParser:
     DEFAULT_PROPERTY_DECORATORS = (
         "property,cached_property,functools.cached_property"
     )
-    DEFAULT_CONVENTION = conventions.pep257
+    DEFAULT_CONVENTION = Convention()
 
     PROJECT_CONFIG_FILES = (
         'setup.cfg',
@@ -597,7 +598,7 @@ class ConfigurationParser:
         elif options.select is not None:
             checked_codes = cls._expand_error_codes(options.select)
         elif options.convention is not None:
-            checked_codes = getattr(conventions, options.convention)
+            checked_codes = Convention(options.convention).error_codes
 
         # To not override the conventions nor the options - copy them.
         return copy.deepcopy(checked_codes)
@@ -642,7 +643,7 @@ class ConfigurationParser:
         """Extract the codes needed to be checked from `options`."""
         checked_codes = cls._get_exclusive_error_codes(options)
         if checked_codes is None:
-            checked_codes = cls.DEFAULT_CONVENTION
+            checked_codes = cls.DEFAULT_CONVENTION.error_codes
 
         cls._set_add_options(checked_codes, options)
 
@@ -666,10 +667,10 @@ class ConfigurationParser:
                 )
                 return False
 
-        if options.convention and options.convention not in conventions:
+        if options.convention and options.convention not in CONVENTION_NAMES:
             log.error(
                 "Illegal convention '{}'. Possible conventions: {}".format(
-                    options.convention, ', '.join(conventions.keys())
+                    options.convention, ', '.join(CONVENTION_NAMES)
                 )
             )
             return False
@@ -825,7 +826,7 @@ class ConfigurationParser:
             default=None,
             help='choose the basic list of checked errors by specifying '
             'an existing convention. Possible conventions: {}.'.format(
-                ', '.join(conventions)
+                ', '.join(CONVENTION_NAMES)
             ),
         )
         add_check(
