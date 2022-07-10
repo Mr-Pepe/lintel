@@ -42,37 +42,59 @@ a line by itself, preferably preceded by a blank line.
 # numpy module itself, unabbreviated.
 
 import os
+
 from .expected import Expectation
 
 expectation = Expectation()
 expect = expectation.expect
 
 # module docstring expected violations:
-expectation.expected.add((
-    os.path.normcase(__file__),
-    "D205: 1 blank line required between summary line and description "
-    "(found 0)"))
-expectation.expected.add((
-    os.path.normcase(__file__),
-    "D213: Multi-line docstring summary should start at the second line"))
-expectation.expected.add((
-    os.path.normcase(__file__),
-    "D400: First line should end with a period (not 'd')"))
-expectation.expected.add((
-    os.path.normcase(__file__),
-    "D404: First word of the docstring should not be `This`"))
-expectation.expected.add((
-    os.path.normcase(__file__),
-    "D415: First line should end with a period, question mark, or exclamation "
-    "point (not 'd')"))
+expectation.expected.add(
+    (
+        os.path.normcase(__file__),
+        "D205: 1 blank line required between summary line and description "
+        "(found 0)",
+    )
+)
+expectation.expected.add(
+    (
+        os.path.normcase(__file__),
+        "D213: Multi-line docstring summary should start at the second line",
+    )
+)
+expectation.expected.add(
+    (
+        os.path.normcase(__file__),
+        "D400: First line should end with a period (not 'd')",
+    )
+)
+expectation.expected.add(
+    (
+        os.path.normcase(__file__),
+        "D404: First word of the docstring should not be `This`",
+    )
+)
+expectation.expected.add(
+    (
+        os.path.normcase(__file__),
+        "D415: First line should end with a period, question mark, or exclamation "
+        "point (not 'd')",
+    )
+)
 
 
-@expect("D213: Multi-line docstring summary should start at the second line",
-        arg_count=3)
-@expect("D401: First line should be in imperative mood; try rephrasing "
-        "(found 'A')", arg_count=3)
-@expect("D413: Missing blank line after last section ('Examples')",
-        arg_count=3)
+@expect(
+    "D213: Multi-line docstring summary should start at the second line",
+    arg_count=3,
+)
+@expect(
+    "D401: First line should be in imperative mood; try rephrasing "
+    "(found 'A')",
+    arg_count=3,
+)
+@expect(
+    "D413: Missing blank line after last section ('Examples')", arg_count=3
+)
 def foo(var1, var2, long_var_name='hi'):
     r"""A one-line summary that does not use variable names.
 

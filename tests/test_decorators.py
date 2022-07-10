@@ -6,8 +6,7 @@ Use tox or pytest to run the test suite.
 import io
 import textwrap
 
-from pydocstyle import parser, checker
-
+from pydocstyle import checker, parser
 
 __all__ = ()
 
@@ -17,11 +16,13 @@ class TestParser:
 
     def test_parse_class_single_decorator(self):
         """Class decorator is recorded in class instance."""
-        code = textwrap.dedent("""\
+        code = textwrap.dedent(
+            """\
             @first_decorator
             class Foo:
                 pass
-        """)
+        """
+        )
         module = checker.parse(io.StringIO(code), 'dummy.py')
         decorators = module.children[0].decorators
 
@@ -31,7 +32,8 @@ class TestParser:
 
     def test_parse_class_decorators(self):
         """Class decorators are accumulated together with their arguments."""
-        code = textwrap.dedent("""\
+        code = textwrap.dedent(
+            """\
             @first_decorator
             @second.decorator(argument)
             @third.multi.line(
@@ -40,7 +42,8 @@ class TestParser:
                 )
             class Foo:
                 pass
-        """)
+        """
+        )
 
         module = checker.parse(io.StringIO(code), 'dummy.py')
         defined_class = module.children[0]
@@ -56,14 +59,16 @@ class TestParser:
 
     def test_parse_class_nested_decorator(self):
         """Class decorator is recorded even for nested classes."""
-        code = textwrap.dedent("""\
+        code = textwrap.dedent(
+            """\
             @parent_decorator
             class Foo:
                 pass
                 @first_decorator
                 class NestedClass:
                     pass
-        """)
+        """
+        )
         module = checker.parse(io.StringIO(code), 'dummy.py')
         nested_class = module.children[0].children[0]
         decorators = nested_class.decorators
@@ -74,12 +79,14 @@ class TestParser:
 
     def test_parse_method_single_decorator(self):
         """Method decorators are accumulated."""
-        code = textwrap.dedent("""\
+        code = textwrap.dedent(
+            """\
             class Foo:
                 @first_decorator
                 def method(self):
                     pass
-        """)
+        """
+        )
 
         module = checker.parse(io.StringIO(code), 'dummy.py')
         defined_class = module.children[0]
@@ -91,7 +98,8 @@ class TestParser:
 
     def test_parse_method_decorators(self):
         """Multiple method decorators are accumulated along with their args."""
-        code = textwrap.dedent("""\
+        code = textwrap.dedent(
+            """\
             class Foo:
                 @first_decorator
                 @second.decorator(argument)
@@ -101,7 +109,8 @@ class TestParser:
                     )
                 def method(self):
                     pass
-        """)
+        """
+        )
 
         module = checker.parse(io.StringIO(code), 'dummy.py')
         defined_class = module.children[0]
@@ -117,11 +126,13 @@ class TestParser:
 
     def test_parse_function_decorator(self):
         """A function decorator is also accumulated."""
-        code = textwrap.dedent("""\
+        code = textwrap.dedent(
+            """\
             @first_decorator
             def some_method(self):
                 pass
-        """)
+        """
+        )
 
         module = checker.parse(io.StringIO(code), 'dummy.py')
         decorators = module.children[0].decorators
@@ -132,14 +143,16 @@ class TestParser:
 
     def test_parse_method_nested_decorator(self):
         """Method decorators are accumulated for nested methods."""
-        code = textwrap.dedent("""\
+        code = textwrap.dedent(
+            """\
             class Foo:
                 @parent_decorator
                 def method(self):
                     @first_decorator
                     def nested_method(arg):
                         pass
-        """)
+        """
+        )
 
         module = checker.parse(io.StringIO(code), 'dummy.py')
         defined_class = module.children[0]
@@ -157,20 +170,44 @@ class TestMethod:
         """Return a simple method instance."""
         children = []
         dunder_all = ['ClassName']
-        source = textwrap.dedent("""\
+        source = textwrap.dedent(
+            """\
             class ClassName:
                 def %s(self):
-        """ % (name))
+        """
+            % (name)
+        )
 
-        module = parser.Module('module_name', source, 0, 1, [],
-                               'Docstring for module', [], None,
-                               dunder_all, None, None, '')
+        module = parser.Module(
+            'module_name',
+            source,
+            0,
+            1,
+            [],
+            'Docstring for module',
+            [],
+            None,
+            dunder_all,
+            None,
+            None,
+            '',
+        )
 
-        cls = parser.Class('ClassName', source, 0, 1, [],
-                           'Docstring for class', children, module, '')
+        cls = parser.Class(
+            'ClassName',
+            source,
+            0,
+            1,
+            [],
+            'Docstring for class',
+            children,
+            module,
+            '',
+        )
 
-        return parser.Method(name, source, 0, 1, [],
-                             'Docstring for method', children, cls, '')
+        return parser.Method(
+            name, source, 0, 1, [], 'Docstring for method', children, cls, ''
+        )
 
     def test_is_public_normal(self):
         """Test that methods are normally public, even if decorated."""

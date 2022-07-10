@@ -10,13 +10,16 @@ expect('PublicClass', 'D101: Missing docstring in public class')
 
 class PublicClass:
 
-    expect('PublicNestedClass',
-           'D106: Missing docstring in public nested class')
+    expect(
+        'PublicNestedClass', 'D106: Missing docstring in public nested class'
+    )
 
     class PublicNestedClass:
 
-        expect('PublicNestedClassInPublicNestedClass',
-               'D106: Missing docstring in public nested class')
+        expect(
+            'PublicNestedClassInPublicNestedClass',
+            'D106: Missing docstring in public nested class',
+        )
 
         class PublicNestedClassInPublicNestedClass:
             pass
@@ -25,7 +28,6 @@ class PublicClass:
             pass
 
     class _PrivateNestedClass:
-
         class PublicNestedClassInPrivateNestedClass:
             pass
 

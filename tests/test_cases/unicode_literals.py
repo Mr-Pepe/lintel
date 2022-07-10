@@ -2,7 +2,6 @@
 
 from .expected import Expectation
 
-
 expectation = Expectation()
 expect = expectation.expect
 

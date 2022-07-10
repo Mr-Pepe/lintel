@@ -1,9 +1,9 @@
 # No docstring, so we can test D100
-from functools import wraps
 import os
-from .expected import Expectation
+from functools import wraps
 from typing import overload
 
+from .expected import Expectation
 
 expectation = Expectation()
 expect = expectation.expect
@@ -38,9 +38,11 @@ class class_:
         """Foo bar documentation."""
         return str(a)
 
-    expect('overloaded_method',
-           "D418: Function/ Method decorated with @overload"
-           " shouldn't contain a docstring")
+    expect(
+        'overloaded_method',
+        "D418: Function/ Method decorated with @overload"
+        " shouldn't contain a docstring",
+    )
 
     @property
     def foo(self):
@@ -67,16 +69,18 @@ class class_:
 @expect('D419: Docstring is empty')
 def function():
     """ """
+
     def ok_since_nested():
         pass
 
     @expect('D419: Docstring is empty')
     def nested():
-        ''
+        ''''''
 
 
 def function_with_nesting():
     """Foo bar documentation."""
+
     @overload
     def nested_overloaded_func(a: int) -> str:
         ...
@@ -91,9 +95,11 @@ def function_with_nesting():
         return str(a)
 
 
-expect('nested_overloaded_func',
-       "D418: Function/ Method decorated with @overload"
-       " shouldn't contain a docstring")
+expect(
+    'nested_overloaded_func',
+    "D418: Function/ Method decorated with @overload"
+    " shouldn't contain a docstring",
+)
 
 
 @overload
@@ -112,13 +118,16 @@ def overloaded_func(a):
     return str(a)
 
 
-expect('overloaded_func',
-       "D418: Function/ Method decorated with @overload"
-       " shouldn't contain a docstring")
+expect(
+    'overloaded_func',
+    "D418: Function/ Method decorated with @overload"
+    " shouldn't contain a docstring",
+)
 
 
-@expect('D200: One-line docstring should fit on one line with quotes '
-        '(found 3)')
+@expect(
+    'D200: One-line docstring should fit on one line with quotes ' '(found 3)'
+)
 @expect('D212: Multi-line docstring summary should start at the first line')
 def asdlkfasd():
     """
@@ -148,16 +157,20 @@ def trailing_and_leading_space():
     pass
 
 
-expect('LeadingSpaceMissing',
-       'D203: 1 blank line required before class docstring (found 0)')
+expect(
+    'LeadingSpaceMissing',
+    'D203: 1 blank line required before class docstring (found 0)',
+)
 
 
 class LeadingSpaceMissing:
     """Leading space missing."""
 
 
-expect('WithLeadingSpace',
-       'D211: No blank lines allowed before class docstring (found 1)')
+expect(
+    'WithLeadingSpace',
+    'D211: No blank lines allowed before class docstring (found 1)',
+)
 
 
 class WithLeadingSpace:
@@ -165,31 +178,43 @@ class WithLeadingSpace:
     """With leading space."""
 
 
-expect('TrailingSpace',
-       'D204: 1 blank line required after class docstring (found 0)')
-expect('TrailingSpace',
-       'D211: No blank lines allowed before class docstring (found 1)')
+expect(
+    'TrailingSpace',
+    'D204: 1 blank line required after class docstring (found 0)',
+)
+expect(
+    'TrailingSpace',
+    'D211: No blank lines allowed before class docstring (found 1)',
+)
 
 
 class TrailingSpace:
 
     """TrailingSpace."""
+
     pass
 
 
-expect('LeadingAndTrailingSpaceMissing',
-       'D203: 1 blank line required before class docstring (found 0)')
-expect('LeadingAndTrailingSpaceMissing',
-       'D204: 1 blank line required after class docstring (found 0)')
+expect(
+    'LeadingAndTrailingSpaceMissing',
+    'D203: 1 blank line required before class docstring (found 0)',
+)
+expect(
+    'LeadingAndTrailingSpaceMissing',
+    'D204: 1 blank line required after class docstring (found 0)',
+)
 
 
 class LeadingAndTrailingSpaceMissing:
     """Leading and trailing space missing."""
+
     pass
 
 
-@expect('D205: 1 blank line required between summary line and description '
-        '(found 0)')
+@expect(
+    'D205: 1 blank line required between summary line and description '
+    '(found 0)'
+)
 @expect('D213: Multi-line docstring summary should start at the second line')
 def multi_line_zero_separating_blanks():
     """Summary.
@@ -198,8 +223,10 @@ def multi_line_zero_separating_blanks():
     """
 
 
-@expect('D205: 1 blank line required between summary line and description '
-        '(found 2)')
+@expect(
+    'D205: 1 blank line required between summary line and description '
+    '(found 2)'
+)
 @expect('D213: Multi-line docstring summary should start at the second line')
 def multi_line_two_separating_blanks():
     """Summary.
@@ -224,7 +251,7 @@ def multi_line_one_separating_blanks():
 def asdfsdf():
     """Summary.
 
-Description.
+    Description.
 
     """
 
@@ -235,8 +262,7 @@ def asdsdfsdffsdf():
     """Summary.
 
     Description.
-
-"""
+    """
 
 
 @expect('D208: Docstring is over-indented')
@@ -244,7 +270,7 @@ def asdsdfsdffsdf():
 def asdfsdsdf24():
     """Summary.
 
-       Description.
+    Description.
 
     """
 
@@ -256,7 +282,7 @@ def asdfsdsdfsdf24():
 
     Description.
 
-        """
+    """
 
 
 @expect('D208: Docstring is over-indented')
@@ -264,13 +290,14 @@ def asdfsdsdfsdf24():
 def asdfsdfsdsdsdfsdf24():
     """Summary.
 
-        Description.
+    Description.
 
     """
 
 
-@expect('D209: Multi-line docstring closing quotes should be on a separate '
-        'line')
+@expect(
+    'D209: Multi-line docstring closing quotes should be on a separate ' 'line'
+)
 @expect('D213: Multi-line docstring summary should start at the second line')
 def asdfljdf24():
     """Summary.
@@ -280,18 +307,18 @@ def asdfljdf24():
 
 @expect('D210: No whitespaces allowed surrounding docstring text')
 def endswith():
-    """Whitespace at the end. """
+    """Whitespace at the end."""
 
 
 @expect('D210: No whitespaces allowed surrounding docstring text')
 def around():
-    """ Whitespace at everywhere. """
+    """Whitespace at everywhere."""
 
 
 @expect('D210: No whitespaces allowed surrounding docstring text')
 @expect('D213: Multi-line docstring summary should start at the second line')
 def multiline():
-    """ Whitespace at the beginning.
+    """Whitespace at the beginning.
 
     This is the end.
     """
@@ -344,26 +371,34 @@ def exceptions_of_D301():
 
 
 @expect("D400: First line should end with a period (not 'y')")
-@expect("D415: First line should end with a period, question mark, "
-        "or exclamation point (not 'y')")
+@expect(
+    "D415: First line should end with a period, question mark, "
+    "or exclamation point (not 'y')"
+)
 def lwnlkjl():
     """Summary"""
 
 
-@expect("D401: First line should be in imperative mood "
-        "(perhaps 'Return', not 'Returns')")
+@expect(
+    "D401: First line should be in imperative mood "
+    "(perhaps 'Return', not 'Returns')"
+)
 def liouiwnlkjl():
     """Returns foo."""
 
 
-@expect("D401: First line should be in imperative mood; try rephrasing "
-        "(found 'Constructor')")
+@expect(
+    "D401: First line should be in imperative mood; try rephrasing "
+    "(found 'Constructor')"
+)
 def sdgfsdg23245():
     """Constructor for a foo."""
 
 
-@expect("D401: First line should be in imperative mood; try rephrasing "
-        "(found 'Constructor')")
+@expect(
+    "D401: First line should be in imperative mood; try rephrasing "
+    "(found 'Constructor')"
+)
 def sdgfsdg23245777():
     """Constructor."""
 
@@ -392,45 +427,55 @@ def old_209():
 
 
 @expect("D103: Missing docstring in public function")
-def oneliner_d102(): return
+def oneliner_d102():
+    return
 
 
 @expect("D400: First line should end with a period (not 'r')")
-@expect("D415: First line should end with a period, question mark,"
-        " or exclamation point (not 'r')")
-def oneliner_withdoc(): """One liner"""
+@expect(
+    "D415: First line should end with a period, question mark,"
+    " or exclamation point (not 'r')"
+)
+def oneliner_withdoc():
+    """One liner"""
 
 
-def ignored_decorator(func):   # noqa: D400,D401,D415
+def ignored_decorator(func):  # noqa: D400,D401,D415
     """Runs something"""
     func()
     pass
 
 
-def decorator_for_test(func):   # noqa: D400,D401,D415
+def decorator_for_test(func):  # noqa: D400,D401,D415
     """Runs something"""
     func()
     pass
 
 
 @ignored_decorator
-def oneliner_ignored_decorator(): """One liner"""
+def oneliner_ignored_decorator():
+    """One liner"""
 
 
 @decorator_for_test
 @expect("D400: First line should end with a period (not 'r')")
-@expect("D415: First line should end with a period, question mark,"
-        " or exclamation point (not 'r')")
-def oneliner_with_decorator_expecting_errors(): """One liner"""
+@expect(
+    "D415: First line should end with a period, question mark,"
+    " or exclamation point (not 'r')"
+)
+def oneliner_with_decorator_expecting_errors():
+    """One liner"""
 
 
 @decorator_for_test
-def valid_oneliner_with_decorator(): """One liner."""
+def valid_oneliner_with_decorator():
+    """One liner."""
 
 
 @expect("D207: Docstring is under-indented")
 @expect('D213: Multi-line docstring summary should start at the second line')
-def docstring_start_in_same_line(): """First Line.
+def docstring_start_in_same_line():
+    """First Line.
 
     Second Line
     """
@@ -451,16 +496,21 @@ def a_following_valid_function(x=None):
 
 def outer_function():
     """Do something."""
+
     def inner_function():
         """Do inner something."""
         return 0
 
 
 @expect("D400: First line should end with a period (not 'g')")
-@expect("D401: First line should be in imperative mood "
-        "(perhaps 'Run', not 'Runs')")
-@expect("D415: First line should end with a period, question mark, "
-        "or exclamation point (not 'g')")
+@expect(
+    "D401: First line should be in imperative mood "
+    "(perhaps 'Run', not 'Runs')"
+)
+@expect(
+    "D415: First line should end with a period, question mark, "
+    "or exclamation point (not 'g')"
+)
 def docstring_bad():
     """Runs something"""
     pass
@@ -476,8 +526,10 @@ def docstring_bad_ignore_one():  # noqa: D400,D401,D415
     pass
 
 
-@expect("D401: First line should be in imperative mood "
-        "(perhaps 'Run', not 'Runs')")
+@expect(
+    "D401: First line should be in imperative mood "
+    "(perhaps 'Run', not 'Runs')"
+)
 def docstring_ignore_some_violations_but_catch_D401():  # noqa: E501,D400,D415
     """Runs something"""
     pass
@@ -509,8 +561,10 @@ def valid_google_string():  # noqa: D400
     """Test a valid something!"""
 
 
-@expect("D415: First line should end with a period, question mark, "
-        "or exclamation point (not 'g')")
+@expect(
+    "D415: First line should end with a period, question mark, "
+    "or exclamation point (not 'g')"
+)
 def bad_google_string():  # noqa: D400
     """Test a valid something"""
 
@@ -530,5 +584,7 @@ class Blah:  # noqa: D203,D213
         pass
 
 
-expect(os.path.normcase(__file__ if __file__[-1] != 'c' else __file__[:-1]),
-       'D100: Missing docstring in public module')
+expect(
+    os.path.normcase(__file__ if __file__[-1] != 'c' else __file__[:-1]),
+    'D100: Missing docstring in public module',
+)

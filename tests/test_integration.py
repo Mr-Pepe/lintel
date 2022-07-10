@@ -56,22 +56,23 @@ class SandboxEnv:
 
         name = self.config_name if name is None else name
         if name.endswith('.toml'):
+
             def convert_value(val):
                 return (
-                    repr(val).lower()
-                    if isinstance(val, bool)
-                    else repr(val)
+                    repr(val).lower() if isinstance(val, bool) else repr(val)
                 )
+
         else:
+
             def convert_value(val):
                 return val
 
         with open(os.path.join(base, name), 'wt') as conf:
             conf.write(f"[{self.section_name}]\n")
             for k, v in kwargs.items():
-                conf.write("{} = {}\n".format(
-                    k.replace('_', '-'), convert_value(v)
-                ))
+                conf.write(
+                    "{} = {}\n".format(k.replace('_', '-'), convert_value(v))
+                )
 
     def open(self, path, *args, **kwargs):
         """Open a file in the environment.
@@ -95,19 +96,22 @@ class SandboxEnv:
         the environment base folder.
 
         """
-        run_target = self.tempdir if target is None else \
-            os.path.join(self.tempdir, target)
+        run_target = (
+            self.tempdir
+            if target is None
+            else os.path.join(self.tempdir, target)
+        )
 
-        cmd = shlex.split("{} {} {}"
-                          .format(self.script_name, run_target, args),
-                          posix=False)
-        p = subprocess.Popen(cmd,
-                             stdout=subprocess.PIPE,
-                             stderr=subprocess.PIPE)
+        cmd = shlex.split(
+            "{} {} {}".format(self.script_name, run_target, args), posix=False
+        )
+        p = subprocess.Popen(
+            cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+        )
         out, err = p.communicate()
-        return self.Result(out=out.decode('utf-8'),
-                           err=err.decode('utf-8'),
-                           code=p.returncode)
+        return self.Result(
+            out=out.decode('utf-8'), err=err.decode('utf-8'), code=p.returncode
+        )
 
     def __enter__(self):
         self.tempdir = tempfile.mkdtemp()
@@ -168,7 +172,7 @@ def parse_errors(err):
     lines = err.split('\n')
     while lines:
         curr_line = lines.pop(0)
-        filename = curr_line[:curr_line.find(py_ext) + len(py_ext)]
+        filename = curr_line[: curr_line.find(py_ext) + len(py_ext)]
         if lines:
             err_line = lines.pop(0).strip()
             err_code = err_line.split(':')[0]
@@ -182,8 +186,11 @@ def test_pep257_conformance():
     """Test that we conform to PEP 257."""
     base_dir = (pathlib.Path(__file__).parent / '..').resolve()
     excluded = base_dir / 'tests' / 'test_cases'
-    src_files = (str(path) for path in base_dir.glob('**/*.py')
-                 if excluded not in path.parents)
+    src_files = (
+        str(path)
+        for path in base_dir.glob('**/*.py')
+        if excluded not in path.parents
+    )
 
     ignored = {'D104', 'D105'}
     select = Convention("pep257").error_codes - ignored
@@ -193,18 +200,29 @@ def test_pep257_conformance():
 
 def test_ignore_list():
     """Test that `ignore`d errors are not reported in the API."""
-    function_to_check = textwrap.dedent('''
+    function_to_check = textwrap.dedent(
+        '''
         def function_with_bad_docstring(foo):
             """ does spacinwithout a period in the end
             no blank line after one-liner is bad. Also this - """
             return foo
-    ''')
-    expected_error_codes = {'D100', 'D400', 'D401', 'D205', 'D209', 'D210',
-                            'D403', 'D415', 'D213'}
+    '''
+    )
+    expected_error_codes = {
+        'D100',
+        'D400',
+        'D401',
+        'D205',
+        'D209',
+        'D210',
+        'D403',
+        'D415',
+        'D213',
+    }
     mock_open = mock.mock_open(read_data=function_to_check)
     from pydocstyle import checker
-    with mock.patch.object(
-            checker.tk, 'open', mock_open, create=True):
+
+    with mock.patch.object(checker.tk, 'open', mock_open, create=True):
         # Passing a blank ignore here explicitly otherwise
         # checkers takes the pep257 ignores by default.
         errors = tuple(checker.check(['filepath'], ignore={}))
@@ -213,8 +231,7 @@ def test_ignore_list():
 
     # We need to recreate the mock, otherwise the read file is empty
     mock_open = mock.mock_open(read_data=function_to_check)
-    with mock.patch.object(
-            checker.tk, 'open', mock_open, create=True):
+    with mock.patch.object(checker.tk, 'open', mock_open, create=True):
         ignored = {'D100', 'D202', 'D213'}
         errors = tuple(checker.check(['filepath'], ignore=ignored))
         error_codes = {error.code for error in errors}
@@ -223,17 +240,19 @@ def test_ignore_list():
 
 def test_skip_errors():
     """Test that `ignore`d errors are not reported in the API."""
-    function_to_check = textwrap.dedent('''
+    function_to_check = textwrap.dedent(
+        '''
         def function_with_bad_docstring(foo):  # noqa: D400, D401, D403, D415
             """ does spacinwithout a period in the end
             no blank line after one-liner is bad. Also this - """
             return foo
-    ''')
+    '''
+    )
     expected_error_codes = {'D100', 'D205', 'D209', 'D210', 'D213'}
     mock_open = mock.mock_open(read_data=function_to_check)
     from pydocstyle import checker
-    with mock.patch.object(
-            checker.tk, 'open', mock_open, create=True):
+
+    with mock.patch.object(checker.tk, 'open', mock_open, create=True):
         # Passing a blank ignore here explicitly otherwise
         # checkers takes the pep257 ignores by default.
         errors = tuple(checker.check(['filepath'], ignore={}))
@@ -243,10 +262,10 @@ def test_skip_errors():
     skipped_error_codes = {'D400', 'D401', 'D403', 'D415'}
     # We need to recreate the mock, otherwise the read file is empty
     mock_open = mock.mock_open(read_data=function_to_check)
-    with mock.patch.object(
-            checker.tk, 'open', mock_open, create=True):
-        errors = tuple(checker.check(['filepath'], ignore={},
-                                     ignore_inline_noqa=True))
+    with mock.patch.object(checker.tk, 'open', mock_open, create=True):
+        errors = tuple(
+            checker.check(['filepath'], ignore={}, ignore_inline_noqa=True)
+        )
         error_codes = {error.code for error in errors}
         assert error_codes == expected_error_codes | skipped_error_codes
 
@@ -262,9 +281,7 @@ def test_run_as_named_module():
     # Add --match='' so that no files are actually checked (to make sure that
     # the return code is 0 and to reduce execution time).
     cmd = [sys.executable, "-m", "pydocstyle", "--match=''"]
-    p = subprocess.Popen(cmd,
-                         stdout=subprocess.PIPE,
-                         stderr=subprocess.PIPE)
+    p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out, err = p.communicate()
     assert p.returncode == 0, out.decode('utf-8') + err.decode('utf-8')
 
@@ -279,10 +296,14 @@ def test_config_file(env):
 
     """
     with env.open('example.py', 'wt') as example:
-        example.write(textwrap.dedent("""\
+        example.write(
+            textwrap.dedent(
+                """\
             def foo():
                 pass
-        """))
+        """
+            )
+        )
 
     env.write_config(ignore='D100')
     out, err, code = env.invoke()
@@ -320,10 +341,14 @@ def test_sectionless_config_file(env):
     assert 'Configuration file does not contain a pydocstyle section' in err
 
     with env.open('example.py', 'wt') as example:
-        example.write(textwrap.dedent("""\
+        example.write(
+            textwrap.dedent(
+                """\
             def foo():
                 pass
-        """))
+        """
+            )
+        )
 
     with env.open('tox.ini', 'wt') as conf:
         conf.write('[pdcstl]\n')
@@ -338,21 +363,29 @@ def test_sectionless_config_file(env):
 @pytest.mark.parametrize(
     # Don't parametrize over 'pyproject.toml'
     # since this test applies only to '.ini' files
-    'env', ['ini'], indirect=True
+    'env',
+    ['ini'],
+    indirect=True,
 )
 def test_multiple_lined_config_file(env):
     """Test that .ini files with multi-lined entries are parsed correctly."""
     with env.open('example.py', 'wt') as example:
-        example.write(textwrap.dedent("""\
+        example.write(
+            textwrap.dedent(
+                """\
             class Foo(object):
                 "Doc string"
                 def foo():
                     pass
-        """))
+        """
+            )
+        )
 
-    select_string = ('D100,\n'
-                     '  #D103,\n'
-                     ' D204, D300 # Just remember - don\'t check D103!')
+    select_string = (
+        'D100,\n'
+        '  #D103,\n'
+        ' D204, D300 # Just remember - don\'t check D103!'
+    )
     env.write_config(select=select_string)
 
     out, err, code = env.invoke()
@@ -366,17 +399,23 @@ def test_multiple_lined_config_file(env):
 @pytest.mark.parametrize(
     # Don't parametrize over 'tox.ini' since
     # this test applies only to '.toml' files
-    'env', ['toml'], indirect=True
+    'env',
+    ['toml'],
+    indirect=True,
 )
 def test_accepts_select_error_code_list(env):
     """Test that .ini files with multi-lined entries are parsed correctly."""
     with env.open('example.py', 'wt') as example:
-        example.write(textwrap.dedent("""\
+        example.write(
+            textwrap.dedent(
+                """\
             class Foo(object):
                 "Doc string"
                 def foo():
                     pass
-        """))
+        """
+            )
+        )
 
     env.write_config(select=['D100', 'D204', 'D300'])
 
@@ -396,10 +435,14 @@ def test_config_path(env):
 
     """
     with env.open('example.py', 'wt') as example:
-        example.write(textwrap.dedent("""\
+        example.write(
+            textwrap.dedent(
+                """\
             def foo():
                 pass
-        """))
+        """
+            )
+        )
 
     # either my_config.ini or my_config.toml
     config_ext = env.config_name.split('.')[-1]
@@ -413,8 +456,9 @@ def test_config_path(env):
     assert 'D100' not in out
     assert 'D103' in out
 
-    out, err, code = env.invoke('--config={} -d'
-                                .format(env.get_path(config_name)))
+    out, err, code = env.invoke(
+        '--config={} -d'.format(env.get_path(config_name))
+    )
     assert code == 1, out + err
     assert 'D100' in out
     assert 'D103' not in out
@@ -442,10 +486,14 @@ def test_verbose(env):
 def test_count(env):
     """Test that passing --count correctly prints the error num."""
     with env.open('example.py', 'wt') as example:
-        example.write(textwrap.dedent("""\
+        example.write(
+            textwrap.dedent(
+                """\
             def foo():
                 pass
-        """))
+        """
+            )
+        )
 
     out, err, code = env.invoke(args='--count')
     assert code == 1
@@ -458,10 +506,14 @@ def test_count(env):
 def test_select_cli(env):
     """Test choosing error codes with `--select` in the CLI."""
     with env.open('example.py', 'wt') as example:
-        example.write(textwrap.dedent("""\
+        example.write(
+            textwrap.dedent(
+                """\
             def foo():
                 pass
-        """))
+        """
+            )
+        )
 
     out, err, code = env.invoke(args="--select=D100")
     assert code == 1
@@ -472,12 +524,16 @@ def test_select_cli(env):
 def test_select_config(env):
     """Test choosing error codes with `select` in the config file."""
     with env.open('example.py', 'wt') as example:
-        example.write(textwrap.dedent("""\
+        example.write(
+            textwrap.dedent(
+                """\
             class Foo(object):
                 "Doc string"
                 def foo():
                     pass
-        """))
+        """
+            )
+        )
 
     env.write_config(select="D100,D3")
     out, err, code = env.invoke()
@@ -490,12 +546,16 @@ def test_select_config(env):
 def test_add_select_cli(env):
     """Test choosing error codes with --add-select in the CLI."""
     with env.open('example.py', 'wt') as example:
-        example.write(textwrap.dedent("""\
+        example.write(
+            textwrap.dedent(
+                """\
             class Foo(object):
                 "Doc string"
                 def foo():
                     pass
-        """))
+        """
+            )
+        )
 
     env.write_config(select="D100")
     out, err, code = env.invoke(args="--add-select=D204,D3")
@@ -509,11 +569,15 @@ def test_add_select_cli(env):
 def test_add_ignore_cli(env):
     """Test choosing error codes with --add-ignore in the CLI."""
     with env.open('example.py', 'wt') as example:
-        example.write(textwrap.dedent("""\
+        example.write(
+            textwrap.dedent(
+                """\
             class Foo(object):
                 def foo():
                     pass
-        """))
+        """
+            )
+        )
 
     env.write_config(select="D100,D101")
     out, err, code = env.invoke(args="--add-ignore=D101")
@@ -526,12 +590,16 @@ def test_add_ignore_cli(env):
 def test_wildcard_add_ignore_cli(env):
     """Test choosing error codes with --add-ignore in the CLI."""
     with env.open('example.py', 'wt') as example:
-        example.write(textwrap.dedent("""\
+        example.write(
+            textwrap.dedent(
+                """\
             class Foo(object):
                 "Doc string"
                 def foo():
                     pass
-        """))
+        """
+            )
+        )
 
     env.write_config(select="D203,D300")
     out, err, code = env.invoke(args="--add-ignore=D30")
@@ -543,7 +611,9 @@ def test_wildcard_add_ignore_cli(env):
 @pytest.mark.parametrize(
     # Don't parametrize over 'pyproject.toml'
     # since this test applies only to '.ini' files
-    'env', ['ini'], indirect=True
+    'env',
+    ['ini'],
+    indirect=True,
 )
 def test_ignores_whitespace_in_fixed_option_set(env):
     with env.open('example.py', 'wt') as example:
@@ -558,7 +628,9 @@ def test_ignores_whitespace_in_fixed_option_set(env):
 @pytest.mark.parametrize(
     # Don't parametrize over 'tox.ini' since
     # this test applies only to '.toml' files
-    'env', ['toml'], indirect=True
+    'env',
+    ['toml'],
+    indirect=True,
 )
 def test_accepts_ignore_error_code_list(env):
     with env.open('example.py', 'wt') as example:
@@ -573,12 +645,16 @@ def test_accepts_ignore_error_code_list(env):
 def test_bad_wildcard_add_ignore_cli(env):
     """Test adding a non-existent error codes with --add-ignore."""
     with env.open('example.py', 'wt') as example:
-        example.write(textwrap.dedent("""\
+        example.write(
+            textwrap.dedent(
+                """\
             class Foo(object):
                 "Doc string"
                 def foo():
                     pass
-        """))
+        """
+            )
+        )
 
     env.write_config(select="D203,D300")
     out, err, code = env.invoke(args="--add-ignore=D3004")
@@ -586,14 +662,17 @@ def test_bad_wildcard_add_ignore_cli(env):
     assert 'D203' in out
     assert 'D300' in out
     assert 'D3004' not in out
-    assert ('Error code passed is not a prefix of any known errors: D3004'
-            in err)
+    assert (
+        'Error code passed is not a prefix of any known errors: D3004' in err
+    )
 
 
 def test_overload_function(env):
     """Functions decorated with @overload trigger D418 error."""
     with env.open('example.py', 'wt') as example:
-        example.write(textwrap.dedent('''\
+        example.write(
+            textwrap.dedent(
+                '''\
         from typing import overload
 
 
@@ -612,7 +691,9 @@ def test_overload_function(env):
             """Foo bar documentation."""
             return str(a)
 
-        '''))
+        '''
+            )
+        )
     env.write_config(ignore="D100")
     out, err, code = env.invoke()
     assert code == 1
@@ -623,7 +704,9 @@ def test_overload_function(env):
 def test_overload_method(env):
     """Methods decorated with @overload trigger D418 error."""
     with env.open('example.py', 'wt') as example:
-        example.write(textwrap.dedent('''\
+        example.write(
+            textwrap.dedent(
+                '''\
         from typing import overload
 
         class ClassWithMethods:
@@ -642,7 +725,9 @@ def test_overload_method(env):
                 """Foo bar documentation."""
                 return str(a)
 
-        '''))
+        '''
+            )
+        )
     env.write_config(ignore="D100")
     out, err, code = env.invoke()
     assert code == 1
@@ -657,7 +742,9 @@ def test_overload_method_valid(env):
     This shouldn't throw any errors.
     """
     with env.open('example.py', 'wt') as example:
-        example.write(textwrap.dedent('''\
+        example.write(
+            textwrap.dedent(
+                '''\
         from typing import overload
 
         class ClassWithMethods:
@@ -677,7 +764,9 @@ def test_overload_method_valid(env):
                 """Foo bar documentation."""
                 return str(a)
 
-        '''))
+        '''
+            )
+        )
     env.write_config(ignore="D100, D203")
     out, err, code = env.invoke()
     assert code == 0
@@ -689,7 +778,9 @@ def test_overload_function_valid(env):
     This shouldn't throw any errors.
     """
     with env.open('example.py', 'wt') as example:
-        example.write(textwrap.dedent('''\
+        example.write(
+            textwrap.dedent(
+                '''\
         from typing import overload
 
 
@@ -707,7 +798,9 @@ def test_overload_function_valid(env):
             """Foo bar documentation."""
             return str(a)
 
-        '''))
+        '''
+            )
+        )
     env.write_config(ignore="D100")
     out, err, code = env.invoke()
     assert code == 0
@@ -716,7 +809,9 @@ def test_overload_function_valid(env):
 def test_overload_nested_function(env):
     """Nested functions decorated with @overload trigger D418 error."""
     with env.open('example.py', 'wt') as example:
-        example.write(textwrap.dedent('''\
+        example.write(
+            textwrap.dedent(
+                '''\
         from typing import overload
 
         def function_with_nesting():
@@ -735,7 +830,9 @@ def test_overload_nested_function(env):
             def overloaded_func(a):
                 """Foo bar documentation."""
                 return str(a)
-            '''))
+            '''
+            )
+        )
     env.write_config(ignore="D100")
     out, err, code = env.invoke()
     assert code == 1
@@ -749,7 +846,9 @@ def test_overload_nested_function_valid(env):
     This shouldn't throw any errors.
     """
     with env.open('example.py', 'wt') as example:
-        example.write(textwrap.dedent('''\
+        example.write(
+            textwrap.dedent(
+                '''\
         from typing import overload
 
         def function_with_nesting():
@@ -767,7 +866,9 @@ def test_overload_nested_function_valid(env):
             def overloaded_func(a):
                 """Foo bar documentation."""
                 return str(a)
-            '''))
+            '''
+            )
+        )
     env.write_config(ignore="D100")
     out, err, code = env.invoke()
     assert code == 0
@@ -820,10 +921,14 @@ def test_illegal_convention(env):
 def test_empty_select_cli(env):
     """Test excluding all error codes with `--select=` in the CLI."""
     with env.open('example.py', 'wt') as example:
-        example.write(textwrap.dedent("""\
+        example.write(
+            textwrap.dedent(
+                """\
             def foo():
                 pass
-        """))
+        """
+            )
+        )
 
     _, _, code = env.invoke(args="--select=")
     assert code == 0
@@ -832,10 +937,14 @@ def test_empty_select_cli(env):
 def test_empty_select_config(env):
     """Test excluding all error codes with `select=` in the config file."""
     with env.open('example.py', 'wt') as example:
-        example.write(textwrap.dedent("""\
+        example.write(
+            textwrap.dedent(
+                """\
             def foo():
                 pass
-        """))
+        """
+            )
+        )
 
     env.write_config(select="")
     _, _, code = env.invoke()
@@ -845,10 +954,14 @@ def test_empty_select_config(env):
 def test_empty_select_with_added_error(env):
     """Test excluding all errors but one."""
     with env.open('example.py', 'wt') as example:
-        example.write(textwrap.dedent("""\
+        example.write(
+            textwrap.dedent(
+                """\
             def foo():
                 pass
-        """))
+        """
+            )
+        )
 
     env.write_config(select="")
     out, err, code = env.invoke(args="--add-select=D100")
@@ -861,7 +974,9 @@ def test_empty_select_with_added_error(env):
 def test_pep257_convention(env):
     """Test that the 'pep257' convention options has the correct errors."""
     with env.open('example.py', 'wt') as example:
-        example.write(textwrap.dedent('''
+        example.write(
+            textwrap.dedent(
+                '''
             class Foo(object):
 
 
@@ -881,7 +996,9 @@ def test_pep257_convention(env):
                 """
                 if imag == 0.0 and real == 0.0:
                     return complex_zero
-        '''))
+        '''
+            )
+        )
 
     env.write_config(convention="pep257")
     out, err, code = env.invoke()
@@ -897,7 +1014,9 @@ def test_pep257_convention(env):
 def test_numpy_convention(env):
     """Test that the 'numpy' convention options has the correct errors."""
     with env.open('example.py', 'wt') as example:
-        example.write(textwrap.dedent('''
+        example.write(
+            textwrap.dedent(
+                '''
             class Foo(object):
                 """Docstring for this class.
 
@@ -906,7 +1025,9 @@ def test_numpy_convention(env):
                 """
                 def __init__(self):
                     pass
-        '''))
+        '''
+            )
+        )
 
     env.write_config(convention="numpy")
     out, err, code = env.invoke()
@@ -924,7 +1045,9 @@ def test_numpy_convention(env):
 def test_google_convention(env):
     """Test that the 'google' convention options has the correct errors."""
     with env.open('example.py', 'wt') as example:
-        example.write(textwrap.dedent('''
+        example.write(
+            textwrap.dedent(
+                '''
             def func(num1, num2, num_three=0):
                 """Docstring for this function.
 
@@ -945,7 +1068,9 @@ def test_google_convention(env):
                 """
                 def __init__(self):
                     pass
-        '''))
+        '''
+            )
+        )
 
     env.write_config(convention="google")
     out, err, code = env.invoke()
@@ -989,10 +1114,14 @@ def test_config_file_inheritance(env):
     env.write_config(prefix='A', inherit=False)
 
     with env.open(os.path.join('A', 'test.py'), 'wt') as test:
-        test.write(textwrap.dedent("""\
+        test.write(
+            textwrap.dedent(
+                """\
             def bar():
                 pass
-        """))
+        """
+            )
+        )
 
     out, err, code = env.invoke()
 
@@ -1022,10 +1151,12 @@ def test_config_file_cumulative_add_ignores(env):
     env.write_config(select='D100,D103', add_ignore='D100')
     env.write_config(prefix='A', add_ignore='D103')
 
-    test_content = textwrap.dedent("""\
+    test_content = textwrap.dedent(
+        """\
         def foo():
             pass
-    """)
+    """
+    )
 
     with env.open('base.py', 'wt') as test:
         test.write(test_content)
@@ -1065,10 +1196,12 @@ def test_config_file_cumulative_add_select(env):
     env.write_config(select='', add_select='D100')
     env.write_config(prefix='A', add_select='D103')
 
-    test_content = textwrap.dedent("""\
+    test_content = textwrap.dedent(
+        """\
         def foo():
             pass
-    """)
+    """
+    )
 
     with env.open('base.py', 'wt') as test:
         test.write(test_content)
@@ -1148,10 +1281,14 @@ def test_cli_overrides_config_file(env):
 
     env.makedirs('A')
     with env.open(os.path.join('A', 'a.py'), 'wt') as test:
-        test.write(textwrap.dedent("""\
+        test.write(
+            textwrap.dedent(
+                """\
             def foo():
                 pass
-        """))
+        """
+            )
+        )
 
     out, err, code = env.invoke(args="--convention=pep257")
 
@@ -1184,10 +1321,14 @@ def test_cli_match_overrides_config_file(env):
     env.write_config(prefix='A', match='bar.py')
 
     with env.open('base.py', 'wt') as test:
-        test.write(textwrap.dedent("""\
+        test.write(
+            textwrap.dedent(
+                """\
             def foo():
                 pass
-        """))
+        """
+            )
+        )
 
     with env.open(os.path.join('A', 'a.py'), 'wt') as test:
         test.write("")
@@ -1222,10 +1363,12 @@ def test_config_file_convention_overrides_ignore(env):
     env.write_config(ignore='D100,D103')
     env.write_config(prefix='A', convention='pep257')
 
-    test_content = textwrap.dedent("""\
+    test_content = textwrap.dedent(
+        """\
         def foo():
             pass
-    """)
+    """
+    )
 
     with env.open('base.py', 'wt') as test:
         test.write(test_content)
@@ -1263,11 +1406,13 @@ def test_config_file_ignore_overrides_select(env):
     env.write_config(select='D100')
     env.write_config(prefix='A', ignore='D102')
 
-    test_content = textwrap.dedent("""\
+    test_content = textwrap.dedent(
+        """\
         class Foo(object):
             def bar():
                 pass
-    """)
+    """
+    )
 
     with env.open('base.py', 'wt') as test:
         test.write(test_content)
@@ -1315,11 +1460,13 @@ def test_config_file_nearest_to_checked_file(env):
     env.write_config(convention='pep257', add_ignore='D100')
     env.write_config(prefix='B', add_ignore='D101')
 
-    test_content = textwrap.dedent("""\
+    test_content = textwrap.dedent(
+        """\
         class Foo(object):
             def bar():
                 pass
-    """)
+    """
+    )
 
     with env.open('base.py', 'wt') as test:
         test.write(test_content)
@@ -1372,10 +1519,12 @@ def test_config_file_nearest_match_re(env):
     env.write_config(prefix='A', match_dir='C')
     env.write_config(prefix=os.path.join('A', 'C'), match='bla.py')
 
-    content = textwrap.dedent("""\
+    content = textwrap.dedent(
+        """\
         def foo():
             pass
-    """)
+    """
+    )
 
     env.makedirs(os.path.join('A', 'B'))
     with env.open(os.path.join('A', 'B', 'b.py'), 'wt') as test:
@@ -1408,7 +1557,9 @@ def test_indented_function(env):
     """Test that nested functions do not cause IndentationError."""
     env.write_config(ignore='D')
     with env.open("test.py", 'wt') as fobj:
-        fobj.write(textwrap.dedent('''\
+        fobj.write(
+            textwrap.dedent(
+                '''\
             def foo():
                 def bar(a):
                     """A docstring
@@ -1417,7 +1568,9 @@ def test_indented_function(env):
                         a : An argument.
                     """
                     pass
-        '''))
+        '''
+            )
+        )
     out, err, code = env.invoke(args="-v")
     assert code == 0
     assert "IndentationError: unexpected indent" not in err

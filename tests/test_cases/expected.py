@@ -9,9 +9,11 @@ class Expectation:
         # The `arg_count` parameter helps the decorator
         # with functions that have positional arguments.
         if len(args) == 1:
+
             def decorate(f):
                 self.expected.add((func_name or f.__name__, args[0]))
-                f(*[None]*arg_count)
+                f(*[None] * arg_count)
                 return f
+
             return decorate
         self.expected.add(args)

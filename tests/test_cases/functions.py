@@ -66,7 +66,7 @@ def func_with_inner_decorated_async_func_after():
 def func_with_inner_class_after():
     """Test a function with inner class after docstring."""
 
-    class inner():
+    class inner:
         pass
 
     pass

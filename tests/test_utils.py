@@ -4,7 +4,6 @@ Use tox or pytest to run the test suite.
 """
 from pydocstyle import utils
 
-
 __all__ = ()
 
 
