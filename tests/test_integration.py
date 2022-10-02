@@ -1,5 +1,6 @@
 """Use tox or pytest to run the test-suite."""
 
+import itertools
 import os
 import pathlib
 import shlex
@@ -124,23 +125,6 @@ class SandboxEnv:
         pass
 
 
-@pytest.fixture(scope="module")
-def install_package(request):
-    """Install the package in development mode for the tests.
-
-    This is so we can run the integration tests on the installed console
-    script.
-    """
-    cwd = os.path.join(os.path.dirname(__file__), '..', '..')
-    subprocess.check_call(
-        [sys.executable, "-m", "pip", "install", "-e", "."], cwd=cwd
-    )
-    yield
-    subprocess.check_call(
-        [sys.executable, "-m", "pip", "uninstall", "-y", "pydocstyle"], cwd=cwd
-    )
-
-
 @pytest.fixture(scope="function", params=['ini', 'toml'])
 def env(request):
     """Add a testing environment to a test method."""
@@ -156,9 +140,6 @@ def env(request):
     }[request.param]
     with SandboxEnv(**sandbox_settings) as test_env:
         yield test_env
-
-
-pytestmark = pytest.mark.usefixtures("install_package")
 
 
 def parse_errors(err):
@@ -186,9 +167,13 @@ def test_pep257_conformance():
     """Test that we conform to PEP 257."""
     base_dir = (pathlib.Path(__file__).parent / '..').resolve()
     excluded = base_dir / 'tests' / 'test_cases'
+
     src_files = (
         str(path)
-        for path in base_dir.glob('**/*.py')
+        for path in itertools.chain(
+            base_dir.glob('src/**/*.py'),
+            base_dir.glob('tests/**/*.py'),
+        )
         if excluded not in path.parents
     )
 

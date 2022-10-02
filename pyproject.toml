@@ -1,6 +1,13 @@
+[build-system]
+requires = ["setuptools>=42", "wheel", "setuptools_scm[toml]>=3.4"]
+build-backend = "setuptools.build_meta"
+
+# Enables the usage of setuptools_scm
+[tool.setuptools_scm]
+
 [tool.black]
 line-length = 79
-target-version = ['py36']
+target-version = ['py37']
 skip-string-normalization = true
 
 [tool.isort]
@@ -20,3 +27,8 @@ addopts = """
     -rw
     --cache-clear
     """
+
+[tool.pydocstyle]
+convention="pep257"
+# Ignore hidden directories and some other directories
+match-dir = "(?!venv|\\.|build|dist|test_cases).*"

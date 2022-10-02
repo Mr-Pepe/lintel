@@ -1,3 +1,4 @@
+# fmt: off
 """A valid module docstring."""
 
 from .expected import Expectation
@@ -11,10 +12,8 @@ _D400 = "D400: First line should end with a period (not '!')"
 
 
 @expect(_D213)
-@expect(
-    "D405: Section name should be properly capitalized "
-    "('Returns', not 'returns')"
-)
+@expect("D405: Section name should be properly capitalized "
+        "('Returns', not 'returns')")
 def not_capitalized():  # noqa: D416
     """Toggle the gizmo.
 
@@ -26,10 +25,8 @@ def not_capitalized():  # noqa: D416
 
 
 @expect(_D213)
-@expect(
-    "D406: Section name should end with a newline "
-    "('Returns', not 'Returns:')"
-)
+@expect("D406: Section name should end with a newline "
+        "('Returns', not 'Returns:')")
 def superfluous_suffix():  # noqa: D416
     """Toggle the gizmo.
 
@@ -83,10 +80,8 @@ def consecutive_sections():  # noqa: D416
 
 
 @expect(_D213)
-@expect(
-    "D408: Section underline should be in the line following the "
-    "section's name ('Returns')"
-)
+@expect("D408: Section underline should be in the line following the "
+        "section's name ('Returns')")
 def blank_line_before_underline():  # noqa: D416
     """Toggle the gizmo.
 
@@ -99,10 +94,8 @@ def blank_line_before_underline():  # noqa: D416
 
 
 @expect(_D213)
-@expect(
-    "D409: Section underline should match the length of its name "
-    "(Expected 7 dashes in section 'Returns', got 2)"
-)
+@expect("D409: Section underline should match the length of its name "
+        "(Expected 7 dashes in section 'Returns', got 2)")
 def bad_underline_length():  # noqa: D416
     """Toggle the gizmo.
 
@@ -184,19 +177,13 @@ def ignore_non_actual_section():  # noqa: D416
 
 
 @expect(_D213)
-@expect(
-    "D401: First line should be in imperative mood "
-    "(perhaps 'Return', not 'Returns')"
-)
+@expect("D401: First line should be in imperative mood "
+        "(perhaps 'Return', not 'Returns')")
 @expect("D400: First line should end with a period (not 's')")
-@expect(
-    "D415: First line should end with a period, question "
-    "mark, or exclamation point (not 's')"
-)
-@expect(
-    "D205: 1 blank line required between summary line and description "
-    "(found 0)"
-)
+@expect("D415: First line should end with a period, question "
+        "mark, or exclamation point (not 's')")
+@expect("D205: 1 blank line required between summary line and description "
+        "(found 0)")
 def section_name_in_first_line():  # noqa: D416
     """Returns
     -------
@@ -206,23 +193,16 @@ def section_name_in_first_line():  # noqa: D416
 
 
 @expect(_D213)
-@expect(
-    "D405: Section name should be properly capitalized "
-    "('Short Summary', not 'Short summary')"
-)
-@expect(
-    "D412: No blank lines allowed between a section header and its "
-    "content ('Short Summary')"
-)
-@expect(
-    "D409: Section underline should match the length of its name "
-    "(Expected 7 dashes in section 'Returns', got 6)"
-)
+@expect("D405: Section name should be properly capitalized "
+        "('Short Summary', not 'Short summary')")
+@expect("D412: No blank lines allowed between a section header and its "
+        "content ('Short Summary')")
+@expect("D409: Section underline should match the length of its name "
+        "(Expected 7 dashes in section 'Returns', got 6)")
 @expect("D410: Missing blank line after section ('Returns')")
 @expect("D411: Missing blank line before section ('Raises')")
-@expect(
-    "D406: Section name should end with a newline " "('Raises', not 'Raises:')"
-)
+@expect("D406: Section name should end with a newline "
+        "('Raises', not 'Raises:')")
 @expect("D407: Missing dashed underline after section ('Raises')")
 def multiple_sections():  # noqa: D416
     """Toggle the gizmo.
@@ -284,7 +264,8 @@ def valid_google_style_section():  # noqa: D406, D407
 
 
 @expect(_D213)
-@expect("D416: Section name should end with a colon " "('Args:', not 'Args')")
+@expect("D416: Section name should end with a colon "
+        "('Args:', not 'Args')")
 def missing_colon_google_style_section():  # noqa: D406, D407
     """Toggle the gizmo.
 
@@ -294,34 +275,29 @@ def missing_colon_google_style_section():  # noqa: D406, D407
     """
 
 
-@expect(
-    "D417: Missing argument descriptions in the docstring "
-    "(argument(s) y are missing descriptions in "
-    "'bar' docstring)",
-    func_name="bar",
-)
+@expect("D417: Missing argument descriptions in the docstring "
+        "(argument(s) y are missing descriptions in "
+        "'bar' docstring)", func_name="bar")
 def _test_nested_functions():
     x = 1
 
     def bar(y=2):  # noqa: D207, D213, D406, D407
         """Nested function test for docstrings.
 
-                Will this work when referencing x?
+        Will this work when referencing x?
 
-                Args:
-                    x: Test something
-        that is broken.
+        Args:
+            x: Test something
+that is broken.
 
         """
         print(x)
 
 
 @expect(_D213)
-@expect(
-    "D417: Missing argument descriptions in the docstring "
-    "(argument(s) y are missing descriptions in "
-    "'test_missing_google_args' docstring)"
-)
+@expect("D417: Missing argument descriptions in the docstring "
+        "(argument(s) y are missing descriptions in "
+        "'test_missing_google_args' docstring)")
 def test_missing_google_args(x=1, y=2, _private=3):  # noqa: D406, D407
     """Toggle the gizmo.
 
@@ -343,15 +319,10 @@ class TestGoogle:  # noqa: D203
 
         """
 
-    @expect(
-        "D417: Missing argument descriptions in the docstring "
-        "(argument(s) test, y, z are missing descriptions in "
-        "'test_missing_args' docstring)",
-        arg_count=5,
-    )
-    def test_missing_args(
-        self, test, x, y, z=3, _private_arg=3
-    ):  # noqa: D213, D407
+    @expect("D417: Missing argument descriptions in the docstring "
+            "(argument(s) test, y, z are missing descriptions in "
+            "'test_missing_args' docstring)", arg_count=5)
+    def test_missing_args(self, test, x, y, z=3, _private_arg=3):  # noqa: D213, D407
         """Test a valid args section.
 
         Args:
@@ -360,15 +331,10 @@ class TestGoogle:  # noqa: D203
         """
 
     @classmethod
-    @expect(
-        "D417: Missing argument descriptions in the docstring "
-        "(argument(s) test, y, z are missing descriptions in "
-        "'test_missing_args_class_method' docstring)",
-        arg_count=5,
-    )
-    def test_missing_args_class_method(
-        cls, test, x, y, _, z=3
-    ):  # noqa: D213, D407
+    @expect("D417: Missing argument descriptions in the docstring "
+            "(argument(s) test, y, z are missing descriptions in "
+            "'test_missing_args_class_method' docstring)", arg_count=5)
+    def test_missing_args_class_method(cls, test, x, y, _, z=3):  # noqa: D213, D407
         """Test a valid args section.
 
         Args:
@@ -378,15 +344,10 @@ class TestGoogle:  # noqa: D203
         """
 
     @staticmethod
-    @expect(
-        "D417: Missing argument descriptions in the docstring "
-        "(argument(s) a, y, z are missing descriptions in "
-        "'test_missing_args_static_method' docstring)",
-        arg_count=4,
-    )
-    def test_missing_args_static_method(
-        a, x, y, _test, z=3
-    ):  # noqa: D213, D407
+    @expect("D417: Missing argument descriptions in the docstring "
+            "(argument(s) a, y, z are missing descriptions in "
+            "'test_missing_args_static_method' docstring)", arg_count=4)
+    def test_missing_args_static_method(a, x, y, _test, z=3):  # noqa: D213, D407
         """Test a valid args section.
 
         Args:
@@ -395,12 +356,9 @@ class TestGoogle:  # noqa: D203
         """
 
     @staticmethod
-    @expect(
-        "D417: Missing argument descriptions in the docstring "
-        "(argument(s) a, b are missing descriptions in "
-        "'test_missing_docstring' docstring)",
-        arg_count=2,
-    )
+    @expect("D417: Missing argument descriptions in the docstring "
+            "(argument(s) a, b are missing descriptions in "
+            "'test_missing_docstring' docstring)", arg_count=2)
     def test_missing_docstring(a, b):  # noqa: D213, D407
         """Test a valid args section.
 
@@ -426,11 +384,9 @@ class TestGoogle:  # noqa: D203
 
 
 @expect(_D213)
-@expect(
-    "D417: Missing argument descriptions in the docstring "
-    "(argument(s) y are missing descriptions in "
-    "'test_missing_numpy_args' docstring)"
-)
+@expect("D417: Missing argument descriptions in the docstring "
+        "(argument(s) y are missing descriptions in "
+        "'test_missing_numpy_args' docstring)")
 def test_missing_numpy_args(_private_arg=0, x=1, y=2):  # noqa: D406, D407
     """Toggle the gizmo.
 
@@ -446,9 +402,7 @@ of the entire world.
 class TestNumpy:  # noqa: D203
     """Test class."""
 
-    def test_method(
-        self, test, another_test, z, _, x=1, y=2, _private_arg=1
-    ):  # noqa: D213, D407
+    def test_method(self, test, another_test, z, _, x=1, y=2, _private_arg=1):  # noqa: D213, D407
         """Test a valid args section.
 
         Some long string with a \
@@ -466,15 +420,10 @@ line continuation.
 
         """
 
-    @expect(
-        "D417: Missing argument descriptions in the docstring "
-        "(argument(s) test, y, z are missing descriptions in "
-        "'test_missing_args' docstring)",
-        arg_count=5,
-    )
-    def test_missing_args(
-        self, test, x, y, z=3, t=1, _private=0
-    ):  # noqa: D213, D407
+    @expect("D417: Missing argument descriptions in the docstring "
+            "(argument(s) test, y, z are missing descriptions in "
+            "'test_missing_args' docstring)", arg_count=5)
+    def test_missing_args(self, test, x, y, z=3, t=1, _private=0):  # noqa: D213, D407
         """Test a valid args section.
 
         Parameters
@@ -486,15 +435,10 @@ line continuation.
         """
 
     @classmethod
-    @expect(
-        "D417: Missing argument descriptions in the docstring "
-        "(argument(s) test, y, z are missing descriptions in "
-        "'test_missing_args_class_method' docstring)",
-        arg_count=4,
-    )
-    def test_missing_args_class_method(
-        cls, test, x, y, z=3
-    ):  # noqa: D213, D407
+    @expect("D417: Missing argument descriptions in the docstring "
+            "(argument(s) test, y, z are missing descriptions in "
+            "'test_missing_args_class_method' docstring)", arg_count=4)
+    def test_missing_args_class_method(cls, test, x, y, z=3):  # noqa: D213, D407
         """Test a valid args section.
 
         Parameters
@@ -510,12 +454,9 @@ line continuation.
         """
 
     @staticmethod
-    @expect(
-        "D417: Missing argument descriptions in the docstring "
-        "(argument(s) a, z are missing descriptions in "
-        "'test_missing_args_static_method' docstring)",
-        arg_count=3,
-    )
+    @expect("D417: Missing argument descriptions in the docstring "
+            "(argument(s) a, z are missing descriptions in "
+            "'test_missing_args_static_method' docstring)", arg_count=3)
     def test_missing_args_static_method(a, x, y, z=3, t=1):  # noqa: D213, D407
         """Test a valid args section.
 
@@ -543,18 +484,15 @@ line continuation.
 class TestIncorrectIndent:  # noqa: D203
     """Test class."""
 
-    @expect(
-        "D417: Missing argument descriptions in the docstring "
-        "(argument(s) y are missing descriptions in "
-        "'test_incorrect_indent' docstring)",
-        arg_count=3,
-    )
+    @expect("D417: Missing argument descriptions in the docstring "
+            "(argument(s) y are missing descriptions in "
+            "'test_incorrect_indent' docstring)", arg_count=3)
     def test_incorrect_indent(self, x=1, y=2):  # noqa: D207, D213, D407
         """Reproducing issue #437.
 
-        Testing this incorrectly indented docstring.
+Testing this incorrectly indented docstring.
 
-                Args:
-                    x: Test argument.
+        Args:
+            x: Test argument.
 
         """
