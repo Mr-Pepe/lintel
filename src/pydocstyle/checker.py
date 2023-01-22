@@ -862,8 +862,22 @@ class ConventionChecker:
                     y: Ut enim ad minim veniam
         """
         docstring_args = set()
+
         # normalize leading whitespace
-        args_content = dedent("\n".join(context.following_lines)).strip()
+        if context.following_lines:
+            # any lines with shorter indent than the first one should be disregarded
+            first_line = context.following_lines[0]
+            leading_whitespaces = first_line[: -len(first_line.lstrip())]
+
+        args_content = dedent(
+            "\n".join(
+                [
+                    line
+                    for line in context.following_lines
+                    if line.startswith(leading_whitespaces) or line == ""
+                ]
+            )
+        ).strip()
 
         args_sections = []
         for line in args_content.splitlines(keepends=True):
@@ -1101,9 +1115,7 @@ def check(
     reported.
 
     Note that ignored error code refer to the entire set of possible
-    error codes, which is larger than just the PEP-257 convention. To your
-    convenience, you may use `pydocstyle.violations.conventions.pep257` as
-    a base set to add or remove errors from.
+    error codes, which is larger than just the PEP-257 convention.
 
     `ignore_inline_noqa` controls if `# noqa` comments are respected or not.
 
@@ -1113,9 +1125,6 @@ def check(
     <generator object check at 0x...>
 
     >>> check(['pydocstyle.py'], select=['D100'])
-    <generator object check at 0x...>
-
-    >>> check(['pydocstyle.py'], ignore=conventions.pep257 - {'D100'})
     <generator object check at 0x...>
 
     """

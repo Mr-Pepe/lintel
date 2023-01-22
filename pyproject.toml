@@ -24,8 +24,12 @@ disallow_incomplete_defs = true
 norecursedirs = ["docs", ".tox"]
 addopts = """
     -vv
-    -rw
-    --cache-clear
+    --doctest-modules
+    --junitxml=reports/pytest.xml
+    --cov=pydocstyle
+    --cov-config=pyproject.toml
+    --cov-report xml:reports/coverage.xml
+    --cov-report html:reports/coverage_html
     """
 
 [tool.pydocstyle]
