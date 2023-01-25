@@ -33,14 +33,14 @@ def test_lines():
     """Test proper printing of source lines, including blank line trimming."""
     error = Error('CODE', 'an error', None)
     definition = MockDefinition(
-        source=[
-            'def foo():\n',
-            '    """A docstring."""\n',
-            '\n',
-            '    pass\n',
-            '\n',
-            '\n',
-        ],
+        source=textwrap.dedent(
+            '''
+            def foo():
+                """A docstring."""
+
+                pass
+            '''
+        ).lstrip(),
         start=424,
     )
     error.set_context(definition, None)

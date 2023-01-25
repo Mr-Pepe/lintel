@@ -40,7 +40,7 @@ def test_complex_file(test_case: str, resource_dir: Path) -> None:
         globals=globals(),
         locals=locals(),
         fromlist=['expectation'],
-        level=1,
+        level=2,
     )
     test_case_file = resource_dir / f"{test_case}.py"
     results = list(

@@ -71,7 +71,7 @@ class Error:
         numbers_width = len(str(offset + len(lines_stripped)))
         line_format = f'{{:{numbers_width}}}:{{}}'
         for n, line in enumerate(lines_stripped):
-            if line:
+            if line and line != "\n":
                 line = ' ' + line
             source += line_format.format(n + offset, line)
             if n > 5:
