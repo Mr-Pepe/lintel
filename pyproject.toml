@@ -35,4 +35,4 @@ addopts = """
 [tool.pydocstyle]
 convention="pep257"
 # Ignore hidden directories and some other directories
-match-dir = "(?!venv|\\.|build|dist|test_cases).*"
+match-dir = "(?!venv|\\.|build|dist|resources).*"

@@ -10,6 +10,7 @@ import sys
 import tempfile
 import textwrap
 from collections import namedtuple
+from pathlib import Path
 from unittest import mock
 
 import pytest
@@ -163,10 +164,10 @@ def parse_errors(err):
     return result
 
 
-def test_pep257_conformance():
+def test_pep257_conformance(resource_dir: Path) -> None:
     """Test that we conform to PEP 257."""
     base_dir = (pathlib.Path(__file__).parent / '..').resolve()
-    excluded = base_dir / 'tests' / 'test_cases'
+    excluded = resource_dir
 
     src_files = (
         str(path)
