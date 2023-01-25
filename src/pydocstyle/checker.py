@@ -8,6 +8,8 @@ from itertools import chain, takewhile
 from re import compile as re
 from textwrap import dedent
 
+from pydocstyle.checks import check
+
 from . import violations
 from .config import IllegalConfiguration
 from .parser import (
@@ -34,15 +36,6 @@ from .utils import (
 from .wordlists import IMPERATIVE_BLACKLIST, IMPERATIVE_VERBS, stem
 
 __all__ = ('check',)
-
-
-def check_for(kind, terminal=False):
-    def decorator(f):
-        f._check_for = kind
-        f._terminal = terminal
-        return f
-
-    return decorator
 
 
 class ConventionChecker:
@@ -144,7 +137,7 @@ class ConventionChecker:
         for definition in module:
             for this_check in self.checks:
                 terminate = False
-                if isinstance(definition, this_check._check_for):
+                if isinstance(definition, this_check._node_type):
                     skipping_all = definition.skipped_error_codes == 'all'
                     decorator_skip = ignore_decorators is not None and any(
                         len(ignore_decorators.findall(dec.name)) > 0
@@ -181,11 +174,11 @@ class ConventionChecker:
         all = [
             this_check
             for this_check in vars(type(self)).values()
-            if hasattr(this_check, '_check_for')
+            if hasattr(this_check, '_node_type')
         ]
         return sorted(all, key=lambda this_check: not this_check._terminal)
 
-    @check_for(Definition, terminal=True)
+    @check(Definition, terminal=True)
     def check_docstring_missing(self, definition, docstring):
         """D10{0,1,2,3}: Public definitions should have docstrings.
 
@@ -225,7 +218,7 @@ class ConventionChecker:
             }
             return codes[type(definition)]()
 
-    @check_for(Definition, terminal=True)
+    @check(Definition, terminal=True)
     def check_docstring_empty(self, definition, docstring):
         """D419: Docstring is empty.
 
@@ -237,7 +230,7 @@ class ConventionChecker:
         if docstring and is_blank(ast.literal_eval(docstring)):
             return violations.D419()
 
-    @check_for(Definition)
+    @check(Definition)
     def check_one_liners(self, definition, docstring):
         """D200: One-liner docstrings should fit on one line with quotes.
 
@@ -252,7 +245,7 @@ class ConventionChecker:
                 if non_empty_lines == 1:
                     return violations.D200(len(lines))
 
-    @check_for(Function)
+    @check(Function)
     def check_no_blank_before(self, function, docstring):  # def
         """D20{1,2}: No blank lines allowed around function/method docstring.
 
@@ -277,7 +270,7 @@ class ConventionChecker:
                 ):
                     yield violations.D202(blanks_after_count)
 
-    @check_for(Class)
+    @check(Class)
     def check_blank_before_after_class(self, class_, docstring):
         """D20{3,4}: Class docstring should have 1 blank line around them.
 
@@ -310,7 +303,7 @@ class ConventionChecker:
             if not all(blanks_after) and blanks_after_count != 1:
                 yield violations.D204(blanks_after_count)
 
-    @check_for(Definition)
+    @check(Definition)
     def check_blank_after_summary(self, definition, docstring):
         """D205: Put one blank line between summary line and description.
 
@@ -336,7 +329,7 @@ class ConventionChecker:
         _, _, indent = before_docstring.rpartition('\n')
         return indent
 
-    @check_for(Definition)
+    @check(Definition)
     def check_indent(self, definition, docstring):
         """D20{6,7,8}: The entire docstring should be indented same as code.
 
@@ -364,7 +357,7 @@ class ConventionChecker:
                 if len(indents) > 0 and min(indents) < indent:
                     yield violations.D207()
 
-    @check_for(Definition)
+    @check(Definition)
     def check_newline_after_last_paragraph(self, definition, docstring):
         """D209: Put multi-line docstring closing quotes on separate line.
 
@@ -382,7 +375,7 @@ class ConventionChecker:
                 if docstring.split("\n")[-1].strip() not in ['"""', "'''"]:
                     return violations.D209()
 
-    @check_for(Definition)
+    @check(Definition)
     def check_surrounding_whitespaces(self, definition, docstring):
         """D210: No whitespaces allowed surrounding docstring text."""
         if docstring:
@@ -394,7 +387,7 @@ class ConventionChecker:
             ):
                 return violations.D210()
 
-    @check_for(Definition)
+    @check(Definition)
     def check_multi_line_summary_start(self, definition, docstring):
         """D21{2,3}: Multi-line docstring summary style check.
 
@@ -422,7 +415,7 @@ class ConventionChecker:
                 else:
                     return violations.D213()
 
-    @check_for(Definition)
+    @check(Definition)
     def check_triple_double_quotes(self, definition, docstring):
         r'''D300: Use """triple double quotes""".
 
@@ -449,7 +442,7 @@ class ConventionChecker:
                 illegal_quotes = illegal_matcher.match(docstring).group(1)
                 return violations.D300(illegal_quotes)
 
-    @check_for(Definition)
+    @check(Definition)
     def check_backslashes(self, definition, docstring):
         r'''D301: Use r""" if any backslashes in a docstring.
 
@@ -484,7 +477,7 @@ class ConventionChecker:
             if not summary_line.endswith(chars):
                 return violation(summary_line[-1])
 
-    @check_for(Definition)
+    @check(Definition)
     def check_ends_with_period(self, definition, docstring):
         """D400: First line should end with a period.
 
@@ -493,7 +486,7 @@ class ConventionChecker:
         """
         return self._check_ends_with(docstring, '.', violations.D400)
 
-    @check_for(Definition)
+    @check(Definition)
     def check_ends_with_punctuation(self, definition, docstring):
         """D415: should end with proper punctuation.
 
@@ -505,7 +498,7 @@ class ConventionChecker:
             docstring, ('.', '!', '?'), violations.D415
         )
 
-    @check_for(Function)
+    @check(Function)
     def check_imperative_mood(self, function, docstring):  # def context
         """D401: First line should be in imperative mood: 'Do', not 'Does'.
 
@@ -536,7 +529,7 @@ class ConventionChecker:
                     )
                     return violations.D401(best.capitalize(), first_word)
 
-    @check_for(Function)
+    @check(Function)
     def check_no_signature(self, function, docstring):  # def context
         """D402: First line should not be function's or method's "signature".
 
@@ -549,7 +542,7 @@ class ConventionChecker:
             if function.name + '(' in first_line.replace(' ', ''):
                 return violations.D402()
 
-    @check_for(Function)
+    @check(Function)
     def check_capitalized(self, function, docstring):
         """D403: First word of the first line should be properly capitalized.
 
@@ -566,7 +559,7 @@ class ConventionChecker:
             if first_word != first_word.capitalize():
                 return violations.D403(first_word.capitalize(), first_word)
 
-    @check_for(Function)
+    @check(Function)
     def check_if_needed(self, function, docstring):
         """D418: Function decorated with @overload shouldn't contain a docstring.
 
@@ -578,7 +571,7 @@ class ConventionChecker:
         if docstring and function.is_overload:
             return violations.D418()
 
-    @check_for(Definition)
+    @check(Definition)
     def check_starts_with_this(self, function, docstring):
         """D404: First word of the docstring should not be `This`.
 
@@ -1073,7 +1066,7 @@ class ConventionChecker:
         ):
             yield from self._check_google_section(docstring, definition, ctx)
 
-    @check_for(Definition)
+    @check(Definition)
     def check_docstring_sections(self, definition, docstring):
         """Check for docstring sections."""
         if not docstring:
