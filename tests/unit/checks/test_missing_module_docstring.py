@@ -1,0 +1,21 @@
+from tests.utils.sandbox_env import SandboxEnv
+
+
+def test_missing_docstring_in_module(env: SandboxEnv):
+    with env.open('my_module.py', 'w', encoding="utf-8") as file:
+        file.write("import os\n")
+
+    out, _, code = env.invoke()
+
+    assert code == 1
+    assert 'D100' in out
+
+
+def test_private_module_is_ignored(env: SandboxEnv):
+    with env.open('_my_module.py', 'w', encoding="utf-8") as file:
+        file.write("import os\n")
+
+    out, _, code = env.invoke()
+
+    assert code == 0
+    assert out == ""

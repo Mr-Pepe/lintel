@@ -1,7 +1,7 @@
-from astroid import NodeNG
+from pydocstyle.parser import Definition
 
 
-def check(node_type: NodeNG, terminal: bool = False):
+def check(node_type: Definition, terminal: bool = False):
     """Decorate check with the node type it's applicable for.
 
     Also set whether a failure should stop further check executions.

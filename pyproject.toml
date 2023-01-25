@@ -32,6 +32,14 @@ addopts = """
     --cov-report html:reports/coverage_html
     """
 
+[tool.coverage.run]
+branch = true
+data_file = "reports/.coverage"
+
+[tool.coverage.paths]
+# Maps coverage measured in site-packages to source files in src
+source = ["src/", ".tox/*/lib/python*/site-packages/"]
+
 [tool.pydocstyle]
 convention="pep257"
 # Ignore hidden directories and some other directories

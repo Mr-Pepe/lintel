@@ -8,6 +8,7 @@ from itertools import chain, takewhile
 from re import compile as re
 from textwrap import dedent
 
+import pydocstyle.checks
 from pydocstyle.checks import check
 
 from . import violations
@@ -173,7 +174,13 @@ class ConventionChecker:
     def checks(self):
         all = [
             this_check
-            for this_check in vars(type(self)).values()
+            for this_check in chain(
+                vars(type(self)).values(),
+                (
+                    getattr(pydocstyle.checks, x)
+                    for x in dir(pydocstyle.checks)
+                ),
+            )
             if hasattr(this_check, '_node_type')
         ]
         return sorted(all, key=lambda this_check: not this_check._terminal)
@@ -192,9 +199,12 @@ class ConventionChecker:
               with a single underscore.
 
         """
-        if not docstring and definition.is_public:
+        if (
+            not docstring
+            and definition.is_public
+            and not isinstance(definition, (Module, Package))
+        ):
             codes = {
-                Module: violations.D100,
                 Class: violations.D101,
                 NestedClass: violations.D106,
                 Method: lambda: violations.D105()
@@ -214,7 +224,6 @@ class ConventionChecker:
                     if not definition.is_overload
                     else None
                 ),
-                Package: violations.D104,
             }
             return codes[type(definition)]()
 

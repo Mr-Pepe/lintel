@@ -1,1 +1,3 @@
 from .check import check
+from .missing_module_docstring import check_missing_module_docstring
+from .missing_package_docstring import check_missing_package_docstring
