@@ -943,7 +943,7 @@ def test_numpy_convention(env):
     assert 'D413' not in out
 
 
-def test_google_convention(env):
+def test_google_convention(env: SandboxEnv) -> None:
     """Test that the 'google' convention options has the correct errors."""
     with env.open('example.py', 'wt') as example:
         example.write(
