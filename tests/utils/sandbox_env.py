@@ -4,7 +4,8 @@ import shutil
 import subprocess
 import tempfile
 from collections import namedtuple
-from io import FileIO
+from io import FileIO, TextIOWrapper
+from typing import Any
 
 
 class SandboxEnv:
@@ -62,7 +63,7 @@ class SandboxEnv:
                     "{} = {}\n".format(k.replace('_', '-'), convert_value(v))
                 )
 
-    def open(self, path, *args, **kwargs) -> FileIO:
+    def open(self, path: str, *args: Any, **kwargs: Any) -> TextIOWrapper:
         """Open a file in the environment.
 
         The file path should be relative to the base of the environment.

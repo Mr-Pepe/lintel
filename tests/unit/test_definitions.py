@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-from pydocstyle.checker import check
+from pydocstyle.checker import check_files
 from pydocstyle.config import ConfigurationParser
 from pydocstyle.violations import Error, ErrorRegistry
 
@@ -44,7 +44,7 @@ def test_complex_file(test_case: str, resource_dir: Path) -> None:
     )
     test_case_file = resource_dir / f"{test_case}.py"
     results = list(
-        check(
+        check_files(
             [str(test_case_file)],
             select=set(ErrorRegistry.get_error_codes()),
             ignore_decorators=re.compile('wraps|ignored_decorator'),

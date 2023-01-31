@@ -1,7 +1,7 @@
 from tests.utils.sandbox_env import SandboxEnv
 
 
-def test_missing_docstring_in_package(env: SandboxEnv):
+def test_missing_docstring_in_package(env: SandboxEnv) -> None:
     """Make sure __init__.py files are treated as packages."""
     with env.open('__init__.py', 'wt') as init:
         pass  # an empty package file
@@ -13,7 +13,7 @@ def test_missing_docstring_in_package(env: SandboxEnv):
     assert 'D104' in out  # missing docstring in package
 
 
-def test_package_with_docstring_has_no_error(env: SandboxEnv):
+def test_package_with_docstring_has_no_error(env: SandboxEnv) -> None:
     with env.open('__init__.py', 'wt') as package_init:
         package_init.write('"""My docstring."""\n')
 

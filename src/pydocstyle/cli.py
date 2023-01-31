@@ -2,7 +2,7 @@
 import logging
 import sys
 
-from .checker import check
+from .checker import check_files
 from .config import ConfigurationParser, IllegalConfiguration
 from .utils import log
 from .violations import Error
@@ -45,7 +45,7 @@ def run_pydocstyle():
             property_decorators,
         ) in conf.get_files_to_check():
             errors.extend(
-                check(
+                check_files(
                     (filename,),
                     select=checked_codes,
                     ignore_decorators=ignore_decorators,

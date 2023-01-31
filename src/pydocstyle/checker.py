@@ -147,9 +147,15 @@ class ConventionChecker:
                     if (
                         ignore_inline_noqa or not skipping_all
                     ) and not decorator_skip:
-                        error = this_check(
-                            self, definition, definition.docstring
-                        )
+                        # TODO: Remove try clause when all checks have been extracted
+                        try:
+                            error = this_check(
+                                self, definition, definition.docstring
+                            )
+                        except TypeError:
+                            error = this_check(
+                                definition, definition.docstring
+                            )
                     else:
                         error = None
                     errors = error if hasattr(error, '__iter__') else [error]
@@ -1097,7 +1103,7 @@ class ConventionChecker:
 parse = Parser()
 
 
-def check(
+def check_files(
     filenames,
     select=None,
     ignore=None,
@@ -1123,11 +1129,11 @@ def check(
 
     Examples
     ---------
-    >>> check(['pydocstyle.py'])
-    <generator object check at 0x...>
+    >>> check_files(['pydocstyle.py'])
+    <generator object check_files at 0x...>
 
-    >>> check(['pydocstyle.py'], select=['D100'])
-    <generator object check at 0x...>
+    >>> check_files(['pydocstyle.py'], select=['D100'])
+    <generator object check_files at 0x...>
 
     """
     if select is not None and ignore is not None:
