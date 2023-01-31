@@ -11,6 +11,7 @@ from unittest import mock
 
 import pytest
 from tests.utils.parse_errors import parse_errors
+from tests.utils.sandbox_env import SandboxEnv
 
 from pydocstyle import checker
 from pydocstyle.conventions import Convention
@@ -1543,7 +1544,7 @@ def test_comment_with_noqa_plus_docstring_file(env):
     assert code == 0
 
 
-def test_match_considers_basenames_for_path_args(env):
+def test_match_considers_basenames_for_path_args(env: SandboxEnv) -> None:
     """Test that `match` option only considers basenames for path arguments.
 
     The test environment consists of a single empty module `test_a.py`. The

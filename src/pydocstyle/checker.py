@@ -208,10 +208,9 @@ class ConventionChecker:
         if (
             not docstring
             and definition.is_public
-            and not isinstance(definition, (Module, Package))
+            and not isinstance(definition, (Module, Package, Class))
         ):
             codes = {
-                Class: violations.D101,
                 NestedClass: violations.D106,
                 Method: lambda: violations.D105()
                 if definition.is_magic
