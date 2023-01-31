@@ -2,8 +2,6 @@
 
 from typing import Set
 
-from typing_extensions import Literal
-
 from pydocstyle.violations import all_errors
 
 CONVENTION_NAMES = ("pep257", "numpy", "google")
@@ -64,9 +62,7 @@ convention_errors = {
 class Convention:
     """This class defines the convention to use for checking docstrings."""
 
-    def __init__(
-        self, name: Literal["pep257", "numpy", "google"] = "pep257"
-    ) -> None:
+    def __init__(self, name: str = "pep257") -> None:
         """Initialize the convention.
 
         The convention has two purposes. First, it holds the error codes to be
@@ -85,7 +81,7 @@ class Convention:
             ValueError: _description_
         """
         if name not in CONVENTION_NAMES:
-            name = "pep257"
+            raise ValueError(f"Unknown convention '{name}'.")
 
         self.name = name
         self.error_codes = convention_errors[name]
