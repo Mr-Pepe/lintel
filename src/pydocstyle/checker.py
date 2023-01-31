@@ -192,37 +192,6 @@ class ConventionChecker:
         return sorted(all, key=lambda this_check: not this_check._terminal)
 
     @check(Definition, terminal=True)
-    def check_docstring_missing(self, definition, docstring):
-        """D10{0,1,2,3}: Public definitions should have docstrings.
-
-        All modules should normally have docstrings.  [...] all functions and
-        classes exported by a module should also have docstrings. Public
-        methods (including the __init__ constructor) should also have
-        docstrings.
-
-        Note: Public (exported) definitions are either those with names listed
-              in __all__ variable (if present), or those that do not start
-              with a single underscore.
-
-        """
-        if (
-            not docstring
-            and definition.is_public
-            and not isinstance(
-                definition, (Module, Package, Class, NestedClass, Method)
-            )
-        ):
-            codes = {
-                NestedFunction: violations.D103,
-                Function: (
-                    lambda: violations.D103()
-                    if not definition.is_overload
-                    else None
-                ),
-            }
-            return codes[type(definition)]()
-
-    @check(Definition, terminal=True)
     def check_docstring_empty(self, definition, docstring):
         """D419: Docstring is empty.
 
