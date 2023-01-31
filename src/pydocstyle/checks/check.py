@@ -1,9 +1,12 @@
-from typing import Callable
+from typing import Callable, Tuple, Union
 
 from pydocstyle.parser import Definition
 
 
-def check(node_type: Definition, terminal: bool = False) -> Callable:
+def check(
+    node_type: Union[Definition, Tuple[Definition, ...]],
+    terminal: bool = False,
+) -> Callable:
     """Decorate check with the node type it's applicable for.
 
     Also set whether a failure should stop further check executions.
