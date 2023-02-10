@@ -191,21 +191,6 @@ class ConventionChecker:
         ]
         return sorted(all, key=lambda this_check: not this_check._terminal)
 
-    @check(Definition)
-    def check_one_liners(self, definition, docstring):
-        """D200: One-liner docstrings should fit on one line with quotes.
-
-        The closing quotes are on the same line as the opening quotes.
-        This looks better for one-liners.
-
-        """
-        if docstring:
-            lines = ast.literal_eval(docstring).split('\n')
-            if len(lines) > 1:
-                non_empty_lines = sum(1 for l in lines if not is_blank(l))
-                if non_empty_lines == 1:
-                    return violations.D200(len(lines))
-
     @check(Function)
     def check_no_blank_before(self, function, docstring):  # def
         """D20{1,2}: No blank lines allowed around function/method docstring.
