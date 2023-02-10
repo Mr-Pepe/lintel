@@ -1,4 +1,5 @@
 from .check import check
+from .empty_docstring import check_empty_docstring
 from .missing_class_docstring import check_missing_class_docstring
 from .missing_function_docstring import check_missing_function_docstring
 from .missing_method_docstring import check_missing_method_docstring

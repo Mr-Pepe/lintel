@@ -191,18 +191,6 @@ class ConventionChecker:
         ]
         return sorted(all, key=lambda this_check: not this_check._terminal)
 
-    @check(Definition, terminal=True)
-    def check_docstring_empty(self, definition, docstring):
-        """D419: Docstring is empty.
-
-        If the user provided a docstring but it was empty, it is like they never provided one.
-
-        NOTE: This used to report as D10X errors.
-
-        """
-        if docstring and is_blank(ast.literal_eval(docstring)):
-            return violations.D419()
-
     @check(Definition)
     def check_one_liners(self, definition, docstring):
         """D200: One-liner docstrings should fit on one line with quotes.
