@@ -16,6 +16,11 @@ def is_blank(string: str) -> bool:
     return not string.strip()
 
 
+def has_content(string: str) -> bool:
+    """Return True iff the string does not contain only whitespaces."""
+    return not is_blank(string)
+
+
 def pairwise(
     iterable: Iterable,
     default_value: Any,
