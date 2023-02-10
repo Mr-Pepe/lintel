@@ -1,3 +1,5 @@
+# fmt: off
+
 """A valid module docstrings."""
 
 from .expected import Expectation

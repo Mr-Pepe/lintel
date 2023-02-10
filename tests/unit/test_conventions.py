@@ -15,7 +15,6 @@ def test_default_convention_is_pep257() -> None:
 
 
 def test_invalid_convention_name_raises_error() -> None:
-
     with pytest.raises(
         ValueError, match="Unknown convention 'invalid_convention'."
     ):
