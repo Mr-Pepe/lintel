@@ -1,5 +1,4 @@
 import ast
-from curses.ascii import isblank
 from typing import Optional
 
 from pydocstyle.checks import check
