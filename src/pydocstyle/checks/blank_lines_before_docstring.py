@@ -1,7 +1,7 @@
 from itertools import takewhile
 from typing import Optional
 
-from pydocstyle.checks.check import check
+from pydocstyle.checks import check
 from pydocstyle.parser import Function
 from pydocstyle.utils import is_blank
 from pydocstyle.violations import D201
