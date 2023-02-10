@@ -204,8 +204,6 @@ class ConventionChecker:
             blanks_after = list(map(is_blank, after.split('\n')[1:]))
             blanks_before_count = sum(takewhile(bool, reversed(blanks_before)))
             blanks_after_count = sum(takewhile(bool, blanks_after))
-            if blanks_before_count != 0:
-                yield violations.D201(blanks_before_count)
             if not all(blanks_after) and blanks_after_count != 0:
                 # Report a D202 violation if the docstring is followed by a blank line
                 # and the blank line is not itself followed by an inner function or
@@ -214,7 +212,7 @@ class ConventionChecker:
                     blanks_after_count == 1
                     and re(r"\s+(?:(?:class|def|async def)\s|@)").match(after)
                 ):
-                    yield violations.D202(blanks_after_count)
+                    return violations.D202(blanks_after_count)
 
     @check(Class)
     def check_blank_before_after_class(self, class_, docstring):

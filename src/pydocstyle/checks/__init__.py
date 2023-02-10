@@ -1,3 +1,4 @@
+from .blank_lines_before_docstring import check_blank_lines_before_docstring
 from .check import check
 from .empty_docstring import check_empty_docstring
 from .missing_class_docstring import check_missing_class_docstring
