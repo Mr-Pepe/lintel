@@ -1,4 +1,7 @@
 from ._check import check
+from .blank_line_between_summary_and_content import (
+    check_single_blank_line_after_summary,
+)
 from .blank_lines_after_docstring import (
     check_no_blank_lines_after_function_docstring,
     check_single_blank_line_after_class_docstring,

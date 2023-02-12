@@ -191,25 +191,6 @@ class ConventionChecker:
         ]
         return sorted(all, key=lambda this_check: not this_check._terminal)
 
-    @check(Definition)
-    def check_blank_after_summary(self, definition, docstring):
-        """D205: Put one blank line between summary line and description.
-
-        Multi-line docstrings consist of a summary line just like a one-line
-        docstring, followed by a blank line, followed by a more elaborate
-        description. The summary line may be used by automatic indexing tools;
-        it is important that it fits on one line and is separated from the
-        rest of the docstring by a blank line.
-
-        """
-        if docstring:
-            lines = ast.literal_eval(docstring).strip().split('\n')
-            if len(lines) > 1:
-                post_summary_blanks = list(map(is_blank, lines[1:]))
-                blanks_count = sum(takewhile(bool, post_summary_blanks))
-                if blanks_count != 1:
-                    return violations.D205(blanks_count)
-
     @staticmethod
     def _get_docstring_indent(definition, docstring):
         """Return the indentation of the docstring's opening quotes."""
