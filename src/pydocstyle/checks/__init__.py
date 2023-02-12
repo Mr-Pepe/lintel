@@ -9,9 +9,11 @@ from .blank_lines_before_docstring import (
     check_single_blank_line_before_class_docstring,
 )
 from .empty_docstring import check_empty_docstring
-from .missing_class_docstring import check_missing_class_docstring
-from .missing_function_docstring import check_missing_function_docstring
-from .missing_method_docstring import check_missing_method_docstring
-from .missing_module_docstring import check_missing_module_docstring
-from .missing_package_docstring import check_missing_package_docstring
+from .missing_docstring import (
+    check_missing_class_docstring,
+    check_missing_function_docstring,
+    check_missing_method_docstring,
+    check_missing_module_docstring,
+    check_missing_package_docstring,
+)
 from .one_liner import check_one_liner
