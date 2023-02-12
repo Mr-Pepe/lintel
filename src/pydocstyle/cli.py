@@ -2,9 +2,10 @@
 import logging
 import sys
 
+from pydocstyle.logging import log
+
 from .checker import check_files
 from .config import ConfigurationParser, IllegalConfiguration
-from .utils import log
 from .violations import Error
 
 __all__ = ('main',)

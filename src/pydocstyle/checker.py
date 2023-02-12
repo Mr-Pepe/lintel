@@ -1,15 +1,16 @@
 """Parsed source code checkers for docstring violations."""
 
 import ast
+import re
 import string
 import tokenize as tk
 from collections import namedtuple
 from itertools import chain, takewhile
-from re import compile as re
 from textwrap import dedent
 
 import pydocstyle.checks
 from pydocstyle.checks import check
+from pydocstyle.logging import log
 
 from . import violations
 from .config import IllegalConfiguration
@@ -29,8 +30,9 @@ from .parser import (
 )
 from .utils import (
     common_prefix_length,
+    get_indents,
     is_blank,
-    log,
+    leading_space,
     pairwise,
     strip_non_alphanumeric,
 )
@@ -101,7 +103,7 @@ class ConventionChecker:
     # " random         : test" where random will be captured as the param
     # "  random_t (Test) : test  " where random_t will be captured as the param
     # Matches anything that fulfills all the following conditions:
-    GOOGLE_ARGS_REGEX = re(
+    GOOGLE_ARGS_REGEX = re.compile(
         # Begins with 0 or more whitespace characters
         r"^\s*"
         # Followed by 1 or more unicode chars, numbers or underscores
@@ -191,41 +193,6 @@ class ConventionChecker:
         ]
         return sorted(all, key=lambda this_check: not this_check._terminal)
 
-    @staticmethod
-    def _get_docstring_indent(definition, docstring):
-        """Return the indentation of the docstring's opening quotes."""
-        before_docstring, _, _ = definition.source.partition(docstring)
-        _, _, indent = before_docstring.rpartition('\n')
-        return indent
-
-    @check(Definition)
-    def check_indent(self, definition, docstring):
-        """D20{6,7,8}: The entire docstring should be indented same as code.
-
-        The entire docstring is indented the same as the quotes at its
-        first line.
-
-        """
-        if docstring:
-            indent = self._get_docstring_indent(definition, docstring)
-            lines = docstring.split('\n')
-            if len(lines) > 1:
-                # First line and line continuations need no indent.
-                lines = [
-                    line
-                    for i, line in enumerate(lines)
-                    if i and not lines[i - 1].endswith('\\')
-                ]
-                indents = [leading_space(l) for l in lines if not is_blank(l)]
-                if set(' \t') == set(''.join(indents) + indent):
-                    yield violations.D206()
-                if (len(indents) > 1 and min(indents[:-1]) > indent) or (
-                    len(indents) > 0 and indents[-1] > indent
-                ):
-                    yield violations.D208()
-                if len(indents) > 0 and min(indents) < indent:
-                    yield violations.D207()
-
     @check(Definition)
     def check_newline_after_last_paragraph(self, definition, docstring):
         """D209: Put multi-line docstring closing quotes on separate line.
@@ -302,12 +269,12 @@ class ConventionChecker:
                 # Allow ''' quotes if docstring contains """, because
                 # otherwise """ quotes could not be expressed inside
                 # docstring. Not in PEP 257.
-                regex = re(r"[uU]?[rR]?'''[^'].*")
+                regex = re.compile(r"[uU]?[rR]?'''[^'].*")
             else:
-                regex = re(r'[uU]?[rR]?"""[^"].*')
+                regex = re.compile(r'[uU]?[rR]?"""[^"].*')
 
             if not regex.match(docstring):
-                illegal_matcher = re(r"""[uU]?[rR]?("+|'+).*""")
+                illegal_matcher = re.compile(r"""[uU]?[rR]?("+|'+).*""")
                 illegal_quotes = illegal_matcher.match(docstring).group(1)
                 return violations.D300(illegal_quotes)
 
@@ -327,7 +294,7 @@ class ConventionChecker:
 
         if (
             docstring
-            and re(r'\\[^\nuN]').search(docstring)
+            and re.compile(r'\\[^\nuN]').search(docstring)
             and not docstring.startswith(('r', 'ur'))
         ):
             return violations.D301()
@@ -601,7 +568,7 @@ class ConventionChecker:
 
         Also yields all the errors from `_check_blanks_and_section_underline`.
         """
-        indentation = cls._get_docstring_indent(definition, docstring)
+        indentation, _ = get_indents(definition, docstring)
         capitalized_section = context.section_name.title()
 
         if (
@@ -638,7 +605,7 @@ class ConventionChecker:
         Additionally, also yield all violations from `_check_common_section`
         which are style-agnostic section checks.
         """
-        indentation = cls._get_docstring_indent(definition, docstring)
+        indentation, _ = get_indents(definition, docstring)
         capitalized_section = context.section_name.title()
         yield from cls._check_common_section(
             docstring, definition, context, cls.NUMPY_SECTION_NAMES
@@ -1031,17 +998,12 @@ def is_ascii(string):
     return all(ord(char) < 128 for char in string)
 
 
-def leading_space(string):
-    """Return any leading space from `string`."""
-    return re(r'\s*').match(string).group()
-
-
 def get_leading_words(line):
     """Return any leading set of words from `line`.
 
     For example, if `line` is "  Hello world!!!", returns "Hello world".
     """
-    result = re(r"[\w ]+").match(line.strip())
+    result = re.compile(r"[\w ]+").match(line.strip())
     if result is not None:
         return result.group()
 

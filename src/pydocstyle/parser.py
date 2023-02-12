@@ -9,7 +9,7 @@ from pathlib import Path
 from re import compile as re
 from typing import Tuple
 
-from .utils import log
+from pydocstyle.logging import log
 
 __all__ = (
     'Parser',

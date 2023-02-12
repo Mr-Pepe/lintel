@@ -11,9 +11,10 @@ from configparser import NoOptionError, NoSectionError, RawConfigParser
 from functools import reduce
 from re import compile as re
 
+from pydocstyle.logging import log
+
 from ._version import __version__
 from .conventions import CONVENTION_NAMES, Convention
-from .utils import log
 from .violations import ErrorRegistry
 
 if sys.version_info >= (3, 11):
