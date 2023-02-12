@@ -1,6 +1,13 @@
 from ._check import check
-from .blank_lines_after_docstring import check_blank_lines_after_docstring
-from .blank_lines_before_docstring import check_blank_lines_before_docstring
+from .blank_lines_after_docstring import (
+    check_no_blank_lines_after_function_docstring,
+    check_single_blank_line_after_class_docstring,
+)
+from .blank_lines_before_docstring import (
+    check_no_blank_lines_before_class_docstring,
+    check_no_blank_lines_before_function_docstring,
+    check_single_blank_line_before_class_docstring,
+)
 from .empty_docstring import check_empty_docstring
 from .missing_class_docstring import check_missing_class_docstring
 from .missing_function_docstring import check_missing_function_docstring

@@ -191,39 +191,6 @@ class ConventionChecker:
         ]
         return sorted(all, key=lambda this_check: not this_check._terminal)
 
-    @check(Class)
-    def check_blank_before_after_class(self, class_, docstring):
-        """D20{3,4}: Class docstring should have 1 blank line around them.
-
-        Insert a blank line before and after all docstrings (one-line or
-        multi-line) that document a class -- generally speaking, the class's
-        methods are separated from each other by a single blank line, and the
-        docstring needs to be offset from the first method by a blank line;
-        for symmetry, put a blank line between the class header and the
-        docstring.
-
-        """
-        # NOTE: this gives false-positive in this case
-        # class Foo:
-        #
-        #     """Docstring."""
-        #
-        #
-        # # comment here
-        # def foo(): pass
-        if docstring:
-            before, _, after = class_.source.partition(docstring)
-            blanks_before = list(map(is_blank, before.split('\n')[:-1]))
-            blanks_after = list(map(is_blank, after.split('\n')[1:]))
-            blanks_before_count = sum(takewhile(bool, reversed(blanks_before)))
-            blanks_after_count = sum(takewhile(bool, blanks_after))
-            if blanks_before_count != 0:
-                yield violations.D211(blanks_before_count)
-            if blanks_before_count != 1:
-                yield violations.D203(blanks_before_count)
-            if not all(blanks_after) and blanks_after_count != 1:
-                yield violations.D204(blanks_after_count)
-
     @check(Definition)
     def check_blank_after_summary(self, definition, docstring):
         """D205: Put one blank line between summary line and description.
