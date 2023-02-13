@@ -194,33 +194,6 @@ class ConventionChecker:
         return sorted(all, key=lambda this_check: not this_check._terminal)
 
     @check(Definition)
-    def check_triple_double_quotes(self, definition, docstring):
-        r'''D300: Use """triple double quotes""".
-
-        For consistency, always use """triple double quotes""" around
-        docstrings. Use r"""raw triple double quotes""" if you use any
-        backslashes in your docstrings. For Unicode docstrings, use
-        u"""Unicode triple-quoted strings""".
-
-        Note: Exception to this is made if the docstring contains
-              """ quotes in its body.
-
-        '''
-        if docstring:
-            if '"""' in ast.literal_eval(docstring):
-                # Allow ''' quotes if docstring contains """, because
-                # otherwise """ quotes could not be expressed inside
-                # docstring. Not in PEP 257.
-                regex = re.compile(r"[uU]?[rR]?'''[^'].*")
-            else:
-                regex = re.compile(r'[uU]?[rR]?"""[^"].*')
-
-            if not regex.match(docstring):
-                illegal_matcher = re.compile(r"""[uU]?[rR]?("+|'+).*""")
-                illegal_quotes = illegal_matcher.match(docstring).group(1)
-                return violations.D300(illegal_quotes)
-
-    @check(Definition)
     def check_backslashes(self, definition, docstring):
         r'''D301: Use r""" if any backslashes in a docstring.
 
