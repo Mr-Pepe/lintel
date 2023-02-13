@@ -194,24 +194,6 @@ class ConventionChecker:
         return sorted(all, key=lambda this_check: not this_check._terminal)
 
     @check(Definition)
-    def check_newline_after_last_paragraph(self, definition, docstring):
-        """D209: Put multi-line docstring closing quotes on separate line.
-
-        Unless the entire docstring fits on a line, place the closing
-        quotes on a line by themselves.
-
-        """
-        if docstring:
-            lines = [
-                l
-                for l in ast.literal_eval(docstring).split('\n')
-                if not is_blank(l)
-            ]
-            if len(lines) > 1:
-                if docstring.split("\n")[-1].strip() not in ['"""', "'''"]:
-                    return violations.D209()
-
-    @check(Definition)
     def check_surrounding_whitespaces(self, definition, docstring):
         """D210: No whitespaces allowed surrounding docstring text."""
         if docstring:
