@@ -22,4 +22,5 @@ from .missing_docstring import (
 )
 from .newline_after_last_paragraph import check_newline_after_last_paragraph
 from .one_liner import check_one_liner
+from .summary_start import check_multi_line_summary_start
 from .surrounding_spaces import check_surrounding_whitespaces
