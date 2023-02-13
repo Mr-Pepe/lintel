@@ -193,27 +193,6 @@ class ConventionChecker:
         ]
         return sorted(all, key=lambda this_check: not this_check._terminal)
 
-    @check(Definition)
-    def check_backslashes(self, definition, docstring):
-        r'''D301: Use r""" if any backslashes in a docstring.
-
-        Use r"""raw triple double quotes""" if you use any backslashes
-        (\) in your docstrings.
-
-        Exceptions are backslashes for line-continuation and unicode escape
-        sequences \N... and \u... These are considered intended unescaped
-        content in docstrings.
-        '''
-        # Just check that docstring is raw, check_triple_double_quotes
-        # ensures the correct quotes.
-
-        if (
-            docstring
-            and re.compile(r'\\[^\nuN]').search(docstring)
-            and not docstring.startswith(('r', 'ur'))
-        ):
-            return violations.D301()
-
     @staticmethod
     def _check_ends_with(docstring, chars, violation):
         """First line ends with one of `chars`.
