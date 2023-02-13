@@ -194,18 +194,6 @@ class ConventionChecker:
         return sorted(all, key=lambda this_check: not this_check._terminal)
 
     @check(Definition)
-    def check_surrounding_whitespaces(self, definition, docstring):
-        """D210: No whitespaces allowed surrounding docstring text."""
-        if docstring:
-            lines = ast.literal_eval(docstring).split('\n')
-            if (
-                lines[0].startswith(' ')
-                or len(lines) == 1
-                and lines[0].endswith(' ')
-            ):
-                return violations.D210()
-
-    @check(Definition)
     def check_multi_line_summary_start(self, definition, docstring):
         """D21{2,3}: Multi-line docstring summary style check.
 
