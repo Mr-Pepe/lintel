@@ -193,41 +193,6 @@ class ConventionChecker:
         ]
         return sorted(all, key=lambda this_check: not this_check._terminal)
 
-    @staticmethod
-    def _check_ends_with(docstring, chars, violation):
-        """First line ends with one of `chars`.
-
-        First line of the docstring should end with one of the characters in `chars`.
-        `chars` supports either a `str` or an `Iterable[str]`. If the condition is
-        evaluated to be false, it raises `violation`.
-
-        """
-        if docstring:
-            summary_line = ast.literal_eval(docstring).strip().split('\n')[0]
-            if not summary_line.endswith(chars):
-                return violation(summary_line[-1])
-
-    @check(Definition)
-    def check_ends_with_period(self, definition, docstring):
-        """D400: First line should end with a period.
-
-        The [first line of a] docstring is a phrase ending in a period.
-
-        """
-        return self._check_ends_with(docstring, '.', violations.D400)
-
-    @check(Definition)
-    def check_ends_with_punctuation(self, definition, docstring):
-        """D415: should end with proper punctuation.
-
-        The [first line of a] docstring is a phrase ending in a period,
-        question mark, or exclamation point
-
-        """
-        return self._check_ends_with(
-            docstring, ('.', '!', '?'), violations.D415
-        )
-
     @check(Function)
     def check_imperative_mood(self, function, docstring):  # def context
         """D401: First line should be in imperative mood: 'Do', not 'Does'.

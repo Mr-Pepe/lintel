@@ -12,6 +12,7 @@ from .blank_lines_before_docstring import (
     check_single_blank_line_before_class_docstring,
 )
 from .empty_docstring import check_empty_docstring
+from .ending import check_ends_with_period, check_ends_with_punctuation
 from .indentation import check_indentation
 from .missing_docstring import (
     check_missing_class_docstring,
