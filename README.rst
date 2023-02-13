@@ -79,3 +79,12 @@ Links
 * `Fork pydocstyle on GitHub <https://github.com/PyCQA/pydocstyle>`_.
 
 * `PyPI project page <https://pypi.python.org/pypi/pydocstyle>`_.
+
+
+Todos:
+
+# TODO: Add check for descriptive mood
+# TODO: Add descriptive mood check to Google convention
+# Use astroid
+# Make applicable conventions a check property
+# Make select and ignore usable together
