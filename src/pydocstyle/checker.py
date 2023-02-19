@@ -10,7 +10,7 @@ from textwrap import dedent
 from typing import Generator, Tuple
 
 import pydocstyle.checks
-from pydocstyle.checks import check
+from pydocstyle.checks import Check, check
 from pydocstyle.conventions import Convention
 from pydocstyle.logging import log
 
@@ -171,7 +171,7 @@ class ConventionChecker:
                             config.ignore_inline_noqa
                             or error.code not in definition.skipped_error_codes
                         ):
-                            partition = this_check.__doc__.partition('.\n')
+                            partition = this_check.explanation.partition('.\n')
                             message, _, explanation = partition
                             error.set_context(
                                 explanation=explanation, definition=definition
@@ -194,7 +194,7 @@ class ConventionChecker:
                     for x in dir(pydocstyle.checks)
                 ),
             )
-            if hasattr(this_check, '_node_type')
+            if isinstance(this_check, Check)
         ]
         return sorted(all, key=lambda this_check: not this_check._terminal)
 

@@ -137,7 +137,7 @@ class ErrorRegistry:
             error_code: str,
             error_desc: str,
             error_context: Optional[str] = None,
-        ) -> Callable[[Iterable[str]], Error]:
+        ) -> partial[Error]:
             """Create an error, register it to this group and return it."""
             # TODO: check prefix
 
