@@ -5,7 +5,7 @@ import sys
 from pydocstyle.logging import log
 
 from .checker import check_files
-from .config import ConfigurationParser, IllegalConfiguration
+from .config import Configuration, ConfigurationParser, IllegalConfiguration
 from .violations import Error
 
 __all__ = ('main',)
@@ -45,14 +45,12 @@ def run_pydocstyle():
             ignore_decorators,
             property_decorators,
         ) in conf.get_files_to_check():
-            errors.extend(
-                check_files(
-                    (filename,),
-                    select=checked_codes,
-                    ignore_decorators=ignore_decorators,
-                    property_decorators=property_decorators,
-                )
+            config = Configuration(
+                select=checked_codes,
+                ignore_decorators=ignore_decorators,
+                property_decorators=property_decorators,
             )
+            errors.extend(check_files((filename,), config))
     except IllegalConfiguration as error:
         # An illegal configuration file was found during file generation.
         log.error(error.args[0])

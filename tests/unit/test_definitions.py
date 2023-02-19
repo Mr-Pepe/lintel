@@ -7,7 +7,7 @@ from pathlib import Path
 import pytest
 
 from pydocstyle.checker import check_files
-from pydocstyle.config import ConfigurationParser
+from pydocstyle.config import Configuration, ConfigurationParser
 from pydocstyle.violations import Error, ErrorRegistry
 
 DEFAULT_PROPERTY_DECORATORS = ConfigurationParser.DEFAULT_PROPERTY_DECORATORS
@@ -43,14 +43,13 @@ def test_complex_file(test_case: str, resource_dir: Path) -> None:
         level=2,
     )
     test_case_file = resource_dir / f"{test_case}.py"
-    results = list(
-        check_files(
-            [str(test_case_file)],
-            select=set(ErrorRegistry.get_error_codes()),
-            ignore_decorators=re.compile('wraps|ignored_decorator'),
-            property_decorators=DEFAULT_PROPERTY_DECORATORS,
-        )
+
+    config = Configuration(
+        select=set(ErrorRegistry.get_error_codes()),
+        ignore_decorators=re.compile('wraps|ignored_decorator'),
+        property_decorators=DEFAULT_PROPERTY_DECORATORS,
     )
+    results = list(check_files([str(test_case_file)], config))
     for error in results:
         assert isinstance(error, Error)
 

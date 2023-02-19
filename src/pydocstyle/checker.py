@@ -7,13 +7,15 @@ import tokenize as tk
 from collections import namedtuple
 from itertools import chain, takewhile
 from textwrap import dedent
+from typing import Generator, Tuple
 
 import pydocstyle.checks
 from pydocstyle.checks import check
+from pydocstyle.conventions import Convention
 from pydocstyle.logging import log
 
 from . import violations
-from .config import IllegalConfiguration
+from .config import Configuration, IllegalConfiguration
 from .parser import (
     AllError,
     Class,
@@ -127,14 +129,14 @@ class ConventionChecker:
 
     def check_source(
         self,
-        source,
-        filename,
-        ignore_decorators=None,
-        property_decorators=None,
-        ignore_inline_noqa=False,
-    ):
+        source: str,
+        filename: str,
+        config: Configuration = Configuration(),
+    ) -> Generator:
         self.property_decorators = (
-            {} if property_decorators is None else property_decorators
+            {}
+            if config.property_decorators is None
+            else config.property_decorators
         )
         module = parse(StringIO(source), filename)
         for definition in module:
@@ -142,12 +144,15 @@ class ConventionChecker:
                 terminate = False
                 if isinstance(definition, this_check._node_type):
                     skipping_all = definition.skipped_error_codes == 'all'
-                    decorator_skip = ignore_decorators is not None and any(
-                        len(ignore_decorators.findall(dec.name)) > 0
-                        for dec in definition.decorators
+                    decorator_skip = (
+                        config.ignore_decorators is not None
+                        and any(
+                            len(config.ignore_decorators.findall(dec.name)) > 0
+                            for dec in definition.decorators
+                        )
                     )
                     if (
-                        ignore_inline_noqa or not skipping_all
+                        config.ignore_inline_noqa or not skipping_all
                     ) and not decorator_skip:
                         # TODO: Remove try clause when all checks have been extracted
                         try:
@@ -163,7 +168,7 @@ class ConventionChecker:
                     errors = error if hasattr(error, '__iter__') else [error]
                     for error in errors:
                         if error is not None and (
-                            ignore_inline_noqa
+                            config.ignore_inline_noqa
                             or error.code not in definition.skipped_error_codes
                         ):
                             partition = this_check.__doc__.partition('.\n')
@@ -784,51 +789,29 @@ parse = Parser()
 
 
 def check_files(
-    filenames,
-    select=None,
-    ignore=None,
-    ignore_decorators=None,
-    property_decorators=None,
-    ignore_inline_noqa=False,
-):
+    filenames: Tuple[str], config: Configuration = Configuration()
+) -> Generator:
     """Generate docstring errors that exist in `filenames` iterable.
 
     By default, the PEP-257 convention is checked. To specifically define the
     set of error codes to check for, supply either `select` or `ignore` (but
     not both). In either case, the parameter should be a collection of error
     code strings, e.g., {'D100', 'D404'}.
-
-    When supplying `select`, only specified error codes will be reported.
-    When supplying `ignore`, all error codes which were not specified will be
-    reported.
-
-    Note that ignored error code refer to the entire set of possible
-    error codes, which is larger than just the PEP-257 convention.
-
-    `ignore_inline_noqa` controls if `# noqa` comments are respected or not.
-
-    Examples
-    ---------
-    >>> check_files(['pydocstyle.py'])
-    <generator object check_files at 0x...>
-
-    >>> check_files(['pydocstyle.py'], select=['D100'])
-    <generator object check_files at 0x...>
-
     """
-    if select is not None and ignore is not None:
+    if config.select is not None and config.ignore is not None:
         raise IllegalConfiguration(
             'Cannot pass both select and ignore. '
             'They are mutually exclusive.'
         )
-    elif select is not None:
-        checked_codes = select
-    elif ignore is not None:
-        checked_codes = list(
-            set(violations.ErrorRegistry.get_error_codes()) - set(ignore)
+    elif config.select is not None:
+        checked_codes = config.select
+    elif config.ignore is not None:
+        checked_codes = set(violations.ErrorRegistry.get_error_codes()) - set(
+            config.ignore
         )
+
     else:
-        checked_codes = violations.conventions.pep257
+        checked_codes = Convention().error_codes
 
     for filename in filenames:
         log.info('Checking file %s.', filename)
@@ -838,9 +821,7 @@ def check_files(
             for error in ConventionChecker().check_source(
                 source,
                 filename,
-                ignore_decorators,
-                property_decorators,
-                ignore_inline_noqa,
+                config,
             ):
                 code = getattr(error, 'code', None)
                 if code in checked_codes:

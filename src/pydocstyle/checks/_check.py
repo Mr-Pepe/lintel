@@ -1,5 +1,6 @@
-from typing import Callable, Tuple, Union
+from typing import Any, Callable, Tuple, Union
 
+from pydocstyle.config import Configuration
 from pydocstyle.parser import Definition
 
 
@@ -12,7 +13,9 @@ def check(
     Also set whether a failure should stop further check executions.
     """
 
-    def decorator(check: Callable) -> Callable:
+    def decorator(
+        check: Callable[[Definition, str, Configuration], Any]
+    ) -> Callable:
         check._node_type = node_type  # type: ignore
         check._terminal = terminal  # type: ignore
         return check

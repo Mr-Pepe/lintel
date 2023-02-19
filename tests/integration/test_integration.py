@@ -14,6 +14,7 @@ from tests.utils.parse_errors import parse_errors
 from tests.utils.sandbox_env import SandboxEnv
 
 from pydocstyle import checker
+from pydocstyle.config import Configuration
 from pydocstyle.conventions import Convention
 
 __all__ = ()
@@ -35,7 +36,7 @@ def test_pep257_conformance(resource_dir: Path) -> None:
 
     ignored = {'D104', 'D105'}
     select = Convention("pep257").error_codes - ignored
-    errors = list(checker.check_files(src_files, select=select))
+    errors = list(checker.check_files(src_files, Configuration(select=select)))
     assert errors == [], errors
 
 
@@ -66,7 +67,9 @@ def test_ignore_list():
     with mock.patch.object(checker.tk, 'open', mock_open, create=True):
         # Passing a blank ignore here explicitly otherwise
         # checkers takes the pep257 ignores by default.
-        errors = tuple(checker.check_files(['filepath'], ignore={}))
+        errors = tuple(
+            checker.check_files(['filepath'], Configuration(ignore=set()))
+        )
         error_codes = {error.code for error in errors}
         assert error_codes == expected_error_codes
 
@@ -74,7 +77,9 @@ def test_ignore_list():
     mock_open = mock.mock_open(read_data=function_to_check)
     with mock.patch.object(checker.tk, 'open', mock_open, create=True):
         ignored = {'D100', 'D202', 'D213'}
-        errors = tuple(checker.check_files(['filepath'], ignore=ignored))
+        errors = tuple(
+            checker.check_files(['filepath'], Configuration(ignore=ignored))
+        )
         error_codes = {error.code for error in errors}
         assert error_codes == expected_error_codes - ignored
 
@@ -96,7 +101,9 @@ def test_skip_errors():
     with mock.patch.object(checker.tk, 'open', mock_open, create=True):
         # Passing a blank ignore here explicitly otherwise
         # checkers takes the pep257 ignores by default.
-        errors = tuple(checker.check_files(['filepath'], ignore={}))
+        errors = tuple(
+            checker.check_files(['filepath'], Configuration(ignore=set()))
+        )
         error_codes = {error.code for error in errors}
         assert error_codes == expected_error_codes
 
@@ -106,7 +113,8 @@ def test_skip_errors():
     with mock.patch.object(checker.tk, 'open', mock_open, create=True):
         errors = tuple(
             checker.check_files(
-                ['filepath'], ignore={}, ignore_inline_noqa=True
+                ['filepath'],
+                Configuration(ignore=set(), ignore_inline_noqa=True),
             )
         )
         error_codes = {error.code for error in errors}

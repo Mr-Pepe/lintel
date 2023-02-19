@@ -8,8 +8,11 @@ import sys
 from collections import namedtuple
 from collections.abc import Set
 from configparser import NoOptionError, NoSectionError, RawConfigParser
+from dataclasses import dataclass, field
 from functools import reduce
+from re import Pattern
 from re import compile as re
+from typing import Optional
 
 from pydocstyle.logging import log
 
@@ -35,6 +38,27 @@ def check_initialized(method):
         return method(self, *args, **kwargs)
 
     return _decorator
+
+
+@dataclass
+class Configuration:
+    """The docstring checker configuration.
+
+    When supplying `select`, only specified error codes will be reported.
+    When supplying `ignore`, all error codes which were not specified will be
+    reported.
+
+    Note that ignored error code refer to the entire set of possible
+    error codes, which is larger than just the PEP-257 convention.
+    """
+
+    select: Optional[Set[str]] = None
+    ignore: Optional[Set[str]] = None
+    ignore_decorators: Optional[Pattern] = None
+    property_decorators: Optional[list] = None
+    ignore_inline_noqa: bool = (
+        False  # Whether `# noqa` comments are respected or not.
+    )
 
 
 class TomlParser:
