@@ -157,11 +157,11 @@ class ConventionChecker:
                         # TODO: Remove try clause when all checks have been extracted
                         try:
                             error = this_check(
-                                self, definition, definition.docstring
+                                self, definition, definition.docstring, config
                             )
                         except TypeError:
                             error = this_check(
-                                definition, definition.docstring
+                                definition, definition.docstring, config
                             )
                     else:
                         error = None
@@ -199,7 +199,9 @@ class ConventionChecker:
         return sorted(all, key=lambda this_check: not this_check._terminal)
 
     @check(Function)
-    def check_imperative_mood(self, function, docstring):  # def context
+    def check_imperative_mood(
+        self, function, docstring, config
+    ):  # def context
         """D401: First line should be in imperative mood: 'Do', not 'Does'.
 
         [Docstring] prescribes the function or method's effect as a command:
@@ -230,7 +232,7 @@ class ConventionChecker:
                     return violations.D401(best.capitalize(), first_word)
 
     @check(Function)
-    def check_no_signature(self, function, docstring):  # def context
+    def check_no_signature(self, function, docstring, config):  # def context
         """D402: First line should not be function's or method's "signature".
 
         The one-line docstring should NOT be a "signature" reiterating the
@@ -243,7 +245,7 @@ class ConventionChecker:
                 return violations.D402()
 
     @check(Function)
-    def check_capitalized(self, function, docstring):
+    def check_capitalized(self, function, docstring, config):
         """D403: First word of the first line should be properly capitalized.
 
         The [first line of a] docstring is a phrase ending in a period.
@@ -260,7 +262,7 @@ class ConventionChecker:
                 return violations.D403(first_word.capitalize(), first_word)
 
     @check(Function)
-    def check_if_needed(self, function, docstring):
+    def check_if_needed(self, function, docstring, config):
         """D418: Function decorated with @overload shouldn't contain a docstring.
 
         Functions that are decorated with @overload are definitions,
@@ -272,7 +274,7 @@ class ConventionChecker:
             return violations.D418()
 
     @check(Definition)
-    def check_starts_with_this(self, function, docstring):
+    def check_starts_with_this(self, function, docstring, config):
         """D404: First word of the docstring should not be `This`.
 
         Docstrings should use short, simple language. They should not begin
@@ -767,7 +769,7 @@ class ConventionChecker:
             yield from self._check_google_section(docstring, definition, ctx)
 
     @check(Definition)
-    def check_docstring_sections(self, definition, docstring):
+    def check_docstring_sections(self, definition, docstring, config):
         """Check for docstring sections."""
         if not docstring:
             return

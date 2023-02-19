@@ -3,13 +3,14 @@ import re
 from typing import Optional
 
 from pydocstyle.checks import check
+from pydocstyle.config import Configuration
 from pydocstyle.parser import Definition
 from pydocstyle.violations import D300, D301
 
 
 @check(Definition)
 def check_triple_double_quotes(
-    _: Definition, docstring: str
+    _: Definition, docstring: str, config: Configuration
 ) -> Optional[D300]:
     r'''D300: Use """triple double quotes""".
 
@@ -43,7 +44,9 @@ def check_triple_double_quotes(
 
 
 @check(Definition)
-def check_backslashes(_: Definition, docstring: str) -> Optional[D301]:
+def check_backslashes(
+    _: Definition, docstring: str, config: Configuration
+) -> Optional[D301]:
     r'''D301: Use r""" if any backslashes in a docstring.
 
     Use r"""raw triple double quotes""" if you use any backslashes

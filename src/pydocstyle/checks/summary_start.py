@@ -2,6 +2,7 @@ import ast
 from typing import Optional, Union
 
 from pydocstyle.checks import check
+from pydocstyle.config import Configuration
 from pydocstyle.parser import Definition
 from pydocstyle.violations import D212, D213
 
@@ -19,7 +20,7 @@ START_TRIPLE = (
 
 @check(Definition)
 def check_multi_line_summary_start(
-    _: Definition, docstring: str
+    _: Definition, docstring: str, config: Configuration
 ) -> Optional[Union[D212, D213]]:
     """D212, D213: Multi-line docstring must start on specific line.
 

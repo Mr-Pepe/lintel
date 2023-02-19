@@ -2,13 +2,16 @@ import ast
 from typing import Optional
 
 from pydocstyle.checks import check
+from pydocstyle.config import Configuration
 from pydocstyle.parser import Definition
 from pydocstyle.utils import has_content
 from pydocstyle.violations import D200
 
 
 @check(Definition)
-def check_one_liner(_: Definition, docstring: str) -> Optional[D200]:
+def check_one_liner(
+    _: Definition, docstring: str, config: Configuration
+) -> Optional[D200]:
     """D200: One-liner docstrings have to fit on one line with quotes."""
     if not docstring:
         return None

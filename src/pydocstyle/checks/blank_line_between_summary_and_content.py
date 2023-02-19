@@ -3,6 +3,7 @@ from itertools import takewhile
 from typing import Optional
 
 from pydocstyle.checks import check
+from pydocstyle.config import Configuration
 from pydocstyle.parser import Definition
 from pydocstyle.utils import is_blank
 from pydocstyle.violations import D205
@@ -10,7 +11,7 @@ from pydocstyle.violations import D205
 
 @check(Definition)
 def check_single_blank_line_after_summary(
-    _: Definition, docstring: str
+    _: Definition, docstring: str, config: Configuration
 ) -> Optional[D205]:
     """D205: Put one blank line between summary line and description.
 

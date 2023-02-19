@@ -1,6 +1,7 @@
 from typing import Generator, List, Tuple, Union
 
 from pydocstyle.checks import check
+from pydocstyle.config import Configuration
 from pydocstyle.parser import Definition
 from pydocstyle.utils import get_indents, has_content, leading_space, pairwise
 from pydocstyle.violations import D206, D207, D208
@@ -8,7 +9,7 @@ from pydocstyle.violations import D206, D207, D208
 
 @check(Definition)
 def check_indentation(
-    definition: Definition, docstring: str
+    definition: Definition, docstring: str, config: Configuration
 ) -> Generator[Union[D206, D207, D208], None, None]:
     """D206, D207, D208: The entire docstring should be indented same as code.
 

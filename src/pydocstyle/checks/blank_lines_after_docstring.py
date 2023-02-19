@@ -2,6 +2,7 @@ from itertools import takewhile
 from typing import List, Optional, Tuple
 
 from pydocstyle.checks import check
+from pydocstyle.config import Configuration
 from pydocstyle.parser import Class, Definition, Function
 from pydocstyle.utils import is_blank
 from pydocstyle.violations import D202, D204
@@ -9,7 +10,7 @@ from pydocstyle.violations import D202, D204
 
 @check(Function)
 def check_no_blank_lines_after_function_docstring(
-    function: Function, docstring: str
+    function: Function, docstring: str, config: Configuration
 ) -> Optional[D202]:
     """D202: No blank lines allowed after function/method docstring.
 
@@ -39,7 +40,7 @@ def check_no_blank_lines_after_function_docstring(
 
 @check(Class)
 def check_single_blank_line_after_class_docstring(
-    class_: Class, docstring: str
+    class_: Class, docstring: str, config: Configuration
 ) -> Optional[D204]:
     """D204: 1 blank line required after class docstring."""
     if not docstring:

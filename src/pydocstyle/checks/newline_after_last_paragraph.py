@@ -1,6 +1,7 @@
 from typing import Optional
 
 from pydocstyle.checks import check
+from pydocstyle.config import Configuration
 from pydocstyle.parser import Definition
 from pydocstyle.utils import has_content
 from pydocstyle.violations import D209
@@ -8,7 +9,7 @@ from pydocstyle.violations import D209
 
 @check(Definition)
 def check_newline_after_last_paragraph(
-    _: Definition, docstring: str
+    _: Definition, docstring: str, config: Configuration
 ) -> Optional[D209]:
     """D209: Put multi-line docstring closing quotes on separate line.
 
