@@ -197,18 +197,6 @@ class ConventionChecker:
         ]
         return sorted(all, key=lambda this_check: not this_check._terminal)
 
-    @check(Function)
-    def check_if_needed(self, function, docstring, config):
-        """D418: Function decorated with @overload shouldn't contain a docstring.
-
-        Functions that are decorated with @overload are definitions,
-        and are for the benefit of the type checker only,
-        since they will be overwritten by the non-@overload-decorated definition.
-
-        """
-        if docstring and function.is_overload:
-            return violations.D418()
-
     @check(Definition)
     def check_starts_with_this(self, function, docstring, config):
         """D404: First word of the docstring should not be `This`.
