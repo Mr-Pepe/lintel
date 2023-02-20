@@ -11,6 +11,7 @@ from .blank_lines_before_docstring import (
     check_no_blank_lines_before_function_docstring,
     check_single_blank_line_before_class_docstring,
 )
+from .capitalized import check_capitalized
 from .empty_docstring import check_empty_docstring
 from .ending import check_ends_with_period, check_ends_with_punctuation
 from .indentation import check_indentation

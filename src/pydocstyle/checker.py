@@ -198,23 +198,6 @@ class ConventionChecker:
         return sorted(all, key=lambda this_check: not this_check._terminal)
 
     @check(Function)
-    def check_capitalized(self, function, docstring, config):
-        """D403: First word of the first line should be properly capitalized.
-
-        The [first line of a] docstring is a phrase ending in a period.
-
-        """
-        if docstring:
-            first_word = ast.literal_eval(docstring).split()[0]
-            if first_word == first_word.upper():
-                return
-            for char in first_word:
-                if char not in string.ascii_letters and char != "'":
-                    return
-            if first_word != first_word.capitalize():
-                return violations.D403(first_word.capitalize(), first_word)
-
-    @check(Function)
     def check_if_needed(self, function, docstring, config):
         """D418: Function decorated with @overload shouldn't contain a docstring.
 
