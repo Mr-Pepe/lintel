@@ -28,5 +28,6 @@ from .one_liner import check_one_liner
 from .overload import check_overload
 from .quotation import check_backslashes, check_triple_double_quotes
 from .signature import check_not_signature
+from .starts_with_this import check_starts_with_this
 from .summary_start import check_multi_line_summary_start
 from .surrounding_spaces import check_surrounding_whitespaces

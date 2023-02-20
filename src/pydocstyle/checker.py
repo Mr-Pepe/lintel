@@ -197,25 +197,6 @@ class ConventionChecker:
         ]
         return sorted(all, key=lambda this_check: not this_check._terminal)
 
-    @check(Definition)
-    def check_starts_with_this(self, function, docstring, config):
-        """D404: First word of the docstring should not be `This`.
-
-        Docstrings should use short, simple language. They should not begin
-        with "This class is [..]" or "This module contains [..]".
-
-        """
-        if not docstring:
-            return
-
-        stripped = ast.literal_eval(docstring).strip()
-        if not stripped:
-            return
-
-        first_word = strip_non_alphanumeric(stripped.split()[0])
-        if first_word.lower() == 'this':
-            return violations.D404()
-
     @staticmethod
     def _is_docstring_section(context):
         """Check if the suspected context is really a section header.
