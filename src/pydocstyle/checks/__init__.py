@@ -21,6 +21,7 @@ from .missing_docstring import (
     check_missing_module_docstring,
     check_missing_package_docstring,
 )
+from .mood import check_imperative_mood
 from .newline_after_last_paragraph import check_newline_after_last_paragraph
 from .one_liner import check_one_liner
 from .quotation import check_backslashes, check_triple_double_quotes

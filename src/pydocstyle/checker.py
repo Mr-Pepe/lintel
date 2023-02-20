@@ -38,7 +38,6 @@ from .utils import (
     pairwise,
     strip_non_alphanumeric,
 )
-from .wordlists import IMPERATIVE_BLACKLIST, IMPERATIVE_VERBS, stem
 
 __all__ = ('check',)
 
@@ -197,39 +196,6 @@ class ConventionChecker:
             if isinstance(this_check, Check)
         ]
         return sorted(all, key=lambda this_check: not this_check._terminal)
-
-    @check(Function)
-    def check_imperative_mood(
-        self, function, docstring, config
-    ):  # def context
-        """D401: First line should be in imperative mood: 'Do', not 'Does'.
-
-        [Docstring] prescribes the function or method's effect as a command:
-        ("Do this", "Return that"), not as a description; e.g. don't write
-        "Returns the pathname ...".
-
-        """
-        if (
-            docstring
-            and not function.is_test
-            and not function.is_property(self.property_decorators)
-        ):
-            stripped = ast.literal_eval(docstring).strip()
-            if stripped:
-                first_word = strip_non_alphanumeric(stripped.split()[0])
-                check_word = first_word.lower()
-
-                if check_word in IMPERATIVE_BLACKLIST:
-                    return violations.D401b(first_word)
-
-                correct_forms = IMPERATIVE_VERBS.get(stem(check_word))
-
-                if correct_forms and check_word not in correct_forms:
-                    best = max(
-                        correct_forms,
-                        key=lambda f: common_prefix_length(check_word, f),
-                    )
-                    return violations.D401(best.capitalize(), first_word)
 
     @check(Function)
     def check_no_signature(self, function, docstring, config):  # def context
