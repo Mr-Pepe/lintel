@@ -198,19 +198,6 @@ class ConventionChecker:
         return sorted(all, key=lambda this_check: not this_check._terminal)
 
     @check(Function)
-    def check_no_signature(self, function, docstring, config):  # def context
-        """D402: First line should not be function's or method's "signature".
-
-        The one-line docstring should NOT be a "signature" reiterating the
-        function/method parameters (which can be obtained by introspection).
-
-        """
-        if docstring:
-            first_line = ast.literal_eval(docstring).strip().split('\n')[0]
-            if function.name + '(' in first_line.replace(' ', ''):
-                return violations.D402()
-
-    @check(Function)
     def check_capitalized(self, function, docstring, config):
         """D403: First word of the first line should be properly capitalized.
 

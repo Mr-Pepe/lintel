@@ -25,5 +25,6 @@ from .mood import check_imperative_mood
 from .newline_after_last_paragraph import check_newline_after_last_paragraph
 from .one_liner import check_one_liner
 from .quotation import check_backslashes, check_triple_double_quotes
+from .signature import check_not_signature
 from .summary_start import check_multi_line_summary_start
 from .surrounding_spaces import check_surrounding_whitespaces
