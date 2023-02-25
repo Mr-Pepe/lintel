@@ -1,9 +1,18 @@
 """General shared utilities."""
 import re
 from itertools import tee, zip_longest
-from typing import Any, Iterable, List, Tuple, TypeVar
+from typing import Any, Iterable, List, Tuple, TypeVar, Union
 
-from pydocstyle.parser import Definition
+import astroid
+from astroid import NodeNG
+
+from pydocstyle.docstring import Docstring
+
+CHECKED_NODE_TYPE = Union[
+    astroid.ClassDef, astroid.FunctionDef, astroid.Module
+]
+NODES_TO_CHECK = (astroid.ClassDef, astroid.FunctionDef, astroid.Module)
+
 
 #: Regular expression for stripping non-alphanumeric characters
 NON_ALPHANUMERIC_STRIP_RE = re.compile(r'[\W_]+')
@@ -62,18 +71,89 @@ def leading_space(string: str) -> str:
 
 
 def get_indents(
-    definition: Definition, docstring: str
+    node: CHECKED_NODE_TYPE, docstring: Docstring
 ) -> Tuple[str, List[str]]:
     """Return the indentation of docstring quotes and content lines."""
-    before_docstring, _, _ = definition.source.partition(docstring)
+    before_docstring, _, _ = node.as_string().partition(docstring.doc)
     _, _, docstring_indent = before_docstring.rpartition('\n')
 
     lines = [
         next_line
-        for first_line, next_line in pairwise(docstring.split("\n"), "")
+        for first_line, next_line in pairwise(docstring.doc.split("\n"), "")
         if has_content(next_line) and not first_line.endswith('\\')
     ]
 
     line_indents = [leading_space(l) for l in lines]
 
     return docstring_indent, line_indents
+
+
+def source_has_noqa(source: str) -> bool:
+    """Return whether the source code contains a `# pydoclint: noqa` comment.
+
+    Any number of whitespaces is allowed between the hashtag, `pydoclint`, `:`, and `noqa`
+    but nothing else can be on that line.
+    """
+    regex = re.compile(r"^\s*#\s*pydoclint\s*:\s*noqa\s*$")
+    for line in source.splitlines():
+        if regex.search(line):
+            return True
+
+    return False
+
+
+def get_line_noqa(line: str) -> list[str]:
+    ignore_all_regex = re.compile(r".*#\s*noqa(\s*$|\s*#)")
+    if ignore_all_regex.search(line):
+        return ["all"]
+
+    return []
+
+
+def get_decorator_names(node: NodeNG) -> list[str]:
+    decorator_names: list[str] = []
+
+    decorators = [
+        child_node
+        for child_node in node.get_children()
+        if isinstance(child_node, astroid.Decorators)
+    ]
+
+    if decorators:
+        for decorator in decorators[0].nodes:
+            if isinstance(decorator, astroid.Name):
+                decorator_names.append(decorator.name)
+            if isinstance(decorator, astroid.Call):
+                decorator_names.append(decorator.func.name)
+
+    return decorator_names
+
+
+def is_public(node: CHECKED_NODE_TYPE) -> bool:
+    if is_dunder(node):
+        return True
+
+    if node.name.startswith("_"):
+        return False
+
+    if (
+        isinstance(node.parent, astroid.Module)
+        and not node.name in node.parent.wildcard_import_names()
+    ):
+        return False
+
+    while node.parent is not None:
+        if not is_public(node.parent):
+            return False
+
+        node = node.parent
+
+    return True
+
+
+def is_private(node: CHECKED_NODE_TYPE) -> bool:
+    return not is_public(node)
+
+
+def is_dunder(node: CHECKED_NODE_TYPE) -> bool:
+    return node.name.startswith('__') and node.name.endswith('__')

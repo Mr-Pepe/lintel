@@ -1,22 +1,21 @@
-from itertools import takewhile
-from typing import List, Optional, Tuple
+import linecache
+from typing import List, Optional, Tuple, Union
+
+from astroid import ClassDef, FunctionDef
 
 from pydocstyle.checks import check
 from pydocstyle.config import Configuration
-from pydocstyle.parser import Class, Definition, Function
-from pydocstyle.utils import is_blank
+from pydocstyle.docstring import Docstring
+from pydocstyle.utils import has_content
 from pydocstyle.violations import D201, D203, D211
 
 
-@check(Function)
+@check(FunctionDef)
 def check_no_blank_lines_before_function_docstring(
-    function: Function, docstring: str, config: Configuration
+    function_: FunctionDef, docstring: Docstring, config: Configuration
 ) -> Optional[D201]:
     """D201 No blank lines allowed before function/method docstring."""
-    if not docstring:
-        return None
-
-    _, _, n_blanks_before = _get_stuff_before_docstring(function, docstring)
+    n_blanks_before = _get_n_blanks_before_docstring(function_, docstring)
 
     if n_blanks_before == 0:
         return None
@@ -24,15 +23,12 @@ def check_no_blank_lines_before_function_docstring(
     return D201(n_blanks_before)
 
 
-@check(Class)
+@check(ClassDef)
 def check_single_blank_line_before_class_docstring(
-    class_: Class, docstring: str, config: Configuration
+    class_: ClassDef, docstring: Docstring, config: Configuration
 ) -> Optional[D203]:
     """D203: Class docstrings should have 1 blank line before them."""
-    if not docstring:
-        return None
-
-    _, _, n_blanks_before = _get_stuff_before_docstring(class_, docstring)
+    n_blanks_before = _get_n_blanks_before_docstring(class_, docstring)
 
     if n_blanks_before == 1:
         return None
@@ -40,15 +36,12 @@ def check_single_blank_line_before_class_docstring(
     return D203(n_blanks_before)
 
 
-@check(Class)
+@check(ClassDef)
 def check_no_blank_lines_before_class_docstring(
-    class_: Class, docstring: str, config: Configuration
+    class_: ClassDef, docstring: Docstring, config: Configuration
 ) -> Optional[D211]:
     """D211: No blank lines allowed before class docstring."""
-    if not docstring:
-        return None
-
-    _, _, n_blanks_before = _get_stuff_before_docstring(class_, docstring)
+    n_blanks_before = _get_n_blanks_before_docstring(class_, docstring)
 
     if n_blanks_before == 0:
         return None
@@ -56,11 +49,17 @@ def check_no_blank_lines_before_class_docstring(
     return D211(n_blanks_before)
 
 
-def _get_stuff_before_docstring(
-    definition: Definition, docstring: str
+def _get_n_blanks_before_docstring(
+    node: Union[FunctionDef, ClassDef], docstring: Docstring
 ) -> Tuple[List[str], List[str], int]:
-    lines_before = definition.source.partition(docstring)[0].split('\n')[:-1]
-    blanks_before = list(takewhile(is_blank, reversed(lines_before)))
-    n_blanks_before = len(blanks_before)
+    n_blanks = 0
+    line = node.doc_node.fromlineno - 1
 
-    return lines_before, blanks_before, n_blanks_before
+    while line > 0:
+        if has_content(linecache.getline(node.root().file, line)):
+            break
+
+        n_blanks += 1
+        line -= 1
+
+    return n_blanks

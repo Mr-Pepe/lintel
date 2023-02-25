@@ -1,17 +1,23 @@
 import ast
 from typing import Optional, Union
 
+from astroid import FunctionDef
+
 from pydocstyle.checks import check
 from pydocstyle.config import Configuration
-from pydocstyle.parser import Function
-from pydocstyle.utils import common_prefix_length, strip_non_alphanumeric
+from pydocstyle.docstring import Docstring
+from pydocstyle.utils import (
+    common_prefix_length,
+    get_decorator_names,
+    strip_non_alphanumeric,
+)
 from pydocstyle.violations import D401, D401b
 from pydocstyle.wordlists import IMPERATIVE_BLACKLIST, IMPERATIVE_VERBS, stem
 
 
-@check(Function)
+@check(FunctionDef)
 def check_imperative_mood(
-    function: Function, docstring: str, config: Configuration
+    function_: FunctionDef, docstring: Docstring, config: Configuration
 ) -> Optional[Union[D401, D401b]]:
     """D401: First line should be in imperative mood: 'Do', not 'Does'.
 
@@ -19,13 +25,10 @@ def check_imperative_mood(
     ("Do this", "Return that"), not as a description; e.g. don't write
     "Returns the pathname ...".
     """
-    if not docstring:
+    if _is_test(function_) or _is_property(function_, config):
         return None
 
-    if function.is_test or function.is_property(config.property_decorators):
-        return None
-
-    stripped = ast.literal_eval(docstring).strip()
+    stripped = docstring.doc.strip()
 
     if not stripped:
         return None
@@ -45,3 +48,16 @@ def check_imperative_mood(
         key=lambda f: common_prefix_length(check_word, f),
     )
     return D401(best.capitalize(), first_word)
+
+
+def _is_test(function_: FunctionDef) -> bool:
+    return isinstance(function_.name, str) and (
+        function_.name.startswith('test') or function_.name == 'runTest'
+    )
+
+
+def _is_property(function_: FunctionDef, config: Configuration) -> bool:
+    return any(
+        decorator in config.property_decorators
+        for decorator in get_decorator_names(function_)
+    )

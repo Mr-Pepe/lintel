@@ -1,22 +1,21 @@
 import ast
 from typing import Optional
 
+from astroid import NodeNG
+
 from pydocstyle.checks import check
 from pydocstyle.config import Configuration
-from pydocstyle.parser import Definition
+from pydocstyle.docstring import Docstring
 from pydocstyle.utils import has_content
 from pydocstyle.violations import D200
 
 
-@check(Definition)
+@check(NodeNG)
 def check_one_liner(
-    _: Definition, docstring: str, config: Configuration
+    _: NodeNG, docstring: Docstring, config: Configuration
 ) -> Optional[D200]:
     """D200: One-liner docstrings have to fit on one line with quotes."""
-    if not docstring:
-        return None
-
-    lines = ast.literal_eval(docstring).split('\n')
+    lines = docstring.doc.split('\n')
 
     non_empty_lines = sum(1 for l in lines if has_content(l))
 

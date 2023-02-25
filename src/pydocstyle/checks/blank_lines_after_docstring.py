@@ -1,27 +1,27 @@
+import linecache
 from itertools import takewhile
-from typing import List, Optional, Tuple
+from typing import List, Optional, Tuple, Union
+
+from astroid import ClassDef, FunctionDef
 
 from pydocstyle.checks import check
 from pydocstyle.config import Configuration
-from pydocstyle.parser import Class, Definition, Function
+from pydocstyle.docstring import Docstring
 from pydocstyle.utils import is_blank
 from pydocstyle.violations import D202, D204
 
 
-@check(Function)
+@check(FunctionDef)
 def check_no_blank_lines_after_function_docstring(
-    function: Function, docstring: str, config: Configuration
+    function_: FunctionDef, docstring: Docstring, _: Configuration
 ) -> Optional[D202]:
     """D202: No blank lines allowed after function/method docstring.
 
     There should be no blank line after the docstring unless directly
     followed by an inner function or class.
     """
-    if not docstring:
-        return None
-
     lines_after, _, n_blanks_after = _get_stuff_after_docstring(
-        function, docstring
+        function_, docstring
     )
 
     if n_blanks_after == 0:
@@ -38,14 +38,11 @@ def check_no_blank_lines_after_function_docstring(
     return D202(n_blanks_after)
 
 
-@check(Class)
+@check(ClassDef)
 def check_single_blank_line_after_class_docstring(
-    class_: Class, docstring: str, config: Configuration
+    class_: ClassDef, docstring: Docstring, config: Configuration
 ) -> Optional[D204]:
     """D204: 1 blank line required after class docstring."""
-    if not docstring:
-        return None
-
     lines_after, _, n_blanks_after = _get_stuff_after_docstring(
         class_, docstring
     )
@@ -60,9 +57,12 @@ def check_single_blank_line_after_class_docstring(
 
 
 def _get_stuff_after_docstring(
-    definition: Definition, docstring: str
+    node: Union[ClassDef, FunctionDef], docstring: Docstring
 ) -> Tuple[List[str], List[str], int]:
-    lines_after = definition.source.partition(docstring)[-1].split('\n')[1:]
+    lines_after = [
+        linecache.getline(node.root().file, l)
+        for l in range(node.doc_node.end_lineno + 1, node.end_lineno + 1)
+    ]
     blanks_after = list(takewhile(is_blank, lines_after))
     n_blanks_after = len(blanks_after)
 

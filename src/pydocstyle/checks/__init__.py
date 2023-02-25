@@ -18,9 +18,7 @@ from .indentation import check_indentation
 from .missing_docstring import (
     check_missing_class_docstring,
     check_missing_function_docstring,
-    check_missing_method_docstring,
     check_missing_module_docstring,
-    check_missing_package_docstring,
 )
 from .mood import check_imperative_mood
 from .newline_after_last_paragraph import check_newline_after_last_paragraph

@@ -4,10 +4,12 @@ from tests.utils.sandbox_env import SandboxEnv
 def test_missing_docstring_in_package(env: SandboxEnv) -> None:
     """Make sure __init__.py files are treated as packages."""
     with env.open('__init__.py', 'wt') as init:
+        init.write("# Well hello there")
         pass  # an empty package file
 
-    out, _, exit_code = env.invoke()
+    out, err, exit_code = env.invoke()
 
+    print(err)
     assert exit_code == 1
     assert 'D100' not in out  # shouldn't be treated as a module
     assert 'D104' in out  # missing docstring in package

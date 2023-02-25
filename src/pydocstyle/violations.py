@@ -5,7 +5,10 @@ from functools import partial
 from itertools import dropwhile
 from typing import Callable, Iterable, List, Optional
 
-from .parser import Definition
+from astroid import NodeNG
+
+from pydocstyle.utils import CHECKED_NODE_TYPE
+
 from .utils import is_blank
 
 __all__ = ('Error', 'ErrorRegistry')
@@ -37,16 +40,25 @@ class Error:
         self.short_desc = short_desc
         self.context = context
         self.parameters = parameters
-        self.definition = None  # type: Optional[Definition]
+        self.node: CHECKED_NODE_TYPE = NodeNG()
         self.explanation = None  # type: Optional[str]
 
-    def set_context(self, definition: Definition, explanation: str) -> None:
+    def set_context(self, node: NodeNG, explanation: str) -> None:
         """Set the source code context for this error."""
-        self.definition = definition
+        self.node = node
         self.explanation = explanation
 
-    filename = property(lambda self: self.definition.module.name)
-    line = property(lambda self: self.definition.error_lineno)
+    @property
+    def filename(self):
+        return self.node.file
+
+    @property
+    def line(self):
+        return self.node.lineno
+
+    @property
+    def node_name(self):
+        return self.node.name
 
     @property
     def message(self) -> str:
@@ -60,31 +72,20 @@ class Error:
     @property
     def lines(self) -> str:
         """Return the source code lines for this error."""
-        if self.definition is None:
+        if self.node is None:
             return ''
-        source = ''
-        lines = self.definition.source.splitlines(keepends=True)
-        offset = self.definition.start  # type: ignore
+        lines = self.node.as_string().splitlines(keepends=True)
         lines_stripped = list(
             reversed(list(dropwhile(is_blank, reversed(lines))))
         )
-        numbers_width = len(str(offset + len(lines_stripped)))
-        line_format = f'{{:{numbers_width}}}:{{}}'
-        for n, line in enumerate(lines_stripped):
-            if line and line != "\n":
-                line = ' ' + line
-            source += line_format.format(n + offset, line)
-            if n > 5:
-                source += '        ...\n'
-                break
-        return source
+        return lines_stripped
 
     def __str__(self) -> str:
         if self.explanation:
             self.explanation = '\n'.join(
                 l for l in self.explanation.split('\n') if not is_blank(l)
             )
-        template = '{filename}:{line} {definition}:\n        {message}'
+        template = '{filename}:{line} {node_name}:\n        {message}'
         if self.source and self.explain:
             template += '\n\n{explanation}\n\n{lines}\n'
         elif self.source and not self.explain:
@@ -97,7 +98,7 @@ class Error:
                 for name in [
                     'filename',
                     'line',
-                    'definition',
+                    'node_name',
                     'message',
                     'explanation',
                     'lines',

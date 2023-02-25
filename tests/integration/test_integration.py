@@ -1527,7 +1527,7 @@ def test_only_comment_with_noqa_file(env):
             '# -*- coding: utf-8 -*-\n'
             '# Useless comment\n'
             '# Just another useless comment\n'
-            '# noqa: D100\n'
+            '# pydoclint: noqa\n'
         )
 
     out, _, code = env.invoke()
@@ -1543,13 +1543,31 @@ def test_comment_with_noqa_plus_docstring_file(env):
             '# -*- coding: utf-8 -*-\n'
             '# Useless comment\n'
             '# Just another useless comment\n'
-            '# noqa: D400\n'
+            '# pydoclint : noqa\n'
             '"""Module docstring without period"""\n'
         )
 
     out, _, code = env.invoke()
     assert '' == out
     assert code == 0
+
+
+def test_comment_with_blank_noqa_for_single_line(env):
+    """Test that a blank noqa comment ignores errors for that node."""
+    with env.open('example.py', 'wt') as example:
+        example.write(
+            textwrap.dedent(
+                """\
+            def foo():
+                pass
+        """
+            )
+        )
+
+    out, _, code = env.invoke()
+    assert code == 1
+    assert 'D100' in out  # Missing module docstring is reported
+    assert 'D103' not in out  # Missing function docstring is ignored
 
 
 def test_match_considers_basenames_for_path_args(env: SandboxEnv) -> None:

@@ -7,6 +7,7 @@ def test_missing_docstring_in_module(env: SandboxEnv) -> None:
 
     out, _, code = env.invoke()
 
+    print(out)
     assert code == 1
     assert 'D100' in out
 
