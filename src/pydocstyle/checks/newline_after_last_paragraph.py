@@ -5,7 +5,7 @@ from astroid import NodeNG
 from pydocstyle.checks import check
 from pydocstyle.config import Configuration
 from pydocstyle.docstring import Docstring
-from pydocstyle.utils import has_content
+from pydocstyle.utils import has_content, is_blank
 from pydocstyle.violations import D209
 
 
@@ -18,12 +18,12 @@ def check_newline_after_last_paragraph(
     Unless the entire docstring fits on a line, place the closing
     quotes on a line by themselves.
     """
-    lines = [l for l in docstring.doc.split('\n') if has_content(l)]
+    lines = [l for l in docstring.doc.split('\n')]
 
     if len(lines) <= 1:
         return None
 
-    if lines[-1].strip() in ('"""', "'''"):
+    if is_blank(lines[-1]):
         return None
 
     return D209()

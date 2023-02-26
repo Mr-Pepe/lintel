@@ -5,7 +5,13 @@ from astroid import ClassDef, FunctionDef, Module
 from pydocstyle.checks import check
 from pydocstyle.config import Configuration
 from pydocstyle.docstring import Docstring
-from pydocstyle.utils import get_decorator_names, is_dunder, is_private
+from pydocstyle.utils import (
+    VARIADIC_MAGIC_METHODS,
+    get_decorator_names,
+    is_dunder,
+    is_overloaded,
+    is_private,
+)
 from pydocstyle.violations import (
     D100,
     D101,
@@ -36,15 +42,18 @@ def check_missing_function_docstring(
     config: Configuration,
 ) -> Optional[Union[D102, D105, D107]]:
     """D102, D103, D105, D107: Public, magic, and __init__ methods and functions should have docstrings."""
-    if docstring or is_private(function_):
+    if docstring or is_private(function_) or is_overloaded(function_):
         return None
 
-    if isinstance(function_.parent, (FunctionDef, ClassDef)):
+    if isinstance(function_.parent, FunctionDef):
         # Function is nested
         return None
 
     if function_.is_bound():
-        if is_dunder(function_):
+        if (
+            is_dunder(function_)
+            and not function_.name in VARIADIC_MAGIC_METHODS
+        ):
             return D105()
 
         if function_.name == "__init__":

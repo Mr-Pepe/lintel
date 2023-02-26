@@ -15,109 +15,19 @@ import astroid
 import pydocstyle.checks
 from pydocstyle.checks import Check, check
 from pydocstyle.conventions import Convention
-from pydocstyle.docstring import Docstring, docstringify
+from pydocstyle.docstring import Docstring, get_docstring_from_doc_node
 from pydocstyle.logging import log
 from pydocstyle.violations import Error
 
 from . import violations
 from .config import Configuration, IllegalConfiguration
-from .utils import (
-    NODES_TO_CHECK,
-    get_decorator_names,
-    get_indents,
-    get_line_noqa,
-    is_blank,
-    leading_space,
-    pairwise,
-    source_has_noqa,
-)
+from .utils import NODES_TO_CHECK, get_decorator_names, get_error_codes_to_skip
 
 __all__ = ('check',)
 
 
 class ConventionChecker:
-    """Checker for PEP 257, NumPy and Google conventions.
-
-    D10x: Missing docstrings
-    D20x: Whitespace issues
-    D30x: Docstring formatting
-    D40x: Docstring content issues
-
-    """
-
-    NUMPY_SECTION_NAMES = (
-        'Short Summary',
-        'Extended Summary',
-        'Parameters',
-        'Returns',
-        'Yields',
-        'Other Parameters',
-        'Raises',
-        'See Also',
-        'Notes',
-        'References',
-        'Examples',
-        'Attributes',
-        'Methods',
-    )
-
-    GOOGLE_SECTION_NAMES = (
-        'Args',
-        'Arguments',
-        'Attention',
-        'Attributes',
-        'Caution',
-        'Danger',
-        'Error',
-        'Example',
-        'Examples',
-        'Hint',
-        'Important',
-        'Keyword Args',
-        'Keyword Arguments',
-        'Methods',
-        'Note',
-        'Notes',
-        'Return',
-        'Returns',
-        'Raises',
-        'References',
-        'See Also',
-        'Tip',
-        'Todo',
-        'Warning',
-        'Warnings',
-        'Warns',
-        'Yield',
-        'Yields',
-    )
-
-    # Examples that will be matched -
-    # "     random: Test" where random will be captured as the param
-    # " random         : test" where random will be captured as the param
-    # "  random_t (Test) : test  " where random_t will be captured as the param
-    # Matches anything that fulfills all the following conditions:
-    GOOGLE_ARGS_REGEX = re.compile(
-        # Begins with 0 or more whitespace characters
-        r"^\s*"
-        # Followed by 1 or more unicode chars, numbers or underscores
-        # The above is captured as the first group as this is the paramater name.
-        r"(\w+)"
-        # Followed by 0 or more whitespace characters
-        r"\s*"
-        # Matches patterns contained within round brackets.
-        # The `.*?`matches any sequence of characters in a non-greedy
-        # way (denoted by the `*?`)
-        r"(\(.*?\))?"
-        # Followed by 0 or more whitespace chars
-        r"\s*"
-        # Followed by a colon
-        r":"
-        # Might have a new line and leading whitespace
-        r"\n?\s*"
-        # Followed by 1 or more characters - which is the docstring for the parameter
-        ".+"
-    )
+    """Checker for Sphinx, NumPy and Google docstrings."""
 
     def check_source(
         self,
@@ -125,12 +35,11 @@ class ConventionChecker:
         source: str,
         config: Configuration = Configuration(),
     ) -> Generator:
-        if source_has_noqa(source):
-            return
-
         module = astroid.parse(
             source, module_name=filename.stem, path=filename.as_posix()
         )
+
+        module_wide_skipped_errors = get_error_codes_to_skip(module)
 
         nodes = [module]
 
@@ -143,8 +52,8 @@ class ConventionChecker:
                 if isinstance(child_node, NODES_TO_CHECK):
                     nodes.append(child_node)
 
-            error_codes_to_skip = get_line_noqa(
-                node.as_string().splitlines()[0]
+            error_codes_to_skip = module_wide_skipped_errors.union(
+                get_error_codes_to_skip(node)
             )
 
             if "all" in error_codes_to_skip:
@@ -157,6 +66,8 @@ class ConventionChecker:
                 for decorator_name in decorator_names
             ):
                 continue
+
+            docstring = get_docstring_from_doc_node(node)
 
             for this_check in self.checks:
                 terminate = False
@@ -175,10 +86,6 @@ class ConventionChecker:
 
                 if not isinstance(node, this_check._node_type):
                     continue
-
-                docstring: Optional[Docstring] = None
-                if node.doc_node is not None:
-                    docstring = docstringify(node.doc_node.value)
 
                 error = None
 
@@ -286,22 +193,3 @@ def get_leading_words(line):
 def is_def_arg_private(arg_name):
     """Return a boolean indicating if the argument name is private."""
     return arg_name.startswith("_")
-
-
-def get_function_args(function_source):
-    """Return the function arguments given the source-code string."""
-    # We are stripping the whitespace from the left of the
-    # function source.
-    # This is so that if the docstring has incorrectly
-    # indented lines, which are at a lower indent than the
-    # function source, we still dedent the source correctly
-    # and the AST parser doesn't throw an error.
-    try:
-        function_arg_node = ast.parse(function_source.lstrip()).body[0].args
-    except SyntaxError:
-        # If we still get a syntax error, we don't want the
-        # the checker to crash. Instead we just return a blank list.
-        return []
-    arg_nodes = function_arg_node.args
-    kwonly_arg_nodes = function_arg_node.kwonlyargs
-    return [arg_node.arg for arg_node in chain(arg_nodes, kwonly_arg_nodes)]

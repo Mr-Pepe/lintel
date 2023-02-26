@@ -5,7 +5,7 @@ from astroid import FunctionDef
 from pydocstyle import docstring
 from pydocstyle.checks import check
 from pydocstyle.config import Configuration
-from pydocstyle.utils import get_decorator_names
+from pydocstyle.utils import get_decorator_names, is_overloaded
 from pydocstyle.violations import D418
 
 
@@ -18,7 +18,5 @@ def check_overload(
     Functions that are decorated with @overload are definitions,
     and are for the benefit of the type checker only.
     """
-    if "overload" in get_decorator_names(function_):
+    if is_overloaded(function_):
         return D418()
-
-    return None

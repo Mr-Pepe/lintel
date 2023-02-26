@@ -22,39 +22,21 @@
 
 """Utility methods for docstring checking."""
 
+import linecache
 import re
-from typing import List
+from typing import Dict, List, Optional
+
+from pydocstyle.utils import (
+    CHECKED_NODE_TYPE,
+    has_content,
+    leading_space,
+    pairwise,
+)
 
 
 def _split_multiple_exc_types(target: str) -> List[str]:
     delimiters = r"(\s*,(?:\s*or\s)?\s*|\s+or\s+)"
     return re.split(delimiters, target)
-
-
-def space_indentation(s):
-    """The number of leading spaces in a string
-
-    :param str s: input string
-
-    :rtype: int
-    :return: number of leading spaces
-    """
-    return len(s) - len(s.lstrip(" "))
-
-
-def docstringify(docstring, default_type="default"):
-    for docstring_type in (
-        SphinxDocstring,
-        EpytextDocstring,
-        GoogleDocstring,
-        NumpyDocstring,
-    ):
-        instance = docstring_type(docstring)
-        if instance.is_valid():
-            return instance
-
-    docstring_type = DOCSTRING_TYPES.get(default_type, Docstring)
-    return docstring_type(docstring)
 
 
 class Docstring:
@@ -73,9 +55,50 @@ class Docstring:
 
     # These methods are designed to be overridden
     # pylint: disable=no-self-use
-    def __init__(self, doc: str):
-        doc = doc or ""
-        self.doc = doc.expandtabs()
+    def __init__(self, parent_node: CHECKED_NODE_TYPE):
+        if parent_node.doc_node is None:
+            raise ValueError(
+                f"Node '{parent_node.name}' does not have a doc node."
+            )
+
+        self.parent_node = parent_node
+        self.node = parent_node.doc_node
+
+    @property
+    def doc(self) -> str:
+        return str(self.node.value).expandtabs()
+
+    @property
+    def raw(self) -> str:
+        return "\n".join(
+            l
+            for l in linecache.getlines(self.parent_node.root().file)[
+                self.node.fromlineno - 1 : self.node.end_lineno
+            ]
+        )
+
+    @property
+    def indent(self) -> List[str]:
+        """The indentation used for the first line of the docstring."""
+        # Get the text before the quotation marks on the first line of the docstring
+        pre_text = re.findall(
+            "(.*?)[uU]?[rR]?(\"\"\"|\'\'\')", self.raw.splitlines()[0]
+        )[0][0]
+
+        return "".join(' ' for _ in pre_text)
+
+    @property
+    def line_indents(self) -> list[str]:
+        """The indentation of non-empty lines in the docstring."""
+        lines = [
+            next_line
+            for first_line, next_line in pairwise(self.raw.split("\n"), "")
+            if has_content(next_line) and not first_line.endswith('\\')
+        ]
+
+        line_indents = [leading_space(l) for l in lines]
+
+        return line_indents
 
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__}:'''{self.doc}'''>"
@@ -259,59 +282,6 @@ class SphinxDocstring(Docstring):
             re.findall(self.re_type_in_docstring, self.doc)
         )
         return params_with_doc, params_with_type
-
-
-class EpytextDocstring(SphinxDocstring):
-    """
-    Epytext is similar to Sphinx. See the docs:
-        http://epydoc.sourceforge.net/epytext.html
-        http://epydoc.sourceforge.net/fields.html#fields
-
-    It's used in PyCharm:
-        https://www.jetbrains.com/help/pycharm/2016.1/creating-documentation-comments.html#d848203e314
-        https://www.jetbrains.com/help/pycharm/2016.1/using-docstrings-to-specify-types.html
-    """
-
-    re_param_in_docstring = re.compile(
-        SphinxDocstring.re_param_raw.replace(":", "@", 1), re.X | re.S
-    )
-
-    re_type_in_docstring = re.compile(
-        SphinxDocstring.re_type_raw.replace(":", "@", 1), re.X | re.S
-    )
-
-    re_property_type_in_docstring = re.compile(
-        SphinxDocstring.re_property_type_raw.replace(":", "@", 1), re.X | re.S
-    )
-
-    re_raise_in_docstring = re.compile(
-        SphinxDocstring.re_raise_raw.replace(":", "@", 1), re.X | re.S
-    )
-
-    re_rtype_in_docstring = re.compile(
-        r"""
-        @                       # initial "at" symbol
-        (?:                     # Epytext keyword
-        rtype|returntype
-        )
-        :                       # final colon
-        """,
-        re.X | re.S,
-    )
-
-    re_returns_in_docstring = re.compile(r"@returns?:")
-
-    def has_property_returns(self):
-        if not self.doc:
-            return False
-
-        # If this is a property docstring, the summary is the return doc.
-        if self.has_property_type():
-            # The summary line is the return doc,
-            # so the first line must not be a known directive.
-            return not self.doc.lstrip().startswith("@")
-
-        return False
 
 
 class GoogleDocstring(Docstring):
@@ -558,7 +528,7 @@ class GoogleDocstring(Docstring):
         for line in section_match.group(2).splitlines():
             if not line.strip():
                 continue
-            indentation = space_indentation(line)
+            indentation = len(leading_space(line))
             if indentation < min_indentation:
                 break
 
@@ -650,14 +620,28 @@ class NumpyDocstring(GoogleDocstring):
         return bool(re.match(r"\s*-+$", line))
 
 
-DOCSTRING_TYPES = {
+DOCSTRING_TYPES: Dict[str, Docstring] = {
     "sphinx": SphinxDocstring,
-    "epytext": EpytextDocstring,
     "google": GoogleDocstring,
     "numpy": NumpyDocstring,
     "default": Docstring,
 }
-"""A map of the name of the docstring type to its class.
+"""A map of the name of the docstring type to its class."""
 
-:type: dict(str, type)
-"""
+
+def get_docstring_from_doc_node(
+    node: CHECKED_NODE_TYPE,
+) -> Optional[Docstring]:
+    if node.doc_node is None:
+        return None
+
+    for docstring_type in (
+        SphinxDocstring,
+        GoogleDocstring,
+        NumpyDocstring,
+    ):
+        docstring = docstring_type(node)
+        if docstring.is_valid():
+            return docstring
+
+    return Docstring(node)

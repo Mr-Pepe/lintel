@@ -97,6 +97,8 @@ Todos:
     [ ] '# noqa: D234' ignores single error on line
     [ ] '# noqa: D234,D345' ignores multiple errors on line
     [ ] Add behavior to docs
-        - File-level noqa can not specify single error codes anymore
+        - File-level noqa can not specify single error codes anymore -> It should maybe?
 
-# Add to doc that decorator stuff is probably not working the same anymore
+# TODO: Add to doc that decorator stuff is probably not working the same anymore
+
+# TODO: Import docstring tests from pylint

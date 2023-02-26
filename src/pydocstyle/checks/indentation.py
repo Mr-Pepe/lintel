@@ -5,13 +5,13 @@ from astroid import NodeNG
 from pydocstyle.checks import check
 from pydocstyle.config import Configuration
 from pydocstyle.docstring import Docstring
-from pydocstyle.utils import get_indents, has_content, leading_space, pairwise
+from pydocstyle.utils import CHECKED_NODE_TYPE, NODES_TO_CHECK
 from pydocstyle.violations import D206, D207, D208
 
 
-@check(NodeNG)
+@check(NODES_TO_CHECK)
 def check_indentation(
-    node: NodeNG, docstring: Docstring, config: Configuration
+    node: CHECKED_NODE_TYPE, docstring: Docstring, config: Configuration
 ) -> Generator[Union[D206, D207, D208], None, None]:
     """D206, D207, D208: The entire docstring should be indented same as code.
 
@@ -21,20 +21,19 @@ def check_indentation(
     if not docstring:
         return None
 
-    docstring_indent, line_indents = get_indents(node, docstring)
-
-    if len(line_indents) == 0:
+    if len(docstring.line_indents) == 0:
         return None
 
-    if "\t" in docstring_indent or any(
-        "\t" in line_indent for line_indent in line_indents
+    if "\t" in docstring.indent or any(
+        "\t" in line_indent for line_indent in docstring.line_indents
     ):
         yield D206()
 
     if (
-        len(line_indents) > 1 and min(line_indents[:-1]) > docstring_indent
-    ) or line_indents[-1] > docstring_indent:
+        len(docstring.line_indents) > 1
+        and min(docstring.line_indents[:-1]) > docstring.indent
+    ) or docstring.line_indents[-1] > docstring.indent:
         yield D208()
 
-    if min(line_indents) < docstring_indent:
+    if min(docstring.line_indents) < docstring.indent:
         yield D207()

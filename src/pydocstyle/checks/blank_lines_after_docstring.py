@@ -61,7 +61,7 @@ def _get_stuff_after_docstring(
 ) -> Tuple[List[str], List[str], int]:
     lines_after = [
         linecache.getline(node.root().file, l)
-        for l in range(node.doc_node.end_lineno + 1, node.end_lineno + 1)
+        for l in range(node.doc_node.end_lineno + 1, node.end_lineno + 2)
     ]
     blanks_after = list(takewhile(is_blank, lines_after))
     n_blanks_after = len(blanks_after)

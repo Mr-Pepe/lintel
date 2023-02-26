@@ -5,7 +5,7 @@ from functools import partial
 from itertools import dropwhile
 from typing import Callable, Iterable, List, Optional
 
-from astroid import NodeNG
+from astroid import Module, NodeNG
 
 from pydocstyle.utils import CHECKED_NODE_TYPE
 
@@ -43,7 +43,7 @@ class Error:
         self.node: CHECKED_NODE_TYPE = NodeNG()
         self.explanation = None  # type: Optional[str]
 
-    def set_context(self, node: NodeNG, explanation: str) -> None:
+    def set_context(self, node: CHECKED_NODE_TYPE, explanation: str) -> None:
         """Set the source code context for this error."""
         self.node = node
         self.explanation = explanation
@@ -58,6 +58,8 @@ class Error:
 
     @property
     def node_name(self):
+        if isinstance(self.node, Module):
+            return self.node.file
         return self.node.name
 
     @property

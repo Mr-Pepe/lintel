@@ -34,22 +34,52 @@ def test_strip_non_alphanumeric():
 @pytest.mark.parametrize(
     ("source", "expected"),
     [
-        ("# pydoclint: noqa", True),
-        ("#pydoclint:noqa", True),
-        ("#   pydoclint   :   noqa   ", True),
-        ("Some text\n#pydoclint:noqa\nSome more text", True),
-        ("Some text\n#pydoclint:noq\nSome more text", False),
-        ("# pydoclint: noqa # And something else", False),
-        ("# And something else # pydoclint: noqa", False),
-        ("", False),
-        ("# noqa", False),
-        ("#noqa", False),
-        ("pydoclint", False),
-        ("noqa", False),
+        ("# pydoclint: noqa", ["all"]),
+        ("#pydoclint:noqa", ["all"]),
+        ("#   pydoclint   :   noqa   ", ["all"]),
+        ("a = 1\n#pydoclint:noqa\n# Some more text", ["all"]),
+        ("# noqa: D100", ["D100"]),
+        ("# noqa: A123,D1234,D1,D100,D300", ["D1", "D100", "D300"]),
+        (
+            "def my_func(): # noqa: D1,D100,D300\n\t...",
+            [],
+        ),
+        ("# Some text\n#pydoclint:noq\n# Some more text", []),
+        ("# pydoclint: noqa # And something else", []),
+        ("# And something else # pydoclint: noqa", []),
+        ("", []),
+        ("# noqa", []),
+        ("#noqa", []),
+        ("#pydoclint", []),
     ],
 )
-def test_source_has_noqa(source: str, expected: bool) -> None:
-    assert utils.source_has_noqa(source) is expected
+def test_error_codes_to_skip_module(source: str, expected: bool) -> None:
+    node = astroid.parse(source)
+    assert utils.get_error_codes_to_skip(node) == expected
+
+
+@pytest.mark.parametrize(
+    ("source", "expected"),
+    [
+        (
+            "def my_func(): # noqa\n\t...",
+            ["all"],
+        ),
+        (
+            "def my_func():    #   noqa # and more\n\t...",
+            ["all"],
+        ),
+        (
+            "def my_func():    #   noqa: E501,D100,D200 # and more\n\t...",
+            ["D100", "D200"],
+        ),
+    ],
+)
+def test_error_codes_to_skip_class_and_function(
+    source: str, expected: bool
+) -> None:
+    node = next(astroid.parse(source).get_children())
+    assert utils.get_error_codes_to_skip(node) == expected
 
 
 @pytest.mark.parametrize(
@@ -63,7 +93,7 @@ def test_source_has_noqa(source: str, expected: bool) -> None:
     ],
 )
 def test_get_line_noqa(line: str, expected: list[str]) -> None:
-    assert utils.get_line_noqa(line) == expected
+    assert utils._get_line_noqa(line) == expected
 
 
 @pytest.mark.parametrize(
