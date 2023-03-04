@@ -28,11 +28,11 @@ def check_triple_double_quotes(
         # Allow ''' quotes if docstring contains """, because
         # otherwise """ quotes could not be expressed inside
         # docstring. Not in PEP 257.
-        regex = re.compile(r".*?[uU]?[rR]?'''[^'].*")
+        regex = re.compile(r".*?[uU]?[rR]?[^']'''[^'].*")
     else:
-        regex = re.compile(r'.*?[uU]?[rR]?"""[^"].*')
+        regex = re.compile(r'.*?[uU]?[rR]?([^"]|^)"""[^"\n].*')
 
-    if regex.match(docstring.raw.strip()):
+    if regex.match(docstring.raw):
         return None
 
     illegal_match = re.compile(r""".*?[uU]?[rR]?("+|'+).*""").match(
@@ -41,6 +41,9 @@ def check_triple_double_quotes(
     assert illegal_match is not None
 
     illegal_quotes = illegal_match.group(1)
+
+    if illegal_quotes == '"""':
+        return None
 
     return D300(illegal_quotes)
 

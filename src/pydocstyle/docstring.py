@@ -71,7 +71,7 @@ class Docstring:
     @property
     def raw(self) -> str:
         return "\n".join(
-            l
+            l.rstrip()
             for l in linecache.getlines(self.parent_node.root().file)[
                 self.node.fromlineno - 1 : self.node.end_lineno
             ]
@@ -93,7 +93,7 @@ class Docstring:
         lines = [
             next_line
             for first_line, next_line in pairwise(self.raw.split("\n"), "")
-            if has_content(next_line) and not first_line.endswith('\\')
+            if has_content(next_line) and not first_line.endswith("\\")
         ]
 
         line_indents = [leading_space(l) for l in lines]

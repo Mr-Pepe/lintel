@@ -20,6 +20,9 @@ def check_capitalized(
     if first_word in (first_word.upper(), first_word.capitalize()):
         return None
 
+    if first_word.startswith("'"):
+        return None
+
     for char in first_word:
         if char not in string.ascii_letters and char != "'":
             return None
