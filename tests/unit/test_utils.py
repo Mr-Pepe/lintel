@@ -1,3 +1,5 @@
+from typing import Set
+
 import astroid
 import pytest
 
@@ -34,23 +36,23 @@ def test_strip_non_alphanumeric():
 @pytest.mark.parametrize(
     ("source", "expected"),
     [
-        ("# pydoclint: noqa", ["all"]),
-        ("#pydoclint:noqa", ["all"]),
-        ("#   pydoclint   :   noqa   ", ["all"]),
-        ("a = 1\n#pydoclint:noqa\n# Some more text", ["all"]),
-        ("# noqa: D100", ["D100"]),
-        ("# noqa: A123,D1234,D1,D100,D300", ["D1", "D100", "D300"]),
+        ("# pydoclint: noqa", {"all"}),
+        ("#pydoclint:noqa", {"all"}),
+        ("#   pydoclint   :   noqa   ", {"all"}),
+        ("a = 1\n#pydoclint:noqa\n# Some more text", {"all"}),
+        ("# noqa: D100", {"D100"}),
+        ("# noqa: A123,D1234,D1,D100,D300", {"D1", "D100", "D300"}),
         (
             "def my_func(): # noqa: D1,D100,D300\n\t...",
-            [],
+            set(),
         ),
-        ("# Some text\n#pydoclint:noq\n# Some more text", []),
-        ("# pydoclint: noqa # And something else", []),
-        ("# And something else # pydoclint: noqa", []),
-        ("", []),
-        ("# noqa", []),
-        ("#noqa", []),
-        ("#pydoclint", []),
+        ("# Some text\n#pydoclint:noq\n# Some more text", set()),
+        ("# pydoclint: noqa # And something else", set()),
+        ("# And something else # pydoclint: noqa", set()),
+        ("", set()),
+        ("# noqa", set()),
+        ("#noqa", set()),
+        ("#pydoclint", set()),
     ],
 )
 def test_error_codes_to_skip_module(source: str, expected: bool) -> None:
@@ -63,15 +65,15 @@ def test_error_codes_to_skip_module(source: str, expected: bool) -> None:
     [
         (
             "def my_func(): # noqa\n\t...",
-            ["all"],
+            {"all"},
         ),
         (
             "def my_func():    #   noqa # and more\n\t...",
-            ["all"],
+            {"all"},
         ),
         (
             "def my_func():    #   noqa: E501,D100,D200 # and more\n\t...",
-            ["D100", "D200"],
+            {"D100", "D200"},
         ),
     ],
 )
@@ -85,11 +87,11 @@ def test_error_codes_to_skip_class_and_function(
 @pytest.mark.parametrize(
     ("line", "expected"),
     [
-        ("def func(): # noqa", ["all"]),
-        ("def func(): #   noqa   ", ["all"]),
-        ("def func(): #   noqa  # Another comment", ["all"]),
-        ("def func(): # Another comment #   noqa", ["all"]),
-        ("def func(): # Another comment #   noqa something", []),
+        ("def func(): # noqa", {"all"}),
+        ("def func(): #   noqa   ", {"all"}),
+        ("def func(): #   noqa  # Another comment", {"all"}),
+        ("def func(): # Another comment #   noqa", {"all"}),
+        ("def func(): # Another comment #   noqa something", set()),
     ],
 )
 def test_get_line_noqa(line: str, expected: list[str]) -> None:
@@ -115,9 +117,7 @@ def test_get_line_noqa(line: str, expected: list[str]) -> None:
         ),
     ],
 )
-def test_get_decorator_names(
-    code: str, expected_decorators: list[str]
-) -> None:
+def test_get_decorator_names(code: str, expected_decorators: Set[str]) -> None:
     node = list(
         f for f in astroid.parse(code).get_children() if f.name == "func"
     )[0]
