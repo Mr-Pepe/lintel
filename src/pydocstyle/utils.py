@@ -184,3 +184,18 @@ def is_dunder(node: CHECKED_NODE_TYPE) -> bool:
 
 def is_overloaded(function_: FunctionDef) -> bool:
     return "overload" in get_decorator_names(function_)
+
+
+def get_leading_words(line: str):
+    """Return any leading set of words from `line`.
+
+    For example, if `line` is "  Hello world!!!", returns "Hello world".
+    """
+    result = re.compile(r"[\w ]+").match(line.strip())
+    if result is not None:
+        return result.group()
+
+
+def is_ascii(string: str):
+    """Return a boolean indicating if `string` only has ascii characters."""
+    return all(ord(char) < 128 for char in string)

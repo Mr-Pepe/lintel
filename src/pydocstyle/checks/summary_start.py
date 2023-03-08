@@ -18,7 +18,7 @@ def check_multi_line_summary_start(
     D212: Multi-line docstring summary should start at the first line.
     D213: Multi-line docstring summary should start at the second line.
     """
-    lines = docstring.doc.split('\n')
+    lines = docstring.content.split('\n')
 
     if len(lines) <= 1:
         return None

@@ -1,5 +1,6 @@
 """Docstring violation definition."""
 
+import linecache
 from collections import namedtuple
 from functools import partial
 from itertools import dropwhile
@@ -50,7 +51,7 @@ class Error:
 
     @property
     def filename(self):
-        return self.node.file
+        return self.node.root().file
 
     @property
     def line(self):
@@ -76,11 +77,26 @@ class Error:
         """Return the source code lines for this error."""
         if self.node is None:
             return ''
-        lines = self.node.as_string().splitlines(keepends=True)
-        lines_stripped = list(
-            reversed(list(dropwhile(is_blank, reversed(lines))))
-        )
-        return lines_stripped
+
+        source = ""
+        lines = linecache.getlines(self.node.root().file)[
+            self.node.fromlineno - 1 : self.node.end_lineno
+        ]
+        offset = self.node.lineno
+        # Strip blank lines from beginning
+        lines = list(dropwhile(is_blank, lines))
+        # Strip blank lines from end
+        lines = list(reversed(list(dropwhile(is_blank, reversed(lines)))))
+        numbers_width = len(str(offset + len(lines)))
+        line_format = f'{{:{numbers_width}}}:{{}}'
+        for n, line in enumerate(lines):
+            if line and line != "\n":
+                line = ' ' + line
+            source += line_format.format(n + offset, line)
+            if n > 5:
+                source += '        ...\n'
+                break
+        return source
 
     def __str__(self) -> str:
         if self.explanation:

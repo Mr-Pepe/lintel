@@ -3,6 +3,7 @@
 import ast
 import re
 import string
+import sys
 import tokenize as tk
 from collections import namedtuple
 from itertools import chain, takewhile
@@ -11,6 +12,7 @@ from textwrap import dedent
 from typing import Generator, Optional, Tuple
 
 import astroid
+from astroid.exceptions import AstroidSyntaxError
 
 import pydocstyle.checks
 from pydocstyle.checks import Check, check
@@ -35,9 +37,13 @@ class ConventionChecker:
         source: str,
         config: Configuration = Configuration(),
     ) -> Generator:
-        module = astroid.parse(
-            source, module_name=filename.stem, path=filename.as_posix()
-        )
+        try:
+            module = astroid.parse(
+                source, module_name=filename.stem, path=filename.as_posix()
+            )
+        except AstroidSyntaxError as error:
+            yield error
+            return
 
         module_wide_skipped_errors = get_error_codes_to_skip(module)
 
@@ -166,30 +172,12 @@ def check_files(
                 config,
             ):
                 code = getattr(error, 'code', None)
-                if code in checked_codes:
+                if code in checked_codes or isinstance(
+                    error, AstroidSyntaxError
+                ):
                     yield error
         except OSError as error:
             log.warning('Error in file %s: %s', filename, error)
             yield error
         except tk.TokenError:
             yield SyntaxError('invalid syntax in file %s' % filename)
-
-
-def is_ascii(string):
-    """Return a boolean indicating if `string` only has ascii characters."""
-    return all(ord(char) < 128 for char in string)
-
-
-def get_leading_words(line):
-    """Return any leading set of words from `line`.
-
-    For example, if `line` is "  Hello world!!!", returns "Hello world".
-    """
-    result = re.compile(r"[\w ]+").match(line.strip())
-    if result is not None:
-        return result.group()
-
-
-def is_def_arg_private(arg_name):
-    """Return a boolean indicating if the argument name is private."""
-    return arg_name.startswith("_")

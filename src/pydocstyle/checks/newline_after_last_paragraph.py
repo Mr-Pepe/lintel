@@ -18,7 +18,7 @@ def check_newline_after_last_paragraph(
     Unless the entire docstring fits on a line, place the closing
     quotes on a line by themselves.
     """
-    lines = [l for l in docstring.doc.split('\n')]
+    lines = [l for l in docstring.content.split('\n')]
 
     if len(lines) <= 1:
         return None

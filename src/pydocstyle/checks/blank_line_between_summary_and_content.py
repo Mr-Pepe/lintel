@@ -20,7 +20,7 @@ def check_single_blank_line_after_summary(
     docstring, followed by a blank line, followed by a more elaborate
     description.
     """
-    lines = docstring.doc.strip().split('\n')
+    lines = docstring.content.strip().split('\n')
 
     if len(lines) <= 1:
         return None

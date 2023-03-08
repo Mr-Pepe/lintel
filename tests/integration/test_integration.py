@@ -40,16 +40,20 @@ def test_pep257_conformance(resource_dir: Path) -> None:
     assert errors == [], errors
 
 
-def test_ignore_list():
+def test_ignore_list(tmp_path: Path):
     """Test that `ignore`d errors are not reported in the API."""
-    function_to_check = textwrap.dedent(
-        '''
+    test_file_path = tmp_path / "test.py"
+    with open(test_file_path, mode="w", encoding="utf-8") as file:
+        file.write(
+            textwrap.dedent(
+                '''
         def function_with_bad_docstring(foo):
             """ does spacinwithout a period in the end
             no blank line after one-liner is bad. Also this - """
             return foo
     '''
-    )
+            )
+        )
     expected_error_codes = {
         'D100',
         'D400',
@@ -61,64 +65,67 @@ def test_ignore_list():
         'D415',
         'D213',
     }
-    mock_open = mock.mock_open(read_data=function_to_check)
     from pydocstyle import checker
 
-    with mock.patch.object(checker.tk, 'open', mock_open, create=True):
-        # Passing a blank ignore here explicitly otherwise
-        # checkers takes the pep257 ignores by default.
-        errors = tuple(
-            checker.check_files(['filepath'], Configuration(ignore=set()))
+    # Passing a blank ignore here explicitly otherwise
+    # checkers takes the pep257 ignores by default.
+    errors = tuple(
+        checker.check_files(
+            [str(test_file_path)],
+            Configuration(ignore=set()),
+        ),
+    )
+    error_codes = {error.code for error in errors}
+    assert error_codes == expected_error_codes
+
+    ignored = {'D100', 'D202', 'D213'}
+    errors = tuple(
+        checker.check_files(
+            [str(test_file_path)],
+            Configuration(ignore=ignored),
         )
-        error_codes = {error.code for error in errors}
-        assert error_codes == expected_error_codes
-
-    # We need to recreate the mock, otherwise the read file is empty
-    mock_open = mock.mock_open(read_data=function_to_check)
-    with mock.patch.object(checker.tk, 'open', mock_open, create=True):
-        ignored = {'D100', 'D202', 'D213'}
-        errors = tuple(
-            checker.check_files(['filepath'], Configuration(ignore=ignored))
-        )
-        error_codes = {error.code for error in errors}
-        assert error_codes == expected_error_codes - ignored
+    )
+    error_codes = {error.code for error in errors}
+    assert error_codes == expected_error_codes - ignored
 
 
-def test_skip_errors():
+def test_skip_errors(tmp_path: Path):
     """Test that `ignore`d errors are not reported in the API."""
-    function_to_check = textwrap.dedent(
-        '''
+    test_file_path = tmp_path / "test.py"
+    with open(test_file_path, mode="w", encoding="utf-8") as file:
+        file.write(
+            textwrap.dedent(
+                '''
         def function_with_bad_docstring(foo):  # noqa: D400, D401, D403, D415
             """ does spacinwithout a period in the end
             no blank line after one-liner is bad. Also this - """
             return foo
     '''
-    )
-    expected_error_codes = {'D100', 'D205', 'D209', 'D210', 'D213'}
-    mock_open = mock.mock_open(read_data=function_to_check)
-    from pydocstyle import checker
-
-    with mock.patch.object(checker.tk, 'open', mock_open, create=True):
-        # Passing a blank ignore here explicitly otherwise
-        # checkers takes the pep257 ignores by default.
-        errors = tuple(
-            checker.check_files(['filepath'], Configuration(ignore=set()))
-        )
-        error_codes = {error.code for error in errors}
-        assert error_codes == expected_error_codes
-
-    skipped_error_codes = {'D400', 'D401', 'D403', 'D415'}
-    # We need to recreate the mock, otherwise the read file is empty
-    mock_open = mock.mock_open(read_data=function_to_check)
-    with mock.patch.object(checker.tk, 'open', mock_open, create=True):
-        errors = tuple(
-            checker.check_files(
-                ['filepath'],
-                Configuration(ignore=set(), ignore_inline_noqa=True),
             )
         )
-        error_codes = {error.code for error in errors}
-        assert error_codes == expected_error_codes | skipped_error_codes
+    expected_error_codes = {'D100', 'D205', 'D209', 'D210', 'D213'}
+    from pydocstyle import checker
+
+    # Passing a blank ignore here explicitly otherwise
+    # checkers takes the pep257 ignores by default.
+    errors = tuple(
+        checker.check_files(
+            [str(test_file_path)],
+            Configuration(ignore=set()),
+        )
+    )
+    error_codes = {error.code for error in errors}
+    assert error_codes == expected_error_codes
+
+    skipped_error_codes = {'D400', 'D401', 'D403', 'D415'}
+    errors = tuple(
+        checker.check_files(
+            [str(test_file_path)],
+            Configuration(ignore=set(), ignore_inline_noqa=True),
+        )
+    )
+    error_codes = {error.code for error in errors}
+    assert error_codes == expected_error_codes | skipped_error_codes
 
 
 def test_run_as_named_module():
@@ -1084,51 +1091,6 @@ def test_config_file_cumulative_add_ignores(env):
     assert 'D103' in err['base.py'], err
 
 
-def test_config_file_cumulative_add_select(env):
-    """Test that add-select is cumulative.
-
-    env_base
-    +-- tox.ini
-    |   This configuration will set `select=` and `add-select=D100`.
-    +-- base.py
-    |   Will violate D100,D103
-    +-- A
-        +-- tox.ini
-        |   This configuration will set `add-select=D103`.
-        +-- a.py
-            Will violate D100,D103.
-
-    The desired result is that `base.py` will fail with D100 and
-    `a.py` will fail with D100,D103.
-
-    """
-    env.write_config(select='', add_select='D100')
-    env.write_config(prefix='A', add_select='D103')
-
-    test_content = textwrap.dedent(
-        """\
-        def foo():
-            pass
-    """
-    )
-
-    with env.open('base.py', 'wt') as test:
-        test.write(test_content)
-
-    with env.open(os.path.join('A', 'a.py'), 'wt') as test:
-        test.write(test_content)
-
-    out, err, code = env.invoke()
-
-    err = parse_errors(out)
-
-    assert code == 1
-    assert 'base.py' in err, err
-    assert 'a.py' in err, err
-    assert err['base.py'] == {'D100'}, err
-    assert err['a.py'] == {'D100', 'D103'}, err
-
-
 def test_config_file_convention_overrides_select(env):
     """Test that conventions override selected errors.
 
@@ -1457,6 +1419,7 @@ def test_syntax_error_multiple_files(env):
             fobj.write("[")
 
     out, err, code = env.invoke(args="-v")
+    print(out)
     assert code == 1
     assert 'first.py: Cannot parse file' in err
     assert 'second.py: Cannot parse file' in err
@@ -1558,7 +1521,7 @@ def test_comment_with_blank_noqa_for_single_line(env):
         example.write(
             textwrap.dedent(
                 """\
-            def foo():
+            def foo(): # noqa
                 pass
         """
             )

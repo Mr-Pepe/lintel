@@ -15,7 +15,7 @@ def check_capitalized(
     _: FunctionDef, docstring: Docstring, __: Configuration
 ) -> Optional[D403]:
     """D403: First word of the first line should be properly capitalized."""
-    first_word: str = docstring.doc.split()[0]
+    first_word: str = docstring.content.split()[0]
 
     if first_word in (first_word.upper(), first_word.capitalize()):
         return None

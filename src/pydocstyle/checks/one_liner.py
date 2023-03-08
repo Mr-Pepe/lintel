@@ -15,7 +15,7 @@ def check_one_liner(
     _: NodeNG, docstring: Docstring, config: Configuration
 ) -> Optional[D200]:
     """D200: One-liner docstrings have to fit on one line with quotes."""
-    lines = docstring.doc.split('\n')
+    lines = docstring.content.split('\n')
 
     non_empty_lines = sum(1 for l in lines if has_content(l))
 

@@ -21,7 +21,7 @@ def check_not_signature(
     if not docstring:
         return None
 
-    first_line = docstring.doc.strip().split('\n')[0]
+    first_line = docstring.content.strip().split('\n')[0]
 
     if f"{function.name}(" not in first_line.replace(' ', ''):
         return None

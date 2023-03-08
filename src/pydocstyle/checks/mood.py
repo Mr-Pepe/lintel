@@ -28,7 +28,7 @@ def check_imperative_mood(
     if _is_test(function_) or _is_property(function_, config):
         return None
 
-    stripped = docstring.doc.strip()
+    stripped = docstring.content.strip()
 
     if not stripped:
         return None

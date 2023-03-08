@@ -2,6 +2,8 @@
 import logging
 import sys
 
+from astroid.exceptions import AstroidSyntaxError
+
 from pydocstyle.logging import log
 
 from .checker import check_files
@@ -37,7 +39,7 @@ def run_pydocstyle():
     Error.explain = run_conf.explain
     Error.source = run_conf.source
 
-    errors = []
+    error_count = 0
     try:
         for (
             filename,
@@ -50,23 +52,25 @@ def run_pydocstyle():
                 ignore_decorators=ignore_decorators,
                 property_decorators=property_decorators,
             )
-            errors.extend(check_files((filename,), config))
+            for error in check_files((filename,), config):
+                if hasattr(error, 'code'):
+                    sys.stdout.write('%s\n' % error)
+
+                if isinstance(error, AstroidSyntaxError):
+                    sys.stderr.write(f"{filename}: Cannot parse file")
+
+                error_count += 1
     except IllegalConfiguration as error:
         # An illegal configuration file was found during file generation.
         log.error(error.args[0])
         return ReturnCode.invalid_options
 
-    count = 0
-    for error in errors:  # type: ignore
-        if hasattr(error, 'code'):
-            sys.stdout.write('%s\n' % error)
-        count += 1
-    if count == 0:
+    if error_count == 0:
         exit_code = ReturnCode.no_violations_found
     else:
         exit_code = ReturnCode.violations_found
     if run_conf.count:
-        print(count)
+        print(error_count)
     return exit_code
 
 

@@ -34,7 +34,7 @@ def _check_ends_with(
     if not docstring:
         return None
 
-    summary_line: str = docstring.doc.strip().split('\n')[0]
+    summary_line: str = docstring.content.strip().split('\n')[0]
 
     if summary_line.endswith(chars):
         return None

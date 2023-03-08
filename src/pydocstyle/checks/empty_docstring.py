@@ -15,7 +15,7 @@ def check_empty_docstring(
     _: NodeNG, docstring: Optional[Docstring], __: Configuration
 ) -> Optional[D419]:
     """D419: Docstring is empty."""
-    if has_content(docstring.doc):
+    if has_content(docstring.content):
         return None
 
     return D419()

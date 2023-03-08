@@ -24,7 +24,7 @@ def check_triple_double_quotes(
     Note: Exception to this is made if the docstring contains
         """ quotes in its body.
     '''
-    if '"""' in docstring.doc:
+    if '"""' in docstring.content:
         # Allow ''' quotes if docstring contains """, because
         # otherwise """ quotes could not be expressed inside
         # docstring. Not in PEP 257.
@@ -63,7 +63,7 @@ def check_backslashes(
     '''
     # Just check that docstring is raw, check_triple_double_quotes
     # ensures the correct quotes.
-    if not re.compile(r'\\[^\nuN]').search(docstring.doc):
+    if not re.compile(r'\\[^\nuN]').search(docstring.content):
         # No backslash in docstring
         return None
 
