@@ -51,7 +51,7 @@ def check_no_blank_lines_before_class_docstring(
 
 def _get_n_blanks_before_docstring(
     node: Union[FunctionDef, ClassDef], docstring: Docstring
-) -> Tuple[List[str], List[str], int]:
+) -> int:
     n_blanks = 0
     line = node.doc_node.fromlineno - 1
 

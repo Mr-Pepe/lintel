@@ -37,7 +37,7 @@ def test_message_with_insufficient_parameters():
         assert error.message
 
 
-def test_lines(tmp_path: Path):
+def test_lines(tmp_path: Path) -> None:
     """Test proper printing of source lines, including blank line trimming."""
     test_file_path = tmp_path / "test.py"
 

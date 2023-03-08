@@ -36,7 +36,7 @@ class Docstring:
         )
 
     @property
-    def indent(self) -> List[str]:
+    def indent(self) -> str:
         """The indentation used for the first line of the docstring."""
         # Get the text before the quotation marks on the first line of the docstring
         pre_text = re.findall(
@@ -46,7 +46,7 @@ class Docstring:
         return "".join(' ' for _ in pre_text)
 
     @property
-    def line_indents(self) -> list[str]:
+    def line_indents(self) -> List[str]:
         """The indentation of non-empty lines in the docstring."""
         lines = [
             next_line

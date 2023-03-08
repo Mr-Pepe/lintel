@@ -1,4 +1,4 @@
-from typing import Set
+from typing import List, Set
 
 import astroid
 import pytest
@@ -94,7 +94,7 @@ def test_error_codes_to_skip_class_and_function(
         ("def func(): # Another comment #   noqa something", set()),
     ],
 )
-def test_get_line_noqa(line: str, expected: list[str]) -> None:
+def test_get_line_noqa(line: str, expected: List[str]) -> None:
     assert utils._get_line_noqa(line) == expected
 
 

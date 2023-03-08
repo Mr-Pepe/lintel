@@ -2,7 +2,7 @@
 import linecache
 import re
 from itertools import tee, zip_longest
-from typing import Any, Iterable, List, Set, Tuple, TypeVar, Union
+from typing import Any, Iterable, List, Optional, Set, Tuple, TypeVar, Union
 
 import astroid
 from astroid import ClassDef, FunctionDef, Module
@@ -127,8 +127,8 @@ def _get_definition_line(node: Union[FunctionDef, ClassDef]) -> str:
     raise ValueError(f"'{node.name}' does not contain a definition line.")
 
 
-def get_decorator_names(node: CHECKED_NODE_TYPE) -> list[str]:
-    decorator_names: list[str] = []
+def get_decorator_names(node: CHECKED_NODE_TYPE) -> List[str]:
+    decorator_names: List[str] = []
 
     decorators = [
         child_node
@@ -186,7 +186,7 @@ def is_overloaded(function_: FunctionDef) -> bool:
     return "overload" in get_decorator_names(function_)
 
 
-def get_leading_words(line: str):
+def get_leading_words(line: str) -> str:
     """Return any leading set of words from `line`.
 
     For example, if `line` is "  Hello world!!!", returns "Hello world".
@@ -195,7 +195,9 @@ def get_leading_words(line: str):
     if result is not None:
         return result.group()
 
+    return ""
 
-def is_ascii(string: str):
+
+def is_ascii(string: str) -> bool:
     """Return a boolean indicating if `string` only has ascii characters."""
     return all(ord(char) < 128 for char in string)

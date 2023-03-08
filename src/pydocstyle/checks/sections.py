@@ -1,28 +1,48 @@
 import re
 from collections import namedtuple
+from dataclasses import dataclass
 from textwrap import dedent
-from typing import List, Set
+from typing import Any, Generator, List, Optional, Set, Tuple, Union
 
 from astroid import FunctionDef
 
-from pydocstyle import violations
 from pydocstyle.checks import check
 from pydocstyle.config import Configuration
 from pydocstyle.docstring import Docstring
 from pydocstyle.utils import (
     CHECKED_NODE_TYPE,
     NODES_TO_CHECK,
-    get_decorator_names,
     get_leading_words,
     is_blank,
     leading_space,
     pairwise,
 )
+from pydocstyle.violations import (
+    D214,
+    D215,
+    D405,
+    D406,
+    D407,
+    D408,
+    D409,
+    D410,
+    D411,
+    D412,
+    D413,
+    D414,
+    D416,
+    D417,
+)
 
 
-def is_def_arg_private(arg_name: str) -> bool:
-    """Return a boolean indicating if the argument name is private."""
-    return arg_name.startswith("_")
+@dataclass
+class SectionContext:
+    section_name: str
+    previous_line: str
+    line: str
+    following_lines: List[str]
+    original_index: int
+    is_last_section: bool
 
 
 NUMPY_SECTION_NAMES = (
@@ -182,30 +202,30 @@ def _check_blanks_and_section_underline(section_name, context, indentation):
         blank_lines_after_header += 1
     else:
         # There are only blank lines after the header.
-        yield violations.D407(section_name)
-        yield violations.D414(section_name)
+        yield D407(section_name)
+        yield D414(section_name)
         return
 
     non_empty_line = context.following_lines[blank_lines_after_header]
     dash_line_found = ''.join(set(non_empty_line.strip())) == '-'
 
     if not dash_line_found:
-        yield violations.D407(section_name)
+        yield D407(section_name)
         if blank_lines_after_header > 0:
-            yield violations.D412(section_name)
+            yield D412(section_name)
     else:
         if blank_lines_after_header > 0:
-            yield violations.D408(section_name)
+            yield D408(section_name)
 
         if non_empty_line.strip() != "-" * len(section_name):
-            yield violations.D409(
+            yield D409(
                 len(section_name),
                 section_name,
                 len(non_empty_line.strip()),
             )
 
         if leading_space(non_empty_line) > indentation:
-            yield violations.D215(section_name)
+            yield D215(section_name)
 
         line_after_dashes_index = blank_lines_after_header + 1
         # If the line index after the dashes is in range (perhaps we have
@@ -219,16 +239,18 @@ def _check_blanks_and_section_underline(section_name, context, indentation):
                     line_after_dashes_index:
                 ]
                 if not is_blank(''.join(rest_of_lines)):
-                    yield violations.D412(section_name)
+                    yield D412(section_name)
                 else:
-                    yield violations.D414(section_name)
+                    yield D414(section_name)
         else:
-            yield violations.D414(section_name)
+            yield D414(section_name)
 
 
 def _check_common_section(
-    docstring: Docstring, context, valid_section_names: List[str]
-):
+    docstring: Docstring,
+    context: SectionContext,
+    valid_section_names: Tuple[str, ...],
+) -> Generator[Union[D405, D214, D413, D410, D411], None, None]:
     """D4{05,10,11,13}, D214: Section name checks.
 
     Check for valid section names. Checks that:
@@ -246,21 +268,21 @@ def _check_common_section(
         context.section_name not in valid_section_names
         and capitalized_section in valid_section_names
     ):
-        yield violations.D405(capitalized_section, context.section_name)
+        yield D405(capitalized_section, context.section_name)
 
     if leading_space(context.line) > indentation:
-        yield violations.D214(capitalized_section)
+        yield D214(capitalized_section)
 
     if not context.following_lines or not is_blank(
         context.following_lines[-1]
     ):
         if context.is_last_section:
-            yield violations.D413(capitalized_section)
+            yield D413(capitalized_section)
         else:
-            yield violations.D410(capitalized_section)
+            yield D410(capitalized_section)
 
     if not is_blank(context.previous_line):
-        yield violations.D411(capitalized_section)
+        yield D411(capitalized_section)
 
     yield from _check_blanks_and_section_underline(
         capitalized_section, context, indentation
@@ -268,8 +290,8 @@ def _check_common_section(
 
 
 def _check_numpy_section(
-    node: CHECKED_NODE_TYPE, docstring: Docstring, context
-):
+    node: CHECKED_NODE_TYPE, docstring: Docstring, context: SectionContext
+) -> Generator[D406, None, None]:
     """D406: NumPy-style section name checks.
 
     Check for valid section names. Checks that:
@@ -285,13 +307,15 @@ def _check_numpy_section(
     suffix = context.line.strip().lstrip(context.section_name)
 
     if suffix:
-        yield violations.D406(capitalized_section, context.line.strip())
+        yield D406(capitalized_section, context.line.strip())
 
     if capitalized_section == "Parameters":
         yield from _check_parameters_section(node, context)
 
 
-def _check_parameters_section(node: CHECKED_NODE_TYPE, context):
+def _check_parameters_section(
+    node: CHECKED_NODE_TYPE, context: SectionContext
+) -> Generator:
     """D417: `Parameters` section check for numpy style.
 
     Check for a valid `Parameters` section. Checks that:
@@ -337,7 +361,9 @@ def _check_parameters_section(node: CHECKED_NODE_TYPE, context):
     yield from _check_missing_args(node, docstring_args)
 
 
-def _check_args_section(node, context):
+def _check_args_section(
+    node: CHECKED_NODE_TYPE, context: SectionContext
+) -> Generator:
     """D417: `Args` section checks.
 
     Check for a valid `Args` or `Argument` section. Checks that:
@@ -395,7 +421,9 @@ def _check_args_section(node, context):
     yield from _check_missing_args(node, docstring_args)
 
 
-def _check_missing_args(node: CHECKED_NODE_TYPE, docstring_args: Set[str]):
+def _check_missing_args(
+    node: CHECKED_NODE_TYPE, docstring_args: Set[str]
+) -> Generator[D417, None, None]:
     """D417: Yield error for missing arguments in docstring.
 
     Given a list of arguments found in the docstring and the
@@ -414,7 +442,7 @@ def _check_missing_args(node: CHECKED_NODE_TYPE, docstring_args: Set[str]):
         missing_args = required_args - docstring_args
 
         if missing_args:
-            yield violations.D417(", ".join(sorted(missing_args)), node.name)
+            yield D417(", ".join(sorted(missing_args)), node.name)
 
 
 def _check_google_section(node, docstring, context):
@@ -433,13 +461,15 @@ def _check_google_section(node, docstring, context):
     yield from _check_common_section(docstring, context, GOOGLE_SECTION_NAMES)
     suffix = context.line.strip().lstrip(context.section_name)
     if suffix != ":":
-        yield violations.D416(capitalized_section + ":", context.line.strip())
+        yield D416(capitalized_section + ":", context.line.strip())
 
     if capitalized_section in ("Args", "Arguments"):
         yield from _check_args_section(node, context)
 
 
-def _get_section_contexts(lines: List[str], valid_section_names: List[str]):
+def _get_section_contexts(
+    lines: List[str], valid_section_names: Tuple[str, ...]
+) -> Generator[SectionContext, None, None]:
     """Generate `SectionContext` objects for valid sections.
 
     Given a list of `valid_section_names`, generate an
@@ -463,18 +493,6 @@ def _get_section_contexts(lines: List[str], valid_section_names: List[str]):
     suspected_section_indices = [
         i for i, line in enumerate(lines) if _suspected_as_section(line)
     ]
-
-    SectionContext = namedtuple(
-        'SectionContext',
-        (
-            'section_name',
-            'previous_line',
-            'line',
-            'following_lines',
-            'original_index',
-            'is_last_section',
-        ),
-    )
 
     # First - create a list of possible contexts. Note that the
     # `following_lines` member is until the end of the docstring.
@@ -507,7 +525,9 @@ def _get_section_contexts(lines: List[str], valid_section_names: List[str]):
         )
 
 
-def _check_numpy_sections(node: CHECKED_NODE_TYPE, docstring: Docstring):
+def _check_numpy_sections(
+    node: CHECKED_NODE_TYPE, docstring: Docstring
+) -> Generator[Any, None, bool]:
     """NumPy-style docstring sections checks.
 
     Check the general format of a sectioned docstring:
@@ -537,7 +557,9 @@ def _check_numpy_sections(node: CHECKED_NODE_TYPE, docstring: Docstring):
     return found_any_numpy_section
 
 
-def _check_google_sections(node: CHECKED_NODE_TYPE, docstring: Docstring):
+def _check_google_sections(
+    node: CHECKED_NODE_TYPE, docstring: Docstring
+) -> Generator:
     """Google-style docstring section checks.
 
     Check the general format of a sectioned docstring:
@@ -563,8 +585,8 @@ def _check_google_sections(node: CHECKED_NODE_TYPE, docstring: Docstring):
 
 @check(NODES_TO_CHECK)
 def check_docstring_sections(
-    node: CHECKED_NODE_TYPE, docstring: Docstring, config: Configuration
-):
+    node: CHECKED_NODE_TYPE, docstring: Docstring, _: Configuration
+) -> Generator:
     """Check for docstring sections."""
 
     lines = docstring.content.split("\n")

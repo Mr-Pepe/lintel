@@ -9,7 +9,7 @@ from collections import namedtuple
 from itertools import chain, takewhile
 from pathlib import Path
 from textwrap import dedent
-from typing import Generator, Optional, Tuple
+from typing import Generator, List, Optional, Tuple
 
 import astroid
 from astroid.exceptions import AstroidSyntaxError
@@ -41,8 +41,8 @@ class ConventionChecker:
             module = astroid.parse(
                 source, module_name=filename.stem, path=filename.as_posix()
             )
-        except AstroidSyntaxError as error:
-            yield error
+        except AstroidSyntaxError as parsing_error:
+            yield parsing_error
             return
 
         module_wide_skipped_errors = get_error_codes_to_skip(module)
@@ -93,15 +93,9 @@ class ConventionChecker:
                 if not isinstance(node, this_check._node_type):
                     continue
 
-                error = None
+                error = this_check(node, docstring, config)
 
-                # TODO: Remove try clause when all checks have been extracted
-                try:
-                    error = this_check(self, node, docstring, config)
-                except TypeError:
-                    error = this_check(node, docstring, config)
-
-                errors: list[Error] = (
+                errors: List[Error] = (
                     error if hasattr(error, '__iter__') else [error]
                 )
 

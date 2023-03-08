@@ -40,7 +40,7 @@ def test_pep257_conformance(resource_dir: Path) -> None:
     assert errors == [], errors
 
 
-def test_ignore_list(tmp_path: Path):
+def test_ignore_list(tmp_path: Path) -> None:
     """Test that `ignore`d errors are not reported in the API."""
     test_file_path = tmp_path / "test.py"
     with open(test_file_path, mode="w", encoding="utf-8") as file:
@@ -89,7 +89,7 @@ def test_ignore_list(tmp_path: Path):
     assert error_codes == expected_error_codes - ignored
 
 
-def test_skip_errors(tmp_path: Path):
+def test_skip_errors(tmp_path: Path) -> None:
     """Test that `ignore`d errors are not reported in the API."""
     test_file_path = tmp_path / "test.py"
     with open(test_file_path, mode="w", encoding="utf-8") as file:

@@ -18,5 +18,7 @@ def check_overload(
     Functions that are decorated with @overload are definitions,
     and are for the benefit of the type checker only.
     """
-    if is_overloaded(function_):
-        return D418()
+    if not is_overloaded(function_):
+        return None
+
+    return D418()
