@@ -85,6 +85,20 @@ Todos:
 
 # TODO: Add check for descriptive mood
 # TODO: Add descriptive mood check to Google convention
-# Use astroid
-# Make applicable conventions a check property
-# Make select and ignore usable together
+# TODO: Use astroid
+# TODO: Make applicable conventions a check property
+# TODO: Make select and ignore usable together
+# TODO: Switch to GPL
+# TODO: Rename to pydoclint
+
+# TODO Use noqa as used by Flake 8
+    [x] '# pydoclint: noqa' Skips entire file
+    [ ] '# noqa' excludes line
+    [ ] '# noqa: D234' ignores single error on line
+    [ ] '# noqa: D234,D345' ignores multiple errors on line
+    [ ] Add behavior to docs
+        - File-level noqa can not specify single error codes anymore -> It should maybe?
+
+# TODO: Add to doc that decorator stuff is probably not working the same anymore
+
+# TODO: Import docstring tests from pylint

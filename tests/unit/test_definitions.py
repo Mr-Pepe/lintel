@@ -54,5 +54,5 @@ def test_complex_file(test_case: str, resource_dir: Path) -> None:
         assert isinstance(error, Error)
 
     assert case_module.expectation.expected == {
-        (e.definition.name, e.message) for e in results
+        (e.node_name, e.message) for e in results
     }

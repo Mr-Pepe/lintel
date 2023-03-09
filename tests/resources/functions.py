@@ -1,6 +1,6 @@
 # fmt: off
 
-"""A valid module docstrings."""
+"""A valid module docstring."""
 
 from .expected import Expectation
 
@@ -25,7 +25,7 @@ def func_with_space_after():
 def func_with_inner_func_after():
     """Test a function with inner function after docstring."""
 
-    def inner():
+    def inner_after():
         pass
 
     pass
@@ -34,7 +34,7 @@ def func_with_inner_func_after():
 def func_with_inner_async_func_after():
     """Test a function with inner async function after docstring."""
 
-    async def inner():
+    async def inner_async():
         pass
 
     pass
@@ -49,7 +49,7 @@ def func_with_inner_decorated_func_after():
     """Test a function with inner decorated function after docstring."""
 
     @fake_decorator
-    def inner():
+    def inner_decorated():
         pass
 
     pass
@@ -59,7 +59,7 @@ def func_with_inner_decorated_async_func_after():
     """Test a function with inner decorated async function after docstring."""
 
     @fake_decorator
-    async def inner():
+    async def inner_async_decoreated():
         pass
 
     pass
@@ -68,7 +68,7 @@ def func_with_inner_decorated_async_func_after():
 def func_with_inner_class_after():
     """Test a function with inner class after docstring."""
 
-    class inner:
+    class inner_class:
         pass
 
     pass

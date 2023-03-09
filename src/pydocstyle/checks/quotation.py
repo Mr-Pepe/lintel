@@ -1,16 +1,19 @@
-import ast
+import linecache
 import re
 from typing import Optional
 
+from astroid import NodeNG
+
 from pydocstyle.checks import check
 from pydocstyle.config import Configuration
-from pydocstyle.parser import Definition
+from pydocstyle.docstring import Docstring
+from pydocstyle.utils import CHECKED_NODE_TYPE, NODES_TO_CHECK
 from pydocstyle.violations import D300, D301
 
 
-@check(Definition)
+@check(NODES_TO_CHECK)
 def check_triple_double_quotes(
-    _: Definition, docstring: str, config: Configuration
+    node: CHECKED_NODE_TYPE, docstring: Docstring, _: Configuration
 ) -> Optional[D300]:
     r'''D300: Use """triple double quotes""".
 
@@ -21,31 +24,33 @@ def check_triple_double_quotes(
     Note: Exception to this is made if the docstring contains
         """ quotes in its body.
     '''
-    if not docstring:
-        return None
-
-    if '"""' in ast.literal_eval(docstring):
+    if '"""' in docstring.content:
         # Allow ''' quotes if docstring contains """, because
         # otherwise """ quotes could not be expressed inside
         # docstring. Not in PEP 257.
-        regex = re.compile(r"[uU]?[rR]?'''[^'].*")
+        regex = re.compile(r".*?[uU]?[rR]?[^']'''[^'].*")
     else:
-        regex = re.compile(r'[uU]?[rR]?"""[^"].*')
+        regex = re.compile(r'.*?[uU]?[rR]?([^"]|^)"""[^"\n].*')
 
-    if regex.match(docstring):
+    if regex.match(docstring.raw):
         return None
 
-    illegal_match = re.compile(r"""[uU]?[rR]?("+|'+).*""").match(docstring)
+    illegal_match = re.compile(r""".*?[uU]?[rR]?("+|'+).*""").match(
+        docstring.raw
+    )
     assert illegal_match is not None
 
     illegal_quotes = illegal_match.group(1)
 
+    if illegal_quotes == '"""':
+        return None
+
     return D300(illegal_quotes)
 
 
-@check(Definition)
+@check(NODES_TO_CHECK)
 def check_backslashes(
-    _: Definition, docstring: str, config: Configuration
+    _: CHECKED_NODE_TYPE, docstring: Docstring, __: Configuration
 ) -> Optional[D301]:
     r'''D301: Use r""" if any backslashes in a docstring.
 
@@ -58,14 +63,11 @@ def check_backslashes(
     '''
     # Just check that docstring is raw, check_triple_double_quotes
     # ensures the correct quotes.
-    if not docstring:
-        return None
-
-    if not re.compile(r'\\[^\nuN]').search(docstring):
+    if not re.compile(r'\\[^\nuN]').search(docstring.content):
         # No backslash in docstring
         return None
 
-    if docstring.startswith(('r', 'ur')):
+    if docstring.raw.strip().startswith(('r', 'ur')):
         return None
 
     return D301()

@@ -2,12 +2,20 @@
 
 import collections
 import textwrap
+from pathlib import Path
 
+import astroid
 import pytest
 
 from pydocstyle.violations import Error
 
-MockDefinition = collections.namedtuple('MockDefinition', ['source', 'start'])
+
+class MockDefinition:
+    def __init__(self, source: str) -> None:
+        self.source = source
+
+    def as_string(self) -> str:
+        return self.source
 
 
 def test_message_without_context():
@@ -29,27 +37,40 @@ def test_message_with_insufficient_parameters():
         assert error.message
 
 
-def test_lines():
+def test_lines(tmp_path: Path) -> None:
     """Test proper printing of source lines, including blank line trimming."""
-    error = Error('CODE', 'an error', None)
-    definition = MockDefinition(
-        source=textwrap.dedent(
-            '''
-            def foo():
-                """A docstring."""
+    test_file_path = tmp_path / "test.py"
 
-                pass
+    with open(test_file_path, mode="w", encoding="utf-8") as file:
+        file.write(
+            textwrap.dedent(
+                '''
+
+
+
+                def foo():
+                    """A docstring."""
+
+                    pass
             '''
-        ).lstrip(),
-        start=424,
-    )
-    error.set_context(definition, None)
+            )
+        )
+
+    with open(test_file_path, mode="r", encoding="utf-8") as file:
+        node = list(
+            astroid.parse(
+                file.read(), module_name="test", path=str(test_file_path)
+            ).get_children()
+        )[0]
+
+    error = Error('CODE', 'an error', None)
+    error.set_context(node, None)
     print(error.lines)
     assert error.lines == textwrap.dedent(
         '''\
-        424: def foo():
-        425:     """A docstring."""
-        426:
-        427:     pass
+        5: def foo():
+        6:     """A docstring."""
+        7:
+        8:     pass
     '''
     )

@@ -1,14 +1,16 @@
 from typing import Optional, Union
 
+from astroid import ClassDef, FunctionDef, Module
+
 from pydocstyle.checks import check
 from pydocstyle.config import Configuration
-from pydocstyle.parser import (
-    Class,
-    Function,
-    Method,
-    Module,
-    NestedClass,
-    Package,
+from pydocstyle.docstring import Docstring
+from pydocstyle.utils import (
+    VARIADIC_MAGIC_METHODS,
+    get_decorator_names,
+    is_dunder,
+    is_overloaded,
+    is_private,
 )
 from pydocstyle.violations import (
     D100,
@@ -22,90 +24,58 @@ from pydocstyle.violations import (
 )
 
 
-@check(Module, terminal=True)
+@check(Module, terminal=True, only_if_docstring_exists=False)
 def check_missing_module_docstring(
-    module: Module, docstring: str, config: Configuration
-) -> Optional[D100]:
-    """D100: Public modules should have docstrings."""
-    if type(module) == Package:
+    module: Module, docstring: Optional[Docstring], config: Configuration
+) -> Optional[Union[D100, D104]]:
+    """D100, D104: Public modules and packages should have docstrings."""
+    if docstring or is_private(module):
         return None
 
-    if not module.is_public:
-        return None
-
-    if docstring:
-        return None
-
-    return D100()
+    return D104() if module.package else D100()
 
 
-@check(Package, terminal=True)
-def check_missing_package_docstring(
-    module: Module, docstring: str, config: Configuration
-) -> Optional[D104]:
-    """D100: Public packages should have docstrings."""
-    if not module.is_public:
-        return None
-
-    if docstring:
-        return None
-
-    return D104()
-
-
-@check(Method, terminal=True)
-def check_missing_method_docstring(
-    method: Method, docstring: str, config: Configuration
-) -> Optional[Union[D102, D105, D107]]:
-    """D102, D105, D107: Public, magic and __init__ methods should have docstrings."""
-    if not method.is_public:
-        return None
-
-    if docstring:
-        return None
-
-    if method.is_magic:
-        return D105()
-
-    if method.is_init:
-        return D107()
-
-    if method.is_overload:
-        return None
-
-    return D102()
-
-
-@check(Function, terminal=True)
+@check(FunctionDef, terminal=True, only_if_docstring_exists=False)
 def check_missing_function_docstring(
-    function_: Function, docstring: str, config: Configuration
-) -> Optional[D103]:
-    """D103: Public functions should have docstrings."""
-
-    if isinstance(function_, Method):
+    function_: FunctionDef,
+    docstring: Optional[Docstring],
+    config: Configuration,
+) -> Optional[Union[D102, D105, D107]]:
+    """D102, D103, D105, D107: Public, magic, and __init__ methods and functions should have docstrings."""
+    if docstring or is_private(function_) or is_overloaded(function_):
         return None
 
-    if not function_.is_public:
+    if isinstance(function_.parent, FunctionDef):
+        # Function is nested
         return None
 
-    if docstring:
-        return None
+    if function_.is_bound():
+        if (
+            is_dunder(function_)
+            and not function_.name in VARIADIC_MAGIC_METHODS
+        ):
+            return D105()
 
-    if function_.is_overload:
-        return None
+        if function_.name == "__init__":
+            return D107()
+
+        return D102()
 
     return D103()
 
 
-@check((Class, NestedClass), terminal=True)
+@check(ClassDef, terminal=True, only_if_docstring_exists=False)
 def check_missing_class_docstring(
-    class_: Class, docstring: str, config: Configuration
+    class_: ClassDef, docstring: Optional[Docstring], config: Configuration
 ) -> Optional[Union[D101, D106]]:
     """D101, D106: Public (nested) classes should have docstrings."""
-    if not class_.is_public:
+    if docstring or is_private(class_):
         return None
 
-    if docstring:
-        return None
-
-    return D106() if isinstance(class_, NestedClass) else D101()
+    return (
+        D106()
+        if isinstance(
+            class_.parent, (FunctionDef, ClassDef)
+        )  # Class is nested
+        else D101()
+    )

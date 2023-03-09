@@ -1,11 +1,15 @@
 """Docstring violation definition."""
 
+import linecache
 from collections import namedtuple
 from functools import partial
 from itertools import dropwhile
 from typing import Callable, Iterable, List, Optional
 
-from .parser import Definition
+from astroid import Module, NodeNG
+
+from pydocstyle.utils import CHECKED_NODE_TYPE
+
 from .utils import is_blank
 
 __all__ = ('Error', 'ErrorRegistry')
@@ -37,16 +41,27 @@ class Error:
         self.short_desc = short_desc
         self.context = context
         self.parameters = parameters
-        self.definition = None  # type: Optional[Definition]
+        self.node: CHECKED_NODE_TYPE = NodeNG()
         self.explanation = None  # type: Optional[str]
 
-    def set_context(self, definition: Definition, explanation: str) -> None:
+    def set_context(self, node: CHECKED_NODE_TYPE, explanation: str) -> None:
         """Set the source code context for this error."""
-        self.definition = definition
+        self.node = node
         self.explanation = explanation
 
-    filename = property(lambda self: self.definition.module.name)
-    line = property(lambda self: self.definition.error_lineno)
+    @property
+    def filename(self):
+        return self.node.root().file
+
+    @property
+    def line(self):
+        return self.node.lineno
+
+    @property
+    def node_name(self):
+        if isinstance(self.node, Module):
+            return self.node.file
+        return self.node.name
 
     @property
     def message(self) -> str:
@@ -60,17 +75,21 @@ class Error:
     @property
     def lines(self) -> str:
         """Return the source code lines for this error."""
-        if self.definition is None:
+        if self.node is None:
             return ''
-        source = ''
-        lines = self.definition.source.splitlines(keepends=True)
-        offset = self.definition.start  # type: ignore
-        lines_stripped = list(
-            reversed(list(dropwhile(is_blank, reversed(lines))))
-        )
-        numbers_width = len(str(offset + len(lines_stripped)))
+
+        source = ""
+        lines = linecache.getlines(self.node.root().file)[
+            self.node.fromlineno - 1 : self.node.end_lineno
+        ]
+        offset = self.node.lineno
+        # Strip blank lines from beginning
+        lines = list(dropwhile(is_blank, lines))
+        # Strip blank lines from end
+        lines = list(reversed(list(dropwhile(is_blank, reversed(lines)))))
+        numbers_width = len(str(offset + len(lines)))
         line_format = f'{{:{numbers_width}}}:{{}}'
-        for n, line in enumerate(lines_stripped):
+        for n, line in enumerate(lines):
             if line and line != "\n":
                 line = ' ' + line
             source += line_format.format(n + offset, line)
@@ -84,7 +103,7 @@ class Error:
             self.explanation = '\n'.join(
                 l for l in self.explanation.split('\n') if not is_blank(l)
             )
-        template = '{filename}:{line} {definition}:\n        {message}'
+        template = '{filename}:{line} {node_name}:\n        {message}'
         if self.source and self.explain:
             template += '\n\n{explanation}\n\n{lines}\n'
         elif self.source and not self.explain:
@@ -97,7 +116,7 @@ class Error:
                 for name in [
                     'filename',
                     'line',
-                    'definition',
+                    'node_name',
                     'message',
                     'explanation',
                     'lines',

@@ -23,3 +23,7 @@ def docstring_bad_ignore_one():  # noqa: D400,D401,D415
 def docstring_ignore_some_violations_but_catch_D401():  # noqa: E501,D400,D415
     """Runs something"""
     pass
+
+
+def docstring_should_not_trigger_d400_and_d415_because_of_module_wide_noqa():
+    """No period at the end"""

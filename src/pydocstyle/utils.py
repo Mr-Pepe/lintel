@@ -1,12 +1,22 @@
 """General shared utilities."""
+import linecache
 import re
 from itertools import tee, zip_longest
-from typing import Any, Iterable, List, Tuple, TypeVar
+from typing import Any, Iterable, List, Optional, Set, Tuple, TypeVar, Union
 
-from pydocstyle.parser import Definition
+import astroid
+from astroid import ClassDef, FunctionDef, Module
+
+CHECKED_NODE_TYPE = Union[
+    astroid.ClassDef, astroid.FunctionDef, astroid.Module
+]
+NODES_TO_CHECK = (astroid.ClassDef, astroid.FunctionDef, astroid.Module)
+
 
 #: Regular expression for stripping non-alphanumeric characters
 NON_ALPHANUMERIC_STRIP_RE = re.compile(r'[\W_]+')
+
+VARIADIC_MAGIC_METHODS = ("__new__", "__init__", "__call__")
 
 T = TypeVar("T")
 
@@ -61,19 +71,133 @@ def leading_space(string: str) -> str:
     return match.group()
 
 
-def get_indents(
-    definition: Definition, docstring: str
-) -> Tuple[str, List[str]]:
-    """Return the indentation of docstring quotes and content lines."""
-    before_docstring, _, _ = definition.source.partition(docstring)
-    _, _, docstring_indent = before_docstring.rpartition('\n')
+def get_error_codes_to_skip(node: CHECKED_NODE_TYPE) -> Set[str]:
+    """Returns the error codes to skip for the given node.
 
-    lines = [
-        next_line
-        for first_line, next_line in pairwise(docstring.split("\n"), "")
-        if has_content(next_line) and not first_line.endswith('\\')
+    {"all"} will be returned if all error codes should be skipped.
+    """
+    error_codes_to_skip: Set[str] = set()
+
+    # Check for blank ignore in module
+    if isinstance(node, Module):
+        ignore_all_regex = re.compile(r"^\s*#\s*pydoclint\s*:\s*noqa\s*$")
+        specific_ignore_regex = re.compile(r"^\s*#\s*noqa\s*:[\sA-Z\d,]*D\d+")
+
+        for line in node.file_bytes.decode().splitlines():
+            if ignore_all_regex.search(line):
+                return {"all"}
+
+            for match in specific_ignore_regex.findall(line):
+                for error_code in re.findall(r"D\d{0,3}\b", match):
+                    error_codes_to_skip.add(error_code)
+
+    # Check for inline ignores
+    if isinstance(node, (FunctionDef, ClassDef)):
+        return _get_line_noqa(_get_definition_line(node))
+
+    return error_codes_to_skip
+
+
+def _get_line_noqa(line: str) -> Set[str]:
+    ignore_all_regex = re.compile(r".*#\s*noqa(\s*$|\s*#)")
+    specific_ignore_regex = re.compile(r".*#\s*noqa\s*:\s*([\sA-Z\d,]*D\d+)")
+
+    if ignore_all_regex.search(line):
+        return {"all"}
+
+    error_codes_to_skip: Set[str] = set()
+
+    for match in specific_ignore_regex.findall(line):
+        for error_code in re.findall(r"D\d{0,3}\b", match):
+            error_codes_to_skip.add(error_code)
+
+    return error_codes_to_skip
+
+
+def _get_definition_line(node: Union[FunctionDef, ClassDef]) -> str:
+    lines = (
+        node.root()
+        .file_bytes.decode()
+        .splitlines()[node.lineno - 1 : node.end_lineno]
+    )
+    for line in lines:
+        if line.lstrip().startswith(("def", "async def", "class")):
+            return line
+
+    raise ValueError(f"'{node.name}' does not contain a definition line.")
+
+
+def get_decorator_names(node: CHECKED_NODE_TYPE) -> List[str]:
+    decorator_names: List[str] = []
+
+    decorators = [
+        child_node
+        for child_node in node.get_children()
+        if isinstance(child_node, astroid.Decorators)
     ]
 
-    line_indents = [leading_space(l) for l in lines]
+    if decorators:
+        for decorator in decorators[0].nodes:
+            if isinstance(decorator, astroid.Name):
+                decorator_names.append(decorator.name)
+            if isinstance(decorator, astroid.Call):
+                decorator_names.append(decorator.func.name)
 
-    return docstring_indent, line_indents
+    return decorator_names
+
+
+def is_public(node: CHECKED_NODE_TYPE) -> bool:
+    if is_dunder(node):
+        return True
+
+    if node.name.startswith("_"):
+        return False
+
+    if (
+        isinstance(node.parent, astroid.Module)
+        and not node.name in node.parent.wildcard_import_names()
+    ):
+        return False
+
+    if isinstance(node, astroid.ClassDef) and isinstance(
+        node.parent, astroid.FunctionDef
+    ):
+        # Classes are not considered public if nested in a function
+        return False
+
+    while node.parent is not None:
+        if not is_public(node.parent):
+            return False
+
+        node = node.parent
+
+    return True
+
+
+def is_private(node: CHECKED_NODE_TYPE) -> bool:
+    return not is_public(node)
+
+
+def is_dunder(node: CHECKED_NODE_TYPE) -> bool:
+    return node.name.startswith('__') and node.name.endswith('__')
+
+
+def is_overloaded(function_: FunctionDef) -> bool:
+    return "overload" in get_decorator_names(function_)
+
+
+def get_leading_words(line: str) -> str:
+    """Return any leading set of words from `line`.
+
+    For example, if `line` is "  Hello world!!!", returns "Hello world".
+    """
+    result = re.compile(r"[\w ]+").match(line.strip())
+    if result is not None:
+        return result.group()
+
+    return ""
+
+
+def is_ascii(string: str) -> bool:
+    """Return a boolean indicating if `string` only has ascii characters."""
+    return all(ord(char) < 128 for char in string)

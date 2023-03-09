@@ -18,15 +18,14 @@ from .indentation import check_indentation
 from .missing_docstring import (
     check_missing_class_docstring,
     check_missing_function_docstring,
-    check_missing_method_docstring,
     check_missing_module_docstring,
-    check_missing_package_docstring,
 )
 from .mood import check_imperative_mood
 from .newline_after_last_paragraph import check_newline_after_last_paragraph
 from .one_liner import check_one_liner
 from .overload import check_overload
 from .quotation import check_backslashes, check_triple_double_quotes
+from .sections import check_docstring_sections
 from .signature import check_not_signature
 from .starts_with_this import check_starts_with_this
 from .summary_start import check_multi_line_summary_start
