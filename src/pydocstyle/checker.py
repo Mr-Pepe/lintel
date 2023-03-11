@@ -1,144 +1,42 @@
 """Parsed source code checkers for docstring violations."""
 
-import ast
-import re
-import string
-import sys
-import tokenize as tk
-from collections import namedtuple
-from itertools import chain, takewhile
 from pathlib import Path
-from textwrap import dedent
-from typing import Generator, List, Optional, Tuple
+from typing import Generator, List
 
 import astroid
 from astroid.exceptions import AstroidSyntaxError
 
-import pydocstyle.checks
-from pydocstyle.checks import Check, check
+import pydocstyle
+from pydocstyle import violations
+from pydocstyle.checks import Check
+from pydocstyle.config import Configuration, IllegalConfiguration
 from pydocstyle.conventions import Convention
-from pydocstyle.docstring import Docstring, get_docstring_from_doc_node
-from pydocstyle.logging import log
+from pydocstyle.docstring import get_docstring_from_doc_node
+from pydocstyle.utils import (
+    NODES_TO_CHECK,
+    get_decorator_names,
+    get_error_codes_to_skip,
+)
 from pydocstyle.violations import Error
 
-from . import violations
-from .config import Configuration, IllegalConfiguration
-from .utils import NODES_TO_CHECK, get_decorator_names, get_error_codes_to_skip
 
-__all__ = ('check',)
-
-
-class ConventionChecker:
-    """Checker for Sphinx, NumPy and Google docstrings."""
-
-    def check_source(
-        self,
-        filename: Path,
-        source: str,
-        config: Configuration = Configuration(),
-    ) -> Generator:
-        try:
-            module = astroid.parse(
-                source, module_name=filename.stem, path=filename.as_posix()
-            )
-        except AstroidSyntaxError as parsing_error:
-            yield parsing_error
-            return
-
-        module_wide_skipped_errors = get_error_codes_to_skip(module)
-
-        nodes = [module]
-
-        while len(nodes) > 0:
-            node = nodes.pop()
-
-            child_nodes = list(node.get_children())
-
-            for child_node in child_nodes:
-                if isinstance(child_node, NODES_TO_CHECK):
-                    nodes.append(child_node)
-
-            error_codes_to_skip = module_wide_skipped_errors.union(
-                get_error_codes_to_skip(node)
-            )
-
-            if "all" in error_codes_to_skip:
-                continue
-
-            decorator_names = get_decorator_names(node)
-
-            if config.ignore_decorators is not None and any(
-                len(config.ignore_decorators.findall(decorator_name)) > 0
-                for decorator_name in decorator_names
-            ):
-                continue
-
-            docstring = get_docstring_from_doc_node(node)
-
-            for this_check in self.checks:
-                terminate = False
-
-                if (
-                    node.doc_node is None
-                    and this_check.only_if_docstring_exists
-                ):
-                    continue
-
-                if (
-                    node.doc_node == ""
-                    and this_check.only_if_docstring_not_empty
-                ):
-                    continue
-
-                if not isinstance(node, this_check._node_type):
-                    continue
-
-                error = this_check(node, docstring, config)
-
-                errors: List[Error] = (
-                    error if hasattr(error, '__iter__') else [error]
-                )
-
-                for error in errors:
-                    if error is not None and (
-                        config.ignore_inline_noqa
-                        or error.code not in error_codes_to_skip
-                    ):
-                        partition = this_check.explanation.partition('.\n')
-                        message, _, explanation = partition
-                        error.set_context(explanation=explanation, node=node)
-                        yield error
-                        if this_check._terminal:
-                            terminate = True
-                            break
-                if terminate:
-                    break
-
-    @property
-    def checks(self):
-        all = [
-            this_check
-            for this_check in chain(
-                vars(type(self)).values(),
-                (
-                    getattr(pydocstyle.checks, x)
-                    for x in dir(pydocstyle.checks)
-                ),
-            )
-            if isinstance(this_check, Check)
-        ]
-        return sorted(all, key=lambda this_check: not this_check._terminal)
-
-
-def check_files(
-    filenames: Tuple[str], config: Configuration = Configuration()
+def check_source(
+    file_path: Path,
+    config: Configuration = Configuration(),
 ) -> Generator:
-    """Generate docstring errors that exist in `filenames` iterable.
+    """Check a Python source file for docstring errors.
 
-    By default, the PEP-257 convention is checked. To specifically define the
-    set of error codes to check for, supply either `select` or `ignore` (but
-    not both). In either case, the parameter should be a collection of error
-    code strings, e.g., {'D100', 'D404'}.
+    Args:
+        file_path: Path to the Python file.
+        config: The configuration to use for error checking.
+            Defaults to Configuration().
+
+    Raises:
+        IllegalConfiguration: If the configuration is invalid.
+
+    Yields:
+        AstroidSyntaxError: If the Python file can not be parsed.
+        Error: If docstring errors are found.
     """
     if config.select is not None and config.ignore is not None:
         raise IllegalConfiguration(
@@ -146,32 +44,100 @@ def check_files(
             'They are mutually exclusive.'
         )
     elif config.select is not None:
-        checked_codes = config.select
+        checked_codes_base = config.select
     elif config.ignore is not None:
-        checked_codes = set(violations.ErrorRegistry.get_error_codes()) - set(
-            config.ignore
+        checked_codes_base = set(
+            violations.ErrorRegistry.get_error_codes()
+        ) - set(config.ignore)
+    else:
+        checked_codes_base = Convention().error_codes
+
+    with open(file_path, mode="r", encoding="utf-8") as file:
+        source = file.read()
+
+        try:
+            module = astroid.parse(
+                source, module_name=file_path.stem, path=file_path.as_posix()
+            )
+        except AstroidSyntaxError as parsing_error:
+            yield parsing_error
+            return
+
+    module_wide_skipped_errors = get_error_codes_to_skip(module)
+
+    nodes = [module]
+
+    while len(nodes) > 0:
+        node = nodes.pop()
+
+        child_nodes = list(node.get_children())
+
+        for child_node in child_nodes:
+            if isinstance(child_node, NODES_TO_CHECK):
+                nodes.append(child_node)
+
+        error_codes_to_skip = (
+            module_wide_skipped_errors | get_error_codes_to_skip(node)
         )
 
-    else:
-        checked_codes = Convention().error_codes
+        if "all" in error_codes_to_skip:
+            continue
 
-    for filename in filenames:
-        log.info('Checking file %s.', filename)
-        try:
-            with tk.open(filename) as file:
-                source = file.read()
-            for error in ConventionChecker().check_source(
-                Path(filename),
-                source,
-                config,
+        checked_codes = checked_codes_base - error_codes_to_skip
+
+        decorator_names = get_decorator_names(node)
+
+        if config.ignore_decorators is not None and any(
+            len(config.ignore_decorators.findall(decorator_name)) > 0
+            for decorator_name in decorator_names
+        ):
+            continue
+
+        docstring = get_docstring_from_doc_node(node)
+
+        for this_check in _get_checks():
+            terminate = False
+
+            if node.doc_node is None and this_check.only_if_docstring_exists:
+                continue
+
+            if (
+                docstring
+                and docstring.content == ""
+                and this_check.only_if_docstring_not_empty
             ):
-                code = getattr(error, 'code', None)
-                if code in checked_codes or isinstance(
-                    error, AstroidSyntaxError
+                continue
+
+            if not isinstance(node, this_check._node_type):
+                continue
+
+            error = this_check(node, docstring, config)
+
+            errors: List[Error] = (
+                error if hasattr(error, '__iter__') else [error]
+            )
+
+            for error in errors:
+                if error is not None and (
+                    config.ignore_inline_noqa or error.code in checked_codes
                 ):
+                    partition = this_check.explanation.partition('.\n')
+                    _, _, explanation = partition
+                    error.set_context(explanation=explanation, node=node)
                     yield error
-        except OSError as error:
-            log.warning('Error in file %s: %s', filename, error)
-            yield error
-        except tk.TokenError:
-            yield SyntaxError('invalid syntax in file %s' % filename)
+                    if this_check._terminal:
+                        terminate = True
+                        break
+            if terminate:
+                break
+
+
+def _get_checks():
+    checks = [
+        this_check
+        for this_check in [
+            getattr(pydocstyle.checks, x) for x in dir(pydocstyle.checks)
+        ]
+        if isinstance(this_check, Check)
+    ]
+    return sorted(checks, key=lambda this_check: not this_check._terminal)

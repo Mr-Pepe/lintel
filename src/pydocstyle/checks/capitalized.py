@@ -1,3 +1,5 @@
+"""Contains a check for proper capitalization of the summary line."""
+
 import ast
 import string
 from typing import Optional

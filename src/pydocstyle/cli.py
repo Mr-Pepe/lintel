@@ -1,16 +1,17 @@
 """Command line interface for pydocstyle."""
 import logging
 import sys
+from pathlib import Path
 
 from astroid.exceptions import AstroidSyntaxError
 
-from pydocstyle.logging import log
-
-from .checker import check_files
+from .checker import check_source
 from .config import Configuration, ConfigurationParser, IllegalConfiguration
 from .violations import Error
 
 __all__ = ('main',)
+
+_logger = logging.getLogger(__name__)
 
 
 class ReturnCode:
@@ -20,7 +21,7 @@ class ReturnCode:
 
 
 def run_pydocstyle():
-    log.setLevel(logging.DEBUG)
+    _logger.setLevel(logging.DEBUG)
     conf = ConfigurationParser()
     setup_stream_handlers(conf.get_default_run_configuration())
 
@@ -34,7 +35,7 @@ def run_pydocstyle():
     # Reset the logger according to the command line arguments
     setup_stream_handlers(run_conf)
 
-    log.debug("starting in debug mode.")
+    _logger.debug("starting in debug mode.")
 
     Error.explain = run_conf.explain
     Error.source = run_conf.source
@@ -47,12 +48,14 @@ def run_pydocstyle():
             ignore_decorators,
             property_decorators,
         ) in conf.get_files_to_check():
+            _logger.info("Checking file: %s" % filename)
+
             config = Configuration(
                 select=checked_codes,
                 ignore_decorators=ignore_decorators,
                 property_decorators=property_decorators,
             )
-            for error in check_files((filename,), config):
+            for error in check_source(Path(filename), config):
                 if hasattr(error, 'code'):
                     sys.stdout.write('%s\n' % error)
 
@@ -62,7 +65,7 @@ def run_pydocstyle():
                 error_count += 1
     except IllegalConfiguration as error:
         # An illegal configuration file was found during file generation.
-        log.error(error.args[0])
+        _logger.error(error.args[0])
         return ReturnCode.invalid_options
 
     if error_count == 0:
@@ -89,7 +92,7 @@ def setup_stream_handlers(conf):
         def filter(self, record):
             return record.levelno in (logging.DEBUG, logging.INFO)
 
-    log.handlers = []
+    _logger.handlers = []
 
     stdout_handler = logging.StreamHandler(sys.stdout)
     stdout_handler.setLevel(logging.WARNING)
@@ -100,10 +103,10 @@ def setup_stream_handlers(conf):
         stdout_handler.setLevel(logging.INFO)
     else:
         stdout_handler.setLevel(logging.WARNING)
-    log.addHandler(stdout_handler)
+    _logger.addHandler(stdout_handler)
 
     stderr_handler = logging.StreamHandler(sys.stderr)
     msg_format = "%(levelname)s: %(message)s"
     stderr_handler.setFormatter(logging.Formatter(fmt=msg_format))
     stderr_handler.setLevel(logging.WARNING)
-    log.addHandler(stderr_handler)
+    _logger.addHandler(stderr_handler)

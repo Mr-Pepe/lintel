@@ -1,4 +1,6 @@
-import ast
+"""Contains a check for empty docstrings."""
+
+
 from typing import Optional
 
 from astroid import NodeNG

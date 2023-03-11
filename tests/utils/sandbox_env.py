@@ -1,3 +1,6 @@
+"""Contains a sandbox environment to execute integration tests."""
+
+
 import os
 import shlex
 import shutil
@@ -70,9 +73,6 @@ class SandboxEnv:
 
         """
         return open(os.path.join(self.tempdir, path), *args, **kwargs)
-
-    def get_path(self, name, prefix=''):
-        return os.path.join(self.tempdir, prefix, name)
 
     def makedirs(self, path, *args, **kwargs):
         """Create a directory in a path relative to the environment base."""

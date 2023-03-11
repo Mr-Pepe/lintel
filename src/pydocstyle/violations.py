@@ -51,14 +51,17 @@ class Error:
 
     @property
     def filename(self):
+        """Return the file this error originates from."""
         return self.node.root().file
 
     @property
     def line(self):
+        """Return the line this error originates from."""
         return self.node.lineno
 
     @property
     def node_name(self):
+        """Return the node this error originates from."""
         if isinstance(self.node, Module):
             return self.node.file
         return self.node.name
@@ -99,6 +102,7 @@ class Error:
         return source
 
     def __str__(self) -> str:
+        """Return the string output for this error."""
         if self.explanation:
             self.explanation = '\n'.join(
                 l for l in self.explanation.split('\n') if not is_blank(l)
@@ -156,10 +160,8 @@ class ErrorRegistry:
             error_code: str,
             error_desc: str,
             error_context: Optional[str] = None,
-        ) -> partial[Error]:
+        ) -> Callable:
             """Create an error, register it to this group and return it."""
-            # TODO: check prefix
-
             error_params = ErrorParams(error_code, error_desc, error_context)
             factory = partial(Error, *error_params)
             self.errors.append(error_params)

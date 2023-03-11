@@ -1,3 +1,6 @@
+"""Contains utility functions for tests."""
+
+
 import os
 from typing import Dict
 
@@ -6,7 +9,6 @@ def parse_errors(error: str) -> Dict[str, set]:
     """Parse `error` to a dictionary of {filename: error_codes}.
 
     This is for test purposes only. All file names should be different.
-
     """
     result: Dict[str, set] = {}
     py_ext = '.py'

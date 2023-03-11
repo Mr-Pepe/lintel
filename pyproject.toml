@@ -44,3 +44,4 @@ source = ["src/", ".tox/*/lib/python*/site-packages/"]
 convention="pep257"
 # Ignore hidden directories and some other directories
 match-dir = "(?!venv|\\.|build|dist|resources).*"
+add-ignore = "D104,D105"

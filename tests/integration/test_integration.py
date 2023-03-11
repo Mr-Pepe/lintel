@@ -7,37 +7,14 @@ import subprocess
 import sys
 import textwrap
 from pathlib import Path
-from unittest import mock
 
 import pytest
 from tests.utils.parse_errors import parse_errors
 from tests.utils.sandbox_env import SandboxEnv
 
-from pydocstyle import checker
 from pydocstyle.config import Configuration
-from pydocstyle.conventions import Convention
 
 __all__ = ()
-
-
-def test_pep257_conformance(resource_dir: Path) -> None:
-    """Test that we conform to PEP 257."""
-    base_dir = (pathlib.Path(__file__).parent / '..').resolve()
-    excluded = resource_dir
-
-    src_files = (
-        str(path)
-        for path in itertools.chain(
-            base_dir.glob('src/**/*.py'),
-            base_dir.glob('tests/**/*.py'),
-        )
-        if excluded not in path.parents
-    )
-
-    ignored = {'D104', 'D105'}
-    select = Convention("pep257").error_codes - ignored
-    errors = list(checker.check_files(src_files, Configuration(select=select)))
-    assert errors == [], errors
 
 
 def test_ignore_list(tmp_path: Path) -> None:
@@ -70,8 +47,8 @@ def test_ignore_list(tmp_path: Path) -> None:
     # Passing a blank ignore here explicitly otherwise
     # checkers takes the pep257 ignores by default.
     errors = tuple(
-        checker.check_files(
-            [str(test_file_path)],
+        checker.check_source(
+            test_file_path,
             Configuration(ignore=set()),
         ),
     )
@@ -80,8 +57,8 @@ def test_ignore_list(tmp_path: Path) -> None:
 
     ignored = {'D100', 'D202', 'D213'}
     errors = tuple(
-        checker.check_files(
-            [str(test_file_path)],
+        checker.check_source(
+            test_file_path,
             Configuration(ignore=ignored),
         )
     )
@@ -109,8 +86,8 @@ def test_skip_errors(tmp_path: Path) -> None:
     # Passing a blank ignore here explicitly otherwise
     # checkers takes the pep257 ignores by default.
     errors = tuple(
-        checker.check_files(
-            [str(test_file_path)],
+        checker.check_source(
+            test_file_path,
             Configuration(ignore=set()),
         )
     )
@@ -119,8 +96,8 @@ def test_skip_errors(tmp_path: Path) -> None:
 
     skipped_error_codes = {'D400', 'D401', 'D403', 'D415'}
     errors = tuple(
-        checker.check_files(
-            [str(test_file_path)],
+        checker.check_source(
+            test_file_path,
             Configuration(ignore=set(), ignore_inline_noqa=True),
         )
     )
@@ -278,6 +255,7 @@ def test_accepts_select_error_code_list(env):
     env.write_config(select=['D100', 'D204', 'D300'])
 
     out, err, code = env.invoke()
+    print(err)
     assert code == 1
     assert 'D100' in out
     assert 'D204' in out
@@ -315,7 +293,7 @@ def test_config_path(env):
     assert 'D103' in out
 
     out, err, code = env.invoke(
-        '--config={} -d'.format(env.get_path(config_name))
+        '--config={} -d'.format(os.path.join(env.tempdir, config_name))
     )
     assert code == 1, out + err
     assert 'D100' in out

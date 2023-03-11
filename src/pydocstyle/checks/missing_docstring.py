@@ -1,3 +1,5 @@
+"""Contains for checks for missing docstrings."""
+
 from typing import Optional, Union
 
 from astroid import ClassDef, FunctionDef, Module
@@ -7,7 +9,6 @@ from pydocstyle.config import Configuration
 from pydocstyle.docstring import Docstring
 from pydocstyle.utils import (
     VARIADIC_MAGIC_METHODS,
-    get_decorator_names,
     is_dunder,
     is_overloaded,
     is_private,
@@ -26,7 +27,7 @@ from pydocstyle.violations import (
 
 @check(Module, terminal=True, only_if_docstring_exists=False)
 def check_missing_module_docstring(
-    module: Module, docstring: Optional[Docstring], config: Configuration
+    module: Module, docstring: Optional[Docstring], _: Configuration
 ) -> Optional[Union[D100, D104]]:
     """D100, D104: Public modules and packages should have docstrings."""
     if docstring or is_private(module):
@@ -39,7 +40,7 @@ def check_missing_module_docstring(
 def check_missing_function_docstring(
     function_: FunctionDef,
     docstring: Optional[Docstring],
-    config: Configuration,
+    _: Configuration,
 ) -> Optional[Union[D102, D105, D107]]:
     """D102, D103, D105, D107: Public, magic, and __init__ methods and functions should have docstrings."""
     if docstring or is_private(function_) or is_overloaded(function_):
@@ -66,7 +67,7 @@ def check_missing_function_docstring(
 
 @check(ClassDef, terminal=True, only_if_docstring_exists=False)
 def check_missing_class_docstring(
-    class_: ClassDef, docstring: Optional[Docstring], config: Configuration
+    class_: ClassDef, docstring: Optional[Docstring], _: Configuration
 ) -> Optional[Union[D101, D106]]:
     """D101, D106: Public (nested) classes should have docstrings."""
     if docstring or is_private(class_):

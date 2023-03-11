@@ -1,4 +1,6 @@
-import ast
+"""Contains checks for whitespaces surrounding a docstring."""
+
+
 from typing import List, Optional
 
 from astroid import NodeNG

@@ -1,8 +1,7 @@
-import linecache
+"""Contains checks for proper docstring quotation."""
+
 import re
 from typing import Optional
-
-from astroid import NodeNG
 
 from pydocstyle.checks import check
 from pydocstyle.config import Configuration
@@ -13,7 +12,7 @@ from pydocstyle.violations import D300, D301
 
 @check(NODES_TO_CHECK)
 def check_triple_double_quotes(
-    node: CHECKED_NODE_TYPE, docstring: Docstring, _: Configuration
+    _: CHECKED_NODE_TYPE, docstring: Docstring, __: Configuration
 ) -> Optional[D300]:
     r'''D300: Use """triple double quotes""".
 

@@ -1,3 +1,6 @@
+"""Contains checks for the correct amount of blank lines before a docstring."""
+
+
 import linecache
 from typing import List, Optional, Tuple, Union
 

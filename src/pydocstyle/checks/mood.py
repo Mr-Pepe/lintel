@@ -1,4 +1,5 @@
-import ast
+"""Contains a check for the mood of a docstring."""
+
 from typing import Optional, Union
 
 from astroid import FunctionDef

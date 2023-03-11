@@ -13,7 +13,17 @@ from pydocstyle.utils import (
 
 
 class Docstring:
+    """A docstring representation."""
+
     def __init__(self, parent_node: CHECKED_NODE_TYPE):
+        """Initialize the docstring.
+
+        Args:
+            parent_node: The node that the docstring is attached to.
+
+        Raises:
+            ValueError: If the parent node does not have a doc node.
+        """
         if parent_node.doc_node is None:
             raise ValueError(
                 f"Node '{parent_node.name}' does not have a doc node."
@@ -24,10 +34,12 @@ class Docstring:
 
     @property
     def content(self) -> str:
+        """The docstring content."""
         return str(self.node.value).expandtabs()
 
     @property
     def raw(self) -> str:
+        """The raw docstring lines."""
         return "\n".join(
             l.rstrip()
             for l in linecache.getlines(self.parent_node.root().file)[
@@ -65,6 +77,7 @@ class Docstring:
 def get_docstring_from_doc_node(
     node: CHECKED_NODE_TYPE,
 ) -> Optional[Docstring]:
+    """Retrieve the docstring of an astroid node."""
     if node.doc_node is None:
         return None
 

@@ -1,3 +1,5 @@
+"""Contains checks for docstring sections."""
+
 import re
 from collections import namedtuple
 from dataclasses import dataclass
@@ -37,6 +39,8 @@ from pydocstyle.violations import (
 
 @dataclass
 class SectionContext:
+    """Holds information about a docstring section."""
+
     section_name: str
     previous_line: str
     line: str
@@ -588,7 +592,6 @@ def check_docstring_sections(
     node: CHECKED_NODE_TYPE, docstring: Docstring, _: Configuration
 ) -> Generator:
     """Check for docstring sections."""
-
     lines = docstring.content.split("\n")
     if len(lines) < 2:
         return

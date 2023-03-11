@@ -1,4 +1,5 @@
-import ast
+"""Make sure that a function signature is not repeated in the docstring."""
+
 from typing import Optional
 
 from astroid import FunctionDef
@@ -18,9 +19,6 @@ def check_not_signature(
     The one-line docstring should NOT be a "signature" reiterating the
     function/method parameters (which can be obtained by introspection).
     """
-    if not docstring:
-        return None
-
     first_line = docstring.content.strip().split('\n')[0]
 
     if f"{function.name}(" not in first_line.replace(' ', ''):

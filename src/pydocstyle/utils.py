@@ -1,8 +1,8 @@
 """General shared utilities."""
-import linecache
+
 import re
 from itertools import tee, zip_longest
-from typing import Any, Iterable, List, Optional, Set, Tuple, TypeVar, Union
+from typing import Iterable, List, Set, Tuple, TypeVar, Union
 
 import astroid
 from astroid import ClassDef, FunctionDef, Module
@@ -72,7 +72,7 @@ def leading_space(string: str) -> str:
 
 
 def get_error_codes_to_skip(node: CHECKED_NODE_TYPE) -> Set[str]:
-    """Returns the error codes to skip for the given node.
+    """Return the error codes to skip for the given node.
 
     {"all"} will be returned if all error codes should be skipped.
     """
@@ -128,6 +128,7 @@ def _get_definition_line(node: Union[FunctionDef, ClassDef]) -> str:
 
 
 def get_decorator_names(node: CHECKED_NODE_TYPE) -> List[str]:
+    """Return the decorator names applied to a node."""
     decorator_names: List[str] = []
 
     decorators = [
@@ -140,13 +141,17 @@ def get_decorator_names(node: CHECKED_NODE_TYPE) -> List[str]:
         for decorator in decorators[0].nodes:
             if isinstance(decorator, astroid.Name):
                 decorator_names.append(decorator.name)
-            if isinstance(decorator, astroid.Call):
-                decorator_names.append(decorator.func.name)
+            if isinstance(decorator, astroid.Call) and decorator.func:
+                if hasattr(decorator.func, "name"):
+                    decorator_names.append(decorator.func.name)
+                elif hasattr(decorator.func, "attrname"):
+                    decorator_names.append(decorator.func.attrname)
 
     return decorator_names
 
 
 def is_public(node: CHECKED_NODE_TYPE) -> bool:
+    """Return whether a node is public."""
     if is_dunder(node):
         return True
 
@@ -175,14 +180,17 @@ def is_public(node: CHECKED_NODE_TYPE) -> bool:
 
 
 def is_private(node: CHECKED_NODE_TYPE) -> bool:
+    """Return whether a node is private."""
     return not is_public(node)
 
 
 def is_dunder(node: CHECKED_NODE_TYPE) -> bool:
+    """Return whether a node has a '__dunder__' name."""
     return node.name.startswith('__') and node.name.endswith('__')
 
 
 def is_overloaded(function_: FunctionDef) -> bool:
+    """Return whether the function has an ``overload`` decorator."""
     return "overload" in get_decorator_names(function_)
 
 

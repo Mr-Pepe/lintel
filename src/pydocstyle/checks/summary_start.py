@@ -1,3 +1,6 @@
+"""Contains checks regarding the summary line start of a docstring."""
+
+
 from typing import Optional, Union
 
 from astroid import NodeNG

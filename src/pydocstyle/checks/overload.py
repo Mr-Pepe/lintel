@@ -1,3 +1,5 @@
+"""Make sure that `@overload` functions are not documented."""
+
 from typing import Optional
 
 from astroid import FunctionDef

@@ -2,19 +2,17 @@
 
 import copy
 import itertools
+import logging
 import operator
 import os
 import sys
 from collections import namedtuple
-from collections.abc import Set
 from configparser import NoOptionError, NoSectionError, RawConfigParser
 from dataclasses import dataclass, field
 from functools import reduce
 from re import Pattern
 from re import compile as re
-from typing import Optional
-
-from pydocstyle.logging import log
+from typing import Optional, Set
 
 from ._version import __version__
 from .conventions import CONVENTION_NAMES, Convention
@@ -27,6 +25,43 @@ else:
         import tomli as tomllib
     except ImportError:  # pragma: no cover
         tomllib = None  # type: ignore
+
+_logger = logging.getLogger(__name__)
+
+
+CONFIG_FILE_OPTIONS = (
+    'convention',
+    'select',
+    'ignore',
+    'add-select',
+    'add-ignore',
+    'match',
+    'match-dir',
+    'ignore-decorators',
+)
+BASE_ERROR_SELECTION_OPTIONS = ('ignore', 'select', 'convention')
+
+DEFAULT_MATCH_RE = r'(?!test_).*\.py'
+DEFAULT_MATCH_DIR_RE = r'[^\.].*'
+DEFAULT_IGNORE_DECORATORS_RE = ''
+DEFAULT_PROPERTY_DECORATORS = (
+    "property,cached_property,functools.cached_property"
+)
+DEFAULT_CONVENTION = Convention()
+
+PROJECT_CONFIG_FILES = (
+    'setup.cfg',
+    'tox.ini',
+    '.pydocstyle',
+    '.pydocstyle.ini',
+    '.pydocstylerc',
+    '.pydocstylerc.ini',
+    'pyproject.toml',
+    # The following is deprecated, but remains for backwards compatibility.
+    '.pep257',
+)
+
+POSSIBLE_SECTION_NAMES = ('pydocstyle', 'pep257')
 
 
 def check_initialized(method):
@@ -55,7 +90,9 @@ class Configuration:
     select: Optional[Set[str]] = None
     ignore: Optional[Set[str]] = None
     ignore_decorators: Optional[Pattern] = None
-    property_decorators: Optional[list] = None
+    property_decorators: Set[str] = field(
+        default_factory=lambda: set(DEFAULT_PROPERTY_DECORATORS.split(","))
+    )
     ignore_inline_noqa: bool = (
         False  # Whether `# noqa` comments are respected or not.
     )
@@ -92,7 +129,7 @@ class TomlParser:
             try:
                 with open(filename, "rb") as fp:
                     if not tomllib:
-                        log.warning(
+                        _logger.warning(
                             "The %s configuration file was ignored, "
                             "because the `tomli` package is not installed.",
                             filename,
@@ -202,40 +239,6 @@ class ConfigurationParser:
 
     """
 
-    CONFIG_FILE_OPTIONS = (
-        'convention',
-        'select',
-        'ignore',
-        'add-select',
-        'add-ignore',
-        'match',
-        'match-dir',
-        'ignore-decorators',
-    )
-    BASE_ERROR_SELECTION_OPTIONS = ('ignore', 'select', 'convention')
-
-    DEFAULT_MATCH_RE = r'(?!test_).*\.py'
-    DEFAULT_MATCH_DIR_RE = r'[^\.].*'
-    DEFAULT_IGNORE_DECORATORS_RE = ''
-    DEFAULT_PROPERTY_DECORATORS = (
-        "property,cached_property,functools.cached_property"
-    )
-    DEFAULT_CONVENTION = Convention()
-
-    PROJECT_CONFIG_FILES = (
-        'setup.cfg',
-        'tox.ini',
-        '.pydocstyle',
-        '.pydocstyle.ini',
-        '.pydocstylerc',
-        '.pydocstylerc.ini',
-        'pyproject.toml',
-        # The following is deprecated, but remains for backwards compatibility.
-        '.pep257',
-    )
-
-    POSSIBLE_SECTION_NAMES = ('pydocstyle', 'pep257')
-
     def __init__(self):
         """Create a configuration parser."""
         self._cache = {}
@@ -324,7 +327,7 @@ class ConfigurationParser:
                             full_path = os.path.join(root, filename)
                             yield (
                                 full_path,
-                                list(config.checked_codes),
+                                set(config.checked_codes),
                                 ignore_decorators,
                                 property_decorators,
                             )
@@ -336,7 +339,7 @@ class ConfigurationParser:
                 if match(os.path.basename(name)):
                     yield (
                         name,
-                        list(config.checked_codes),
+                        set(config.checked_codes),
                         ignore_decorators,
                         property_decorators,
                     )
@@ -415,10 +418,10 @@ class ConfigurationParser:
 
         """
         if self._run_conf.config is None:
-            log.debug('No config file specified, discovering.')
+            _logger.debug('No config file specified, discovering.')
             config = self._get_config_by_discovery(node)
         else:
-            log.debug('Using config file %r', self._run_conf.config)
+            _logger.debug('Using config file %r', self._run_conf.config)
             if not os.path.exists(self._run_conf.config):
                 raise IllegalConfiguration(
                     'Configuration file {!r} specified '
@@ -430,7 +433,7 @@ class ConfigurationParser:
             options, _ = self._read_configuration_file(self._run_conf.config)
 
             if options is None:
-                log.warning(
+                _logger.warning(
                     'Configuration file does not contain a '
                     'pydocstyle section. Using default configuration.'
                 )
@@ -495,8 +498,8 @@ class ConfigurationParser:
                     should_inherit = parser.getboolean(section_name, opt)
                     continue
 
-                if opt.replace('_', '-') not in self.CONFIG_FILE_OPTIONS:
-                    log.warning(f"Unknown option '{opt}' ignored")
+                if opt.replace('_', '-') not in CONFIG_FILE_OPTIONS:
+                    _logger.warning(f"Unknown option '{opt}' ignored")
                     continue
 
                 normalized_opt = opt.replace('-', '_')
@@ -582,7 +585,7 @@ class ConfigurationParser:
         }
         for key, default in defaults.items():
             kwargs[key] = (
-                getattr(cls, f"DEFAULT_{default}")
+                getattr(sys.modules[__name__], f"DEFAULT_{default}")
                 if getattr(options, key) is None and use_defaults
                 else getattr(options, key)
             )
@@ -591,7 +594,7 @@ class ConfigurationParser:
     @classmethod
     def _get_section_name(cls, parser):
         """Parse options from relevant section."""
-        for section_name in cls.POSSIBLE_SECTION_NAMES:
+        for section_name in POSSIBLE_SECTION_NAMES:
             if parser.has_section(section_name):
                 return section_name
 
@@ -607,7 +610,7 @@ class ConfigurationParser:
         if os.path.isfile(path):
             path = os.path.dirname(path)
 
-        for fn in cls.PROJECT_CONFIG_FILES:
+        for fn in PROJECT_CONFIG_FILES:
             if fn.endswith('.toml'):
                 config = TomlParser()
             else:
@@ -657,7 +660,7 @@ class ConfigurationParser:
                     code for code in codes if code.startswith(part)
                 }
                 if not codes_to_add:
-                    log.warning(
+                    _logger.warning(
                         'Error code passed is not a prefix of any '
                         'known errors: %s',
                         part,
@@ -673,7 +676,7 @@ class ConfigurationParser:
         """Extract the codes needed to be checked from `options`."""
         checked_codes = cls._get_exclusive_error_codes(options)
         if checked_codes is None:
-            checked_codes = cls.DEFAULT_CONVENTION.error_codes
+            checked_codes = DEFAULT_CONVENTION.error_codes
 
         cls._set_add_options(checked_codes, options)
 
@@ -688,17 +691,17 @@ class ConfigurationParser:
 
         """
         for opt1, opt2 in itertools.permutations(
-            cls.BASE_ERROR_SELECTION_OPTIONS, 2
+            BASE_ERROR_SELECTION_OPTIONS, 2
         ):
             if getattr(options, opt1) and getattr(options, opt2):
-                log.error(
+                _logger.error(
                     'Cannot pass both {} and {}. They are '
                     'mutually exclusive.'.format(opt1, opt2)
                 )
                 return False
 
         if options.convention and options.convention not in CONVENTION_NAMES:
-            log.error(
+            _logger.error(
                 "Illegal convention '{}'. Possible conventions: {}".format(
                     options.convention, ', '.join(CONVENTION_NAMES)
                 )
@@ -712,7 +715,7 @@ class ConfigurationParser:
         return any(
             [
                 getattr(options, opt) is not None
-                for opt in cls.BASE_ERROR_SELECTION_OPTIONS
+                for opt in BASE_ERROR_SELECTION_OPTIONS
             ]
         )
 
@@ -888,7 +891,7 @@ class ConfigurationParser:
                 "expression; default is --match='{}' which matches "
                 "files that don't start with 'test_' but end with "
                 "'.py'"
-            ).format(cls.DEFAULT_MATCH_RE),
+            ).format(DEFAULT_MATCH_RE),
         )
         option(
             '--match-dir',
@@ -899,7 +902,7 @@ class ConfigurationParser:
                 "expression; default is --match-dir='{}', which "
                 "matches all dirs that don't start with "
                 "a dot"
-            ).format(cls.DEFAULT_MATCH_DIR_RE),
+            ).format(DEFAULT_MATCH_DIR_RE),
         )
 
         # Decorators
@@ -912,7 +915,7 @@ class ConfigurationParser:
                 "by a function with a name fitting the <decorators> "
                 "regular expression; default is --ignore-decorators='{}'"
                 " which does not ignore any decorated functions.".format(
-                    cls.DEFAULT_IGNORE_DECORATORS_RE
+                    DEFAULT_IGNORE_DECORATORS_RE
                 )
             ),
         )
@@ -925,7 +928,7 @@ class ConfigurationParser:
                 "decorators as a property, and consequently allow "
                 "a docstring which is not in imperative mood; default "
                 "is --property-decorators='{}'".format(
-                    cls.DEFAULT_PROPERTY_DECORATORS
+                    DEFAULT_PROPERTY_DECORATORS
                 )
             ),
         )

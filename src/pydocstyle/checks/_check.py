@@ -6,6 +6,8 @@ from pydocstyle.violations import Error
 
 
 class Check:
+    """Represents a specific docstring check."""
+
     def __init__(
         self,
         node_type: Union[NodeNG, Tuple[NodeNG, ...]],
@@ -14,6 +16,7 @@ class Check:
         only_if_docstring_not_empty: bool,
         check_function: Callable[..., Optional[Error]],
     ) -> None:
+        """Initialize the check."""
         self._node_type = node_type
         self._terminal = terminal
         self.only_if_docstring_exists = only_if_docstring_exists
@@ -21,6 +24,7 @@ class Check:
         self.check_function = check_function
 
     def __call__(self, *args: Any, **kwargs: Any) -> Error:
+        """Execute the check."""
         check_result = self.check_function(*args, *kwargs)
         return check_result
 
@@ -35,7 +39,7 @@ def check(
     only_if_docstring_exists: bool = True,
     only_if_docstring_not_empty: bool = True,
 ) -> Callable[[Callable[..., Optional[Error]]], Check]:
-    """Adds a pydoclint check.
+    """Add a pydoclint check.
 
     Args:
         node_type: The astroid node types the check is applicable for.

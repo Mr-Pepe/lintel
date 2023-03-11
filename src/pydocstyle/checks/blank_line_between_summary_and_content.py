@@ -1,3 +1,5 @@
+"""Contains a check for whether a summary line is followed by a blank line."""
+
 from itertools import takewhile
 from typing import Optional
 

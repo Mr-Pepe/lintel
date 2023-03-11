@@ -1,4 +1,5 @@
-import ast
+"""Contains a check whether a docstring starts with `This`."""
+
 from typing import Optional
 
 from astroid import NodeNG

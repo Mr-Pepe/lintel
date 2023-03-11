@@ -1,3 +1,5 @@
+"""Sphinx configuration."""
+
 # pydocstyle documentation build configuration file, created by
 # sphinx-quickstart on Fri Jan 30 20:30:42 2015.
 #
@@ -251,6 +253,7 @@ texinfo_documents = [
 
 
 def generate_error_code_table():
+    """Add a table of all pydocstyle errors to the documentation."""
     from pydocstyle.violations import ErrorRegistry
 
     with open(os.path.join('snippets', 'error_code_table.rst'), 'wt') as outf:

@@ -1,3 +1,5 @@
+__all__ = ("Check", "check")
+
 from ._check import Check, check
 from .blank_line_between_summary_and_content import (
     check_single_blank_line_after_summary,

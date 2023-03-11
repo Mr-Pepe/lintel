@@ -1,6 +1,6 @@
-from typing import Generator, List, Tuple, Union
+"""Contains a check for proper docstring indentation."""
 
-from astroid import NodeNG
+from typing import Generator, Union
 
 from pydocstyle.checks import check
 from pydocstyle.config import Configuration
@@ -11,7 +11,7 @@ from pydocstyle.violations import D206, D207, D208
 
 @check(NODES_TO_CHECK)
 def check_indentation(
-    node: CHECKED_NODE_TYPE, docstring: Docstring, config: Configuration
+    _: CHECKED_NODE_TYPE, docstring: Docstring, __: Configuration
 ) -> Generator[Union[D206, D207, D208], None, None]:
     """D206, D207, D208: The entire docstring should be indented same as code.
 

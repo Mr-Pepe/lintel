@@ -6,11 +6,9 @@ from pathlib import Path
 
 import pytest
 
-from pydocstyle.checker import check_files
-from pydocstyle.config import Configuration, ConfigurationParser
+from pydocstyle.checker import check_source
+from pydocstyle.config import DEFAULT_PROPERTY_DECORATORS, Configuration
 from pydocstyle.violations import Error, ErrorRegistry
-
-DEFAULT_PROPERTY_DECORATORS = ConfigurationParser.DEFAULT_PROPERTY_DECORATORS
 
 
 @pytest.mark.parametrize(
@@ -49,7 +47,7 @@ def test_complex_file(test_case: str, resource_dir: Path) -> None:
         ignore_decorators=re.compile('wraps|ignored_decorator'),
         property_decorators=DEFAULT_PROPERTY_DECORATORS,
     )
-    results = list(check_files([str(test_case_file)], config))
+    results = list(check_source(test_case_file, config))
     for error in results:
         assert isinstance(error, Error)
 

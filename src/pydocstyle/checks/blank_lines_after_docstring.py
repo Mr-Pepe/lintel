@@ -1,3 +1,5 @@
+"""Contains checks for the correct amount of blank lines after a docstring."""
+
 import linecache
 from itertools import takewhile
 from typing import List, Optional, Tuple, Union
@@ -13,16 +15,14 @@ from pydocstyle.violations import D202, D204
 
 @check(FunctionDef)
 def check_no_blank_lines_after_function_docstring(
-    function_: FunctionDef, docstring: Docstring, _: Configuration
+    function_: FunctionDef, __: Docstring, _: Configuration
 ) -> Optional[D202]:
     """D202: No blank lines allowed after function/method docstring.
 
     There should be no blank line after the docstring unless directly
     followed by an inner function or class.
     """
-    lines_after, _, n_blanks_after = _get_stuff_after_docstring(
-        function_, docstring
-    )
+    lines_after, _, n_blanks_after = _get_stuff_after_docstring(function_)
 
     if n_blanks_after == 0:
         return None
@@ -40,12 +40,10 @@ def check_no_blank_lines_after_function_docstring(
 
 @check(ClassDef)
 def check_single_blank_line_after_class_docstring(
-    class_: ClassDef, docstring: Docstring, config: Configuration
+    class_: ClassDef, _: Docstring, __: Configuration
 ) -> Optional[D204]:
     """D204: 1 blank line required after class docstring."""
-    lines_after, _, n_blanks_after = _get_stuff_after_docstring(
-        class_, docstring
-    )
+    lines_after, _, n_blanks_after = _get_stuff_after_docstring(class_)
 
     if _is_empty_definition(lines_after, n_blanks_after):
         return None
@@ -57,7 +55,7 @@ def check_single_blank_line_after_class_docstring(
 
 
 def _get_stuff_after_docstring(
-    node: Union[ClassDef, FunctionDef], docstring: Docstring
+    node: Union[ClassDef, FunctionDef]
 ) -> Tuple[List[str], List[str], int]:
     lines_after = [
         linecache.getline(node.root().file, l)

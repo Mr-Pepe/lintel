@@ -1,4 +1,6 @@
-import ast
+"""Contains a check for one-liner docstrings."""
+
+
 from typing import Optional
 
 from astroid import NodeNG

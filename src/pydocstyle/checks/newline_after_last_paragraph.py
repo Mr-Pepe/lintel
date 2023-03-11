@@ -1,3 +1,5 @@
+"""Contains a check whether closing quotes are on their own line."""
+
 from typing import Optional
 
 from astroid import NodeNG
@@ -5,7 +7,7 @@ from astroid import NodeNG
 from pydocstyle.checks import check
 from pydocstyle.config import Configuration
 from pydocstyle.docstring import Docstring
-from pydocstyle.utils import has_content, is_blank
+from pydocstyle.utils import is_blank
 from pydocstyle.violations import D209
 
 
