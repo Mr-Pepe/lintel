@@ -53,8 +53,7 @@ class Error:
     @property
     def filename(self):
         """Return the file this error originates from."""
-        file = self.node.root().file
-        return os.path.normcase(file if file[-1] != 'c' else file[:-1])
+        return os.path.normcase(self.node.root().file)
 
     @property
     def line(self):
