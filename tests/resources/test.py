@@ -531,5 +531,5 @@ class Blah:  # noqa: D203,D213
         pass
 
 
-expect(os.path.normcase(__file__ if __file__[-1] != 'c' else __file__[:-1]),
+expect(os.path.normcase(__file__),
        'D100: Missing docstring in public module')
