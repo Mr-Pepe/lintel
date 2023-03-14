@@ -1,20 +1,8 @@
 #! /usr/bin/env python
-"""Static analysis tool for checking docstring conventions and style.
-
-The repository is located at:
-http://github.com/PyCQA/pydocstyle
-
-"""
-
-
-__all__ = ()
-
-
-def main() -> None:
-    from pydocstyle import cli
-
-    cli.main()
+"""Static analysis tool for checking docstring conventions and style."""
 
 
 if __name__ == '__main__':
-    main()
+    from pydocstyle import cli
+
+    cli.main()

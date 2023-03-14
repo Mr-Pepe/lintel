@@ -17,8 +17,8 @@ class Check:
         check_function: Callable[..., Optional[Error]],
     ) -> None:
         """Initialize the check."""
-        self._node_type = node_type
-        self._terminal = terminal
+        self.node_type = node_type
+        self.terminal = terminal
         self.only_if_docstring_exists = only_if_docstring_exists
         self.only_if_docstring_not_empty = only_if_docstring_not_empty
         self.check_function = check_function

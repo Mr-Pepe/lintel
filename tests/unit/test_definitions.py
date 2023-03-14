@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-from pydocstyle.checker import check_source
+from pydocstyle.check_source import check_source
 from pydocstyle.config import DEFAULT_PROPERTY_DECORATORS, Configuration
 from pydocstyle.violations import Error, ErrorRegistry
 

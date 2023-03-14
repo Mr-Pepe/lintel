@@ -5,7 +5,7 @@ from pathlib import Path
 
 from astroid.exceptions import AstroidSyntaxError
 
-from .checker import check_source
+from .check_source import check_source
 from .config import Configuration, ConfigurationParser, IllegalConfiguration
 from .violations import Error
 
@@ -55,14 +55,17 @@ def run_pydocstyle():
                 ignore_decorators=ignore_decorators,
                 property_decorators=property_decorators,
             )
-            for error in check_source(Path(filename), config):
-                if hasattr(error, 'code'):
-                    sys.stdout.write('%s\n' % error)
 
-                if isinstance(error, AstroidSyntaxError):
-                    sys.stderr.write(f"{filename}: Cannot parse file")
+            try:
+                for error in check_source(Path(filename), config):
+                    if hasattr(error, 'code'):
+                        sys.stdout.write('%s\n' % error)
+                        error_count += 1
 
+            except AstroidSyntaxError:
+                sys.stderr.write(f"{filename}: Cannot parse file")
                 error_count += 1
+
     except IllegalConfiguration as error:
         # An illegal configuration file was found during file generation.
         _logger.error(error.args[0])

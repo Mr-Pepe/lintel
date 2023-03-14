@@ -42,12 +42,12 @@ def test_ignore_list(tmp_path: Path) -> None:
         'D415',
         'D213',
     }
-    from pydocstyle import checker
+    from pydocstyle import check_source
 
     # Passing a blank ignore here explicitly otherwise
     # checkers takes the pep257 ignores by default.
     errors = tuple(
-        checker.check_source(
+        check_source.check_source(
             test_file_path,
             Configuration(ignore=set()),
         ),
@@ -57,7 +57,7 @@ def test_ignore_list(tmp_path: Path) -> None:
 
     ignored = {'D100', 'D202', 'D213'}
     errors = tuple(
-        checker.check_source(
+        check_source.check_source(
             test_file_path,
             Configuration(ignore=ignored),
         )
@@ -81,12 +81,12 @@ def test_skip_errors(tmp_path: Path) -> None:
             )
         )
     expected_error_codes = {'D100', 'D205', 'D209', 'D210', 'D213'}
-    from pydocstyle import checker
+    from pydocstyle import check_source
 
     # Passing a blank ignore here explicitly otherwise
     # checkers takes the pep257 ignores by default.
     errors = tuple(
-        checker.check_source(
+        check_source.check_source(
             test_file_path,
             Configuration(ignore=set()),
         )
@@ -96,7 +96,7 @@ def test_skip_errors(tmp_path: Path) -> None:
 
     skipped_error_codes = {'D400', 'D401', 'D403', 'D415'}
     errors = tuple(
-        checker.check_source(
+        check_source.check_source(
             test_file_path,
             Configuration(ignore=set(), ignore_inline_noqa=True),
         )
