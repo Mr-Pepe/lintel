@@ -1,6 +1,7 @@
 """Docstring violation definition."""
 
 import linecache
+import os
 from collections import namedtuple
 from functools import partial
 from itertools import dropwhile
@@ -52,7 +53,8 @@ class Error:
     @property
     def filename(self):
         """Return the file this error originates from."""
-        return self.node.root().file
+        file = self.node.root().file
+        return os.path.normcase(file if file[-1] != 'c' else file[:-1])
 
     @property
     def line(self):
