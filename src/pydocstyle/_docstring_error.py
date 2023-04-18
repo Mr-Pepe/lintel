@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import os
-from typing import List, Optional
+from typing import Any, List, Optional, Union
 
 from astroid import ClassDef, FunctionDef, Module
 
@@ -20,11 +20,20 @@ class DocstringError(Exception):
     """Linting error in docstring."""
 
     description: str
-    explanation: str
-    applicable_nodes: List[CHECKED_NODE_TYPES] = NODES_TO_CHECK
+    """Gets printed to the console when an error is encountered.
+    The description is formatted using the provided `parameters`."""
+    explanation: str = ""
+    """Gets added to the output if the '--explain' flag is set."""
+    applicable_nodes: Union[CHECKED_NODE_TYPES, List[CHECKED_NODE_TYPES]] = NODES_TO_CHECK
+    """The node classes this error is applicable for."""
     applicable_if_doc_string_is_missing = False
+    """Whether this error should be checked for if the node does not have a docstring."""
     applicable_if_doc_string_is_empty = False
+    """Whether this error should be checked for if the node's docstring is empty."""
     terminal = False
+    """Whether this error should skip subsequent error checks for a node."""
+    parameters: Optional[list[Any]] = None
+    """Parameters used for formatting the description."""
 
     def __init__(
         self,
@@ -59,7 +68,13 @@ class DocstringError(Exception):
 
     def __str__(self) -> str:
         """Return the string output for this error."""
-        return f"{self.file_name}:{self.line} in {self.node_type} '{self.node_name}': {self.error_code()} - {self.description}"
+        if self.parameters is None:
+            self.parameters = []
+
+        return (
+            f"{self.file_name}:{self.line} in {self.node_type} '{self.node_name}': "
+            f"{self.error_code()} - {self.description.format(*self.parameters)}"
+        )
 
     def __repr__(self) -> str:
         return str(self)

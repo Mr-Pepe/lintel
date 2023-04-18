@@ -10,4 +10,4 @@ from ._version import __version__
 
 from ._docstring import Docstring, get_docstring_from_doc_node
 from ._docstring_error import DocstringError
-from ._get_checks import get_checks
+from ._get_checks import get_checks, get_error_codes

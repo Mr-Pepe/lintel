@@ -46,13 +46,14 @@ def test_ignore_list(tmp_path: Path) -> None:
 
     # Passing a blank ignore here explicitly otherwise
     # checkers takes the pep257 ignores by default.
-    errors = tuple(
+    errors = list(
         check_source.check_source(
             test_file_path,
             Configuration(ignore=set()),
-        ),
+        )
     )
-    error_codes = {error.code for error in errors}
+
+    error_codes = {error.error_code() for error in errors}
     assert error_codes == expected_error_codes
 
     ignored = {'D100', 'D202', 'D213'}

@@ -603,7 +603,7 @@ class ConfigurationParser:
     @classmethod
     def _get_exclusive_error_codes(cls, options):
         """Extract the error codes from the selected exclusive option."""
-        codes = get_all_error_codes()
+        codes = get_error_codes()
         checked_codes = None
 
         if options.ignore is not None:
@@ -626,7 +626,7 @@ class ConfigurationParser:
     @staticmethod
     def _expand_error_codes(code_parts):
         """Return an expanded set of error codes to ignore."""
-        codes = get_all_error_codes()
+        codes = get_error_codes()
         expanded_codes = set()
 
         try:
@@ -919,7 +919,7 @@ RunConfiguration = namedtuple(
 )
 
 
-def get_all_error_codes() -> Set[str]:
-    from pydocstyle import get_checks
+def get_error_codes() -> Set[str]:
+    from pydocstyle import get_error_codes
 
-    return set(check.error_code() for check in get_checks())
+    return get_error_codes()

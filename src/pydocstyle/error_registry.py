@@ -47,31 +47,6 @@ error_registry.add_group(ErrorGroup(name="Docstring Content Issues", prefix="D4"
 #     'One-line docstring should fit on one line ' 'with quotes',
 #     'found {0}',
 # )
-# D201 = D2xx.create_error(
-#     'D201',
-#     'No blank lines allowed before function docstring',
-#     'found {0}',
-# )
-# D202 = D2xx.create_error(
-#     'D202',
-#     'No blank lines allowed after function docstring',
-#     'found {0}',
-# )
-# D203 = D2xx.create_error(
-#     'D203',
-#     '1 blank line required before class docstring',
-#     'found {0}',
-# )
-# D204 = D2xx.create_error(
-#     'D204',
-#     '1 blank line required after class docstring',
-#     'found {0}',
-# )
-# D205 = D2xx.create_error(
-#     'D205',
-#     '1 blank line required between summary line and description',
-#     'found {0}',
-# )
 # D206 = D2xx.create_error(
 #     'D206',
 #     'Docstring should be indented with spaces, not tabs',
@@ -91,11 +66,6 @@ error_registry.add_group(ErrorGroup(name="Docstring Content Issues", prefix="D4"
 # D210 = D2xx.create_error(
 #     'D210',
 #     'No whitespaces allowed surrounding docstring text',
-# )
-# D211 = D2xx.create_error(
-#     'D211',
-#     'No blank lines allowed before class docstring',
-#     'found {0}',
 # )
 # D212 = D2xx.create_error(
 #     'D212',
