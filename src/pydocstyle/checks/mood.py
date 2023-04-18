@@ -56,7 +56,7 @@ class D401(DocstringError):
         )
 
         error = cls(function_)
-        error.parameters = [f", perhaps '{best.capitalize()}', not '{first_word}'"]
+        error.parameters = [f" (perhaps '{best.capitalize()}', not '{first_word}')"]
 
         raise error
 

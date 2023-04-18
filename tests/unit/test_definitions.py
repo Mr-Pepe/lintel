@@ -1,13 +1,11 @@
 """Old parser tests."""
 
-import os
 import re
 from pathlib import Path
 
 import pytest
 
-from pydocstyle._config import DEFAULT_PROPERTY_DECORATORS, Configuration
-from pydocstyle.check_source import check_source
+from pydocstyle import Configuration, DocstringError, check_source, get_error_codes
 
 
 @pytest.mark.parametrize(
@@ -42,12 +40,11 @@ def test_complex_file(test_case: str, resource_dir: Path) -> None:
     test_case_file = resource_dir / f"{test_case}.py"
 
     config = Configuration(
-        select=set(ErrorRegistry.get_error_codes()),
+        select=set(get_error_codes()),
         ignore_decorators=re.compile('wraps|ignored_decorator'),
-        property_decorators=DEFAULT_PROPERTY_DECORATORS,
     )
     results = list(check_source(test_case_file, config))
     for error in results:
-        assert isinstance(error, Error)
+        assert isinstance(error, DocstringError)
 
     assert case_module.expectation.expected == {(e.node_name, e.message) for e in results}

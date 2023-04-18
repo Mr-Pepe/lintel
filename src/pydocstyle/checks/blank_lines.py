@@ -17,7 +17,7 @@ from pydocstyle import (
 
 
 class D201(DocstringError):
-    description = "No blank lines allowed before function/method docstring, found {}."
+    description = "No blank lines allowed before function/method docstring (found {})."
     applicable_nodes = astroid.FunctionDef
 
     @classmethod
@@ -34,7 +34,7 @@ class D201(DocstringError):
 
 
 class D202(DocstringError):
-    description = "No blank lines allowed after function/method docstring, found {}."
+    description = "No blank lines allowed after function/method docstring (found {})."
     applicable_nodes = astroid.FunctionDef
 
     @classmethod
@@ -55,7 +55,7 @@ class D202(DocstringError):
 
 
 class D203(DocstringError):
-    description = "Class docstrings should have 1 blank line before them, found {}."
+    description = "Class docstrings should have 1 blank line before them (found {})."
     applicable_nodes = astroid.ClassDef
 
     @classmethod
@@ -72,7 +72,7 @@ class D203(DocstringError):
 
 
 class D204(DocstringError):
-    description = "1 blank line required after class docstring, found {}."
+    description = "1 blank line required after class docstring (found {})."
     applicable_nodes = astroid.ClassDef
 
     @classmethod
@@ -89,7 +89,7 @@ class D204(DocstringError):
 
 
 class D205(DocstringError):
-    description = "1 blank line required between summary line and description, found {}."
+    description = "1 blank line required between summary line and description (found {})."
     explanation = """Multi-line docstrings consist of a summary line just like a one-line
                      docstring, followed by a blank line, followed by a more elaborate
                      description."""
@@ -112,7 +112,7 @@ class D205(DocstringError):
 
 
 class D211(DocstringError):
-    description = "No blank lines allowed before class docstring, found {}."
+    description = "No blank lines allowed before class docstring (found {})."
     applicable_nodes = astroid.ClassDef
 
     @classmethod

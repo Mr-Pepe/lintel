@@ -3,9 +3,7 @@ from typing import List, Set
 import astroid
 import pytest
 
-from pydocstyle import _utils
-from pydocstyle._docstring_error import DocstringError
-from pydocstyle.checks import check
+from pydocstyle import Configuration, _utils
 
 __all__ = ()
 
@@ -59,7 +57,7 @@ def test_strip_non_alphanumeric():
 )
 def test_error_codes_to_skip_module(source: str, expected: bool) -> None:
     node = astroid.parse(source)
-    assert _utils.get_error_codes_to_skip(node) == expected
+    assert _utils.get_error_codes_to_skip(node, Configuration()) == expected
 
 
 @pytest.mark.parametrize(

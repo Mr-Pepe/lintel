@@ -8,7 +8,6 @@ def test_missing_docstring_in_package(env: SandboxEnv) -> None:
 
     out, err, exit_code = env.invoke()
 
-    print(err)
     assert exit_code == 1
     assert 'D100' not in out  # shouldn't be treated as a module
     assert 'D104' in out  # missing docstring in package

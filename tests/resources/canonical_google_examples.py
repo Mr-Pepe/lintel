@@ -29,7 +29,7 @@ expect = expectation.expect
 expectation.expected.add(
     (
         os.path.normcase(__file__),
-        "D213: Multi-line docstring summary should start at the second line",
+        "D213: Multi-line docstring summary should start at the second line.",
     )
 )
 
@@ -37,7 +37,7 @@ expectation.expected.add(
 # "3.8.3 Functions and Methods" section example
 # https://google.github.io/styleguide/pyguide.html#383-functions-and-methods
 @expect(
-    "D213: Multi-line docstring summary should start at the second line",
+    "D213: Multi-line docstring summary should start at the second line.",
     arg_count=3,
 )
 @expect(
@@ -88,8 +88,8 @@ def fetch_bigtable_rows(big_table, keys, other_silly_variable=None):
 
 # "3.8.4 Classes" section example
 # https://google.github.io/styleguide/pyguide.html#384-classes
-@expect("D203: 1 blank line required before class docstring (found 0)")
-@expect("D213: Multi-line docstring summary should start at the second line")
+@expect("D203: Class docstrings should have 1 blank line before them (found 0)")
+@expect("D213: Multi-line docstring summary should start at the second line.")
 @expect("D406: Section name should end with a newline " "('Attributes', not 'Attributes:')")
 @expect("D407: Missing dashed underline after section ('Attributes')")
 @expect("D413: Missing blank line after last section ('Attributes')")

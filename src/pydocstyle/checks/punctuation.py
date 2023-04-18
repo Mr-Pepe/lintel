@@ -8,23 +8,23 @@ from pydocstyle import CHECKED_NODE_TYPES, Configuration, Docstring, DocstringEr
 
 
 class D400(DocstringError):
-    description = "First line should end with a period, not {!r}."
+    description = "First line should end with a period (not {!r})."
 
     @classmethod
     def check_implementation(
-        cls, node: CHECKED_NODE_TYPES, docstring: Optional[Docstring], config: Configuration
+        cls, node: CHECKED_NODE_TYPES, docstring: Docstring, config: Configuration
     ) -> None:
         _check_ends_with(node, docstring, '.', cls)
 
 
 class D415(DocstringError):
     description = (
-        "First line should end with a period, question mark, or exclamation point, not {!r}."
+        "First line should end with a period, question mark, or exclamation point (not {!r})."
     )
 
     @classmethod
     def check_implementation(
-        cls, node: CHECKED_NODE_TYPES, docstring: Optional[Docstring], config: Configuration
+        cls, node: CHECKED_NODE_TYPES, docstring: Docstring, config: Configuration
     ) -> None:
         _check_ends_with(node, docstring, ('.', '!', '?'), cls)
 

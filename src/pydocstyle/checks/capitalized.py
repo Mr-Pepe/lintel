@@ -7,7 +7,7 @@ from pydocstyle import CHECKED_NODE_TYPES, Configuration, Docstring, DocstringEr
 
 
 class D403(DocstringError):
-    description = "First word of the first line should be properly capitalized: {!r}, not {!r}."
+    description = "First word of the first line should be properly capitalized ({!r}, not {!r})."
 
     @classmethod
     def check_implementation(

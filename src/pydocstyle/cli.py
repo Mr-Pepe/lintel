@@ -5,8 +5,8 @@ from pathlib import Path
 
 from astroid.exceptions import AstroidSyntaxError
 
+from ._check_source import check_source
 from ._config import Configuration, ConfigurationParser, IllegalConfiguration
-from .check_source import check_source
 
 __all__ = ('main',)
 

@@ -41,63 +41,7 @@ error_registry.add_group(ErrorGroup(name="Quotes Issues", prefix="D3"))
 error_registry.add_group(ErrorGroup(name="Docstring Content Issues", prefix="D4"))
 
 
-# D2xx = ErrorRegistry.create_group('D2', 'Whitespace Issues')
-# D200 = D2xx.create_error(
-#     'D200',
-#     'One-line docstring should fit on one line ' 'with quotes',
-#     'found {0}',
-# )
-# D209 = D2xx.create_error(
-#     'D209',
-#     'Multi-line docstring closing quotes should be on a separate line',
-# )
-# D210 = D2xx.create_error(
-#     'D210',
-#     'No whitespaces allowed surrounding docstring text',
-# )
-# D212 = D2xx.create_error(
-#     'D212',
-#     'Multi-line docstring summary should start at the first line',
-# )
-# D213 = D2xx.create_error(
-#     'D213',
-#     'Multi-line docstring summary should start at the second line',
-# )
-# D214 = D2xx.create_error(
-#     'D214',
-#     'Section is over-indented',
-#     '{0!r}',
-# )
-# D215 = D2xx.create_error(
-#     'D215',
-#     'Section underline is over-indented',
-#     'in section {0!r}',
-# )
-
-# D3xx = ErrorRegistry.create_group('D3', 'Quotes Issues')
-# D300 = D3xx.create_error(
-#     'D300',
-#     'Use """triple double quotes"""',
-#     'found {0}-quotes',
-# )
-# D301 = D3xx.create_error(
-#     'D301',
-#     'Use r""" if any backslashes in a docstring',
-# )
-# D302 = D3xx.create_error(
-#     'D302',
-#     'Deprecated: Use u""" for Unicode docstrings',
-# )
-
 # D4xx = ErrorRegistry.create_group('D4', 'Docstring Content Issues')
-# D402 = D4xx.create_error(
-#     'D402',
-#     'First line should not be the function\'s "signature"',
-# )
-# D404 = D4xx.create_error(
-#     'D404',
-#     'First word of the docstring should not be `This`',
-# )
 # D405 = D4xx.create_error(
 #     'D405',
 #     'Section name should be properly capitalized',
@@ -133,16 +77,6 @@ error_registry.add_group(ErrorGroup(name="Docstring Content Issues", prefix="D4"
 #     'Missing blank line before section',
 #     '{0!r}',
 # )
-# D412 = D4xx.create_error(
-#     'D412',
-#     'No blank lines allowed between a section header and its content',
-#     '{0!r}',
-# )
-# D413 = D4xx.create_error(
-#     'D413',
-#     'Missing blank line after last section',
-#     '{0!r}',
-# )
 # D414 = D4xx.create_error(
 #     'D414',
 #     'Section has no content',
@@ -158,15 +92,3 @@ error_registry.add_group(ErrorGroup(name="Docstring Content Issues", prefix="D4"
 #     'Missing argument descriptions in the docstring',
 #     'argument(s) {0} are missing descriptions in {1!r} docstring',
 # )
-
-# D418 = D4xx.create_error(
-#     'D418',
-#     'Function/ Method decorated with @overload shouldn\'t contain a docstring',
-# )
-# D419 = D4xx.create_error(
-#     'D419',
-#     'Docstring is empty',
-# )
-
-
-# all_errors = set(ErrorRegistry.get_error_codes())

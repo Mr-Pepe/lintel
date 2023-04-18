@@ -1,0 +1,20 @@
+"""Contains a check whether closing quotes are on their own line."""
+
+from typing import Optional
+
+from pydocstyle import CHECKED_NODE_TYPES, Configuration, Docstring, DocstringError, has_content
+
+
+class D209(DocstringError):
+    description = "Multi-line docstring closing quotes should be on a separate line."
+    explanation = """Unless the entire docstring fits on a line, place the closing quotes 
+                     on a line by themselves."""
+
+    @classmethod
+    def check_implementation(
+        cls, node: CHECKED_NODE_TYPES, docstring: Optional[Docstring], config: Configuration
+    ) -> None:
+        lines = [l for l in docstring.content.split('\n')]
+
+        if len(lines) > 1 and has_content(lines[-1]):
+            raise cls(node)

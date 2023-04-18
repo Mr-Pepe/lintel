@@ -19,6 +19,7 @@ class D419(DocstringError):
     description = "Docstring is empty."
     applicable_nodes = NODES_TO_CHECK
     applicable_if_doc_string_is_empty = True
+    terminal = True
 
     @classmethod
     def check_implementation(

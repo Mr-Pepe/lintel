@@ -20,7 +20,6 @@ from pydocstyle import (
     get_error_codes,
     get_error_codes_to_skip,
 )
-from pydocstyle.conventions import Convention
 
 
 def check_source(
@@ -100,7 +99,7 @@ def _get_codes_to_check(config: Configuration) -> Set[str]:
         codes_to_check = set(get_error_codes()) - set(config.ignore)
 
     else:
-        codes_to_check = Convention().error_codes
+        codes_to_check = get_error_codes()
 
     return codes_to_check
 

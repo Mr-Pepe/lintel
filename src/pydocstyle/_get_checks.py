@@ -3,10 +3,58 @@ import inspect
 import pkgutil
 from collections import Counter
 from types import ModuleType
-from typing import Generator, Iterator, List, Type
+from typing import Generator, Iterator, List, Optional, Type
 
 import pydocstyle.checks
-from pydocstyle import DocstringError
+from pydocstyle import Convention, DocstringError
+
+convention_ignores = {
+    Convention.PEP257: {
+        'D203',
+        'D212',
+        'D213',
+        'D214',
+        'D215',
+        'D404',
+        'D405',
+        'D406',
+        'D407',
+        'D408',
+        'D409',
+        'D410',
+        'D411',
+        'D413',
+        'D415',
+        'D416',
+        'D417',
+        'D418',
+    },
+    Convention.NUMPY: {
+        'D107',
+        'D203',
+        'D212',
+        'D213',
+        'D402',
+        'D413',
+        'D415',
+        'D416',
+        'D417',
+    },
+    Convention.GOOGLE: {
+        'D203',
+        'D204',
+        'D213',
+        'D215',
+        'D400',
+        'D401',
+        'D404',
+        'D406',
+        'D407',
+        'D408',
+        'D409',
+        'D413',
+    },
+}
 
 
 def get_checks() -> List[Type[DocstringError]]:
@@ -26,12 +74,17 @@ def get_checks() -> List[Type[DocstringError]]:
             ("Found duplicate definitions for the following error codes: {}".format(*duplicates))
         )
 
-    return sorted(errors, key=lambda x: x.error_code())
+    return sorted(errors, key=lambda x: (not x.terminal, x.error_code()))
 
 
-def get_error_codes() -> List[str]:
-    """Returns the error codes of all available checks."""
-    return [check.error_code() for check in get_checks()]
+def get_error_codes(convention: Optional[Convention] = None) -> List[str]:
+    """Returns the error codes of available checks."""
+    error_codes = {check.error_code() for check in get_checks()}
+
+    if convention:
+        error_codes -= convention_ignores[convention]
+
+    return error_codes
 
 
 def _iter_namespace(ns_pkg: ModuleType) -> Iterator[pkgutil.ModuleInfo]:

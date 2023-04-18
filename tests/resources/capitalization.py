@@ -6,13 +6,13 @@ expectation = Expectation()
 expect = expectation.expect
 
 
-@expect("D403: First word of the first line should be properly capitalized " "('Do', not 'do')")
+@expect("D403: First word of the first line should be properly capitalized ('Do', not 'do').")
 def not_capitalized():
     """do something."""
 
 
 # Make sure empty docstrings don't generate capitalization errors.
-@expect("D419: Docstring is empty")
+@expect("D419: Docstring is empty.")
 def empty_docstring():
     """"""
 
@@ -43,14 +43,14 @@ def digit_in_word():
 
 @expect(
     "D403: First word of the first line should be properly capitalized "
-    "(\"Don't\", not \"Don'T\")"
+    "(\"Don't\", not \"Don'T\")."
 )
 def partial_caps():
     """Don'T do that."""
 
 
 @expect(
-    "D403: First word of the first line should be properly capitalized " "('Return', not 'ReTurn')"
+    "D403: First word of the first line should be properly capitalized " "('Return', not 'ReTurn')."
 )
 def more_partial_caps():
     """ReTurn the field."""
@@ -58,7 +58,7 @@ def more_partial_caps():
 
 @expect(
     "D403: First word of the first line should be properly capitalized "
-    "('Generate', not 'generate')"
+    "('Generate', not 'generate')."
 )
 def just_one_more_example():
     """generate a function."""

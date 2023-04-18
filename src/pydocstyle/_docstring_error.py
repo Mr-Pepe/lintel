@@ -23,7 +23,7 @@ class DocstringError(Exception):
     """Gets printed to the console when an error is encountered.
     The description is formatted using the provided `parameters`."""
     explanation: str = ""
-    """Gets added to the output if the '--explain' flag is set."""
+    """A more detailed explanation of the error."""
     applicable_nodes: Union[CHECKED_NODE_TYPES, List[CHECKED_NODE_TYPES]] = NODES_TO_CHECK
     """The node classes this error is applicable for."""
     applicable_if_doc_string_is_missing = False
@@ -62,18 +62,23 @@ class DocstringError(Exception):
         return self.node.name
 
     @property
-    def node_type(self):
+    def node_type(self) -> CHECKED_NODE_TYPES:
         """Return the node type this error belongs to."""
         return {Module: "module", FunctionDef: "function", ClassDef: "class"}[type(self.node)]
 
-    def __str__(self) -> str:
-        """Return the string output for this error."""
+    @property
+    def message(self) -> str:
+        """Returns the error message without context about the file."""
         if self.parameters is None:
             self.parameters = []
 
+        return f"{self.error_code()}: {self.description.format(*self.parameters)}"
+
+    def __str__(self) -> str:
+        """Return the string output for this error."""
+
         return (
-            f"{self.file_name}:{self.line} in {self.node_type} '{self.node_name}': "
-            f"{self.error_code()} - {self.description.format(*self.parameters)}"
+            f"{self.file_name}:{self.line} in {self.node_type} '{self.node_name}': " + self.message
         )
 
     def __repr__(self) -> str:
@@ -86,10 +91,10 @@ class DocstringError(Exception):
         if not isinstance(node, cls.applicable_nodes):
             return None
 
-        if node.doc_node is None and not cls.applicable_if_doc_string_is_missing:
-            return None
-
         docstring = get_docstring_from_doc_node(node)
+
+        if docstring is None and not cls.applicable_if_doc_string_is_missing:
+            return None
 
         if (
             docstring is not None

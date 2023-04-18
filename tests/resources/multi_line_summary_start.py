@@ -5,11 +5,11 @@ from .expected import Expectation
 expectation = Expectation()
 expect = expectation.expect
 
-_D212 = 'D212: Multi-line docstring summary should start at the first line'
-_D213 = 'D213: Multi-line docstring summary should start at the second line'
+_D212 = 'D212: Multi-line docstring summary should start at the first line.'
+_D213 = 'D213: Multi-line docstring summary should start at the second line.'
 
-_D300 = 'D300: Use """triple double quotes""" (found \'\'\'-quotes)'
-_D301 = 'D301: Use r""" if any backslashes in a docstring'
+_D300 = 'D300: Use """triple double quotes""" (found \'\'\'-quotes).'
+_D301 = 'D301: Use r""" if any backslashes are present in a docstring.'
 
 
 @expect(_D212)

@@ -58,7 +58,7 @@ expectation.expected.add(
 expectation.expected.add(
     (
         os.path.normcase(__file__),
-        "D213: Multi-line docstring summary should start at the second line",
+        "D213: Multi-line docstring summary should start at the second line.",
     )
 )
 expectation.expected.add(
@@ -83,7 +83,7 @@ expectation.expected.add(
 
 
 @expect(
-    "D213: Multi-line docstring summary should start at the second line",
+    "D213: Multi-line docstring summary should start at the second line.",
     arg_count=3,
 )
 @expect(

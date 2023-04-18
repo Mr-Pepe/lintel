@@ -8,14 +8,14 @@ expectation = Expectation()
 expect = expectation.expect
 
 
-@expect("D201: No blank lines allowed before function docstring (found 1)")
+@expect("D201: No blank lines allowed before function/method docstring (found 1).")
 def func_with_space_before():
 
     """Test a function with space before docstring."""
     pass
 
 
-@expect("D202: No blank lines allowed after function docstring (found 1)")
+@expect("D202: No blank lines allowed after function/method docstring (found 1).")
 def func_with_space_after():
     """Test a function with space after docstring."""
 

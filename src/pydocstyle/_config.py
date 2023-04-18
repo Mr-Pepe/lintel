@@ -14,8 +14,9 @@ from re import Pattern
 from re import compile as re
 from typing import Optional, Set
 
+from pydocstyle import Convention
+
 from ._version import __version__
-from .conventions import CONVENTION_NAMES, Convention
 
 if sys.version_info >= (3, 11):
     import tomllib
@@ -44,7 +45,6 @@ DEFAULT_MATCH_RE = r'(?!test_).*\.py'
 DEFAULT_MATCH_DIR_RE = r'[^\.].*'
 DEFAULT_IGNORE_DECORATORS_RE = ''
 DEFAULT_PROPERTY_DECORATORS = "property,cached_property,functools.cached_property"
-DEFAULT_CONVENTION = Convention()
 
 PROJECT_CONFIG_FILES = (
     'setup.cfg',
@@ -654,7 +654,7 @@ class ConfigurationParser:
         """Extract the codes needed to be checked from `options`."""
         checked_codes = cls._get_exclusive_error_codes(options)
         if checked_codes is None:
-            checked_codes = DEFAULT_CONVENTION.error_codes
+            checked_codes = get_error_codes()
 
         cls._set_add_options(checked_codes, options)
 
@@ -819,7 +819,9 @@ class ConfigurationParser:
             metavar='<name>',
             default=None,
             help='choose the basic list of checked errors by specifying '
-            'an existing convention. Possible conventions: {}.'.format(', '.join(CONVENTION_NAMES)),
+            'an existing convention. Possible conventions: {}.'.format(
+                ', '.join(m.value for m in Convention)
+            ),
         )
         add_check(
             '--add-select',
@@ -919,7 +921,7 @@ RunConfiguration = namedtuple(
 )
 
 
-def get_error_codes() -> Set[str]:
+def get_error_codes(convention: Optional[Convention] = None) -> Set[str]:
     from pydocstyle import get_error_codes
 
-    return get_error_codes()
+    return get_error_codes(convention)

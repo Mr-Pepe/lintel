@@ -22,7 +22,7 @@ def kos_root():
 
 # "Multiline-line Docstrings" section example
 # https://www.python.org/dev/peps/pep-0257/#id17
-@expect("D213: Multi-line docstring summary should start at the second line")
+@expect("D213: Multi-line docstring summary should start at the second line.")
 @expect(
     "D405: Section name should be properly capitalized "
     "('Keyword Arguments', not 'Keyword arguments')"
