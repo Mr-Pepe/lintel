@@ -78,7 +78,8 @@ class DocstringError(Exception):
         """Return the string output for this error."""
 
         return (
-            f"{self.file_name}:{self.line} in {self.node_type} '{self.node_name}': " + self.message
+            f"{self.file_name}:{self.line} in {self.node_type} '{self.node_name}' -> "
+            + self.message
         )
 
     def __repr__(self) -> str:

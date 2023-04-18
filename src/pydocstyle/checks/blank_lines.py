@@ -98,10 +98,12 @@ class D205(DocstringError):
     def check_implementation(
         cls, node: NODES_TO_CHECK, docstring: Docstring, config: Configuration
     ) -> None:
-        if len(docstring.lines) <= 1:
+        lines = docstring.content.strip().split('\n')
+
+        if len(lines) <= 1:
             return
 
-        blanks = list(takewhile(is_blank, docstring.lines[1:]))
+        blanks = list(takewhile(is_blank, lines[1:]))
         n_blanks = len(blanks)
 
         if n_blanks != 1:

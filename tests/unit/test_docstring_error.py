@@ -50,19 +50,19 @@ def test_node_name() -> None:
 def test_print_for_function_node() -> None:
     error = D123(function_node)
 
-    assert str(error) == "/path/to/my/file:2 in function 'my_func': D123 - some short description"
+    assert str(error) == "/path/to/my/file:2 in function 'my_func' -> D123: some short description"
 
 
 def test_print_for_module_node() -> None:
     error = D123(module_node)
 
-    assert str(error) == "/path/to/my/file:0 in module 'my_module': D123 - some short description"
+    assert str(error) == "/path/to/my/file:0 in module 'my_module' -> D123: some short description"
 
 
 def test_print_for_class_node() -> None:
     error = D123(class_node)
 
-    assert str(error) == "/path/to/my/file:6 in class 'MyClass': D123 - some short description"
+    assert str(error) == "/path/to/my/file:6 in class 'MyClass' -> D123: some short description"
 
 
 def test_str_and_repr() -> None:

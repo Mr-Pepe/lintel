@@ -41,10 +41,6 @@ class Docstring:
         )
 
     @property
-    def lines(self) -> List[str]:
-        return self.content.strip().split('\n')
-
-    @property
     def indent(self) -> str:
         """The indentation used for the first line of the docstring."""
         # Get the text before the quotation marks on the first line of the docstring
