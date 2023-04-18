@@ -93,7 +93,6 @@ class D205(DocstringError):
     explanation = """Multi-line docstrings consist of a summary line just like a one-line
                      docstring, followed by a blank line, followed by a more elaborate
                      description."""
-    applicable_nodes = NODES_TO_CHECK
 
     @classmethod
     def check_implementation(

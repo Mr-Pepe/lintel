@@ -47,18 +47,6 @@ error_registry.add_group(ErrorGroup(name="Docstring Content Issues", prefix="D4"
 #     'One-line docstring should fit on one line ' 'with quotes',
 #     'found {0}',
 # )
-# D206 = D2xx.create_error(
-#     'D206',
-#     'Docstring should be indented with spaces, not tabs',
-# )
-# D207 = D2xx.create_error(
-#     'D207',
-#     'Docstring is under-indented',
-# )
-# D208 = D2xx.create_error(
-#     'D208',
-#     'Docstring is over-indented',
-# )
 # D209 = D2xx.create_error(
 #     'D209',
 #     'Multi-line docstring closing quotes should be on a separate line',
@@ -102,29 +90,9 @@ error_registry.add_group(ErrorGroup(name="Docstring Content Issues", prefix="D4"
 # )
 
 # D4xx = ErrorRegistry.create_group('D4', 'Docstring Content Issues')
-# D400 = D4xx.create_error(
-#     'D400',
-#     'First line should end with a period',
-#     'not {0!r}',
-# )
-# D401 = D4xx.create_error(
-#     'D401',
-#     'First line should be in imperative mood',
-#     "perhaps '{0}', not '{1}'",
-# )
-# D401b = D4xx.create_error(
-#     'D401',
-#     'First line should be in imperative mood; try rephrasing',
-#     "found '{0}'",
-# )
 # D402 = D4xx.create_error(
 #     'D402',
 #     'First line should not be the function\'s "signature"',
-# )
-# D403 = D4xx.create_error(
-#     'D403',
-#     'First word of the first line should be properly capitalized',
-#     '{0!r}, not {1!r}',
 # )
 # D404 = D4xx.create_error(
 #     'D404',
@@ -179,14 +147,6 @@ error_registry.add_group(ErrorGroup(name="Docstring Content Issues", prefix="D4"
 #     'D414',
 #     'Section has no content',
 #     '{0!r}',
-# )
-# D415 = D4xx.create_error(
-#     'D415',
-#     (
-#         'First line should end with a period, question '
-#         'mark, or exclamation point'
-#     ),
-#     'not {0!r}',
 # )
 # D416 = D4xx.create_error(
 #     'D416',

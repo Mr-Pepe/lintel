@@ -5,6 +5,7 @@ from ._node_types import CHECKED_NODE_TYPES, NODES_TO_CHECK
 from ._config import Configuration, IllegalConfiguration
 from ._utils import *
 from ._version import __version__
+from ._wordlists import IMPERATIVE_BLACKLIST, IMPERATIVE_VERBS, stem
 
 # isort: split
 
