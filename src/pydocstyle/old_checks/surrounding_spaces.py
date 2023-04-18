@@ -5,10 +5,10 @@ from typing import List, Optional
 
 from astroid import NodeNG
 
+from pydocstyle._config import Configuration
+from pydocstyle._docstring import Docstring
+from pydocstyle._docstring_error import D210
 from pydocstyle.checks import check
-from pydocstyle.config import Configuration
-from pydocstyle.docstring import Docstring
-from pydocstyle.violations import D210
 
 
 @check(NodeNG)

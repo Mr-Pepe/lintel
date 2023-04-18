@@ -6,11 +6,11 @@ from typing import List, Optional, Tuple, Union
 
 from astroid import ClassDef, FunctionDef
 
+from pydocstyle._config import Configuration
+from pydocstyle._docstring import Docstring
+from pydocstyle._docstring_error import D201, D203, D211
+from pydocstyle._utils import has_content
 from pydocstyle.checks import check
-from pydocstyle.config import Configuration
-from pydocstyle.docstring import Docstring
-from pydocstyle.utils import has_content
-from pydocstyle.violations import D201, D203, D211
 
 
 @check(FunctionDef)
@@ -52,9 +52,7 @@ def check_no_blank_lines_before_class_docstring(
     return D211(n_blanks_before)
 
 
-def _get_n_blanks_before_docstring(
-    node: Union[FunctionDef, ClassDef], docstring: Docstring
-) -> int:
+def _get_n_blanks_before_docstring(node: Union[FunctionDef, ClassDef], docstring: Docstring) -> int:
     n_blanks = 0
     line = node.doc_node.fromlineno - 1
 

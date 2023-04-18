@@ -5,9 +5,8 @@ from pathlib import Path
 
 from astroid.exceptions import AstroidSyntaxError
 
+from ._config import Configuration, ConfigurationParser, IllegalConfiguration
 from .check_source import check_source
-from .config import Configuration, ConfigurationParser, IllegalConfiguration
-from .violations import Error
 
 __all__ = ('main',)
 
@@ -37,9 +36,6 @@ def run_pydocstyle():
 
     _logger.debug("starting in debug mode.")
 
-    Error.explain = run_conf.explain
-    Error.source = run_conf.source
-
     error_count = 0
     try:
         for (
@@ -58,9 +54,8 @@ def run_pydocstyle():
 
             try:
                 for error in check_source(Path(filename), config):
-                    if hasattr(error, 'code'):
-                        sys.stdout.write('%s\n' % error)
-                        error_count += 1
+                    sys.stdout.write('%s\n' % error)
+                    error_count += 1
 
             except AstroidSyntaxError:
                 sys.stderr.write(f"{filename}: Cannot parse file")

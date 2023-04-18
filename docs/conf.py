@@ -1,5 +1,3 @@
-"""Sphinx configuration."""
-
 # pydocstyle documentation build configuration file, created by
 # sphinx-quickstart on Fri Jan 30 20:30:42 2015.
 #
@@ -214,9 +212,7 @@ htmlhelp_basename = 'pydocstyledoc'
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [
-    ('index', 'pydocstyle', 'pydocstyle Documentation', ['Amir Rachum'], 1)
-]
+man_pages = [('index', 'pydocstyle', 'pydocstyle Documentation', ['Amir Rachum'], 1)]
 
 # If true, show URL addresses after external links.
 # man_show_urls = False
@@ -254,7 +250,7 @@ texinfo_documents = [
 
 def generate_error_code_table():
     """Add a table of all pydocstyle errors to the documentation."""
-    from pydocstyle.violations import ErrorRegistry
+    from pydocstyle.error_registry import ErrorRegistry
 
     with open(os.path.join('snippets', 'error_code_table.rst'), 'wt') as outf:
         outf.write(ErrorRegistry.to_rst())

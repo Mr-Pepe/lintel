@@ -16,7 +16,6 @@ from typing import Optional, Set
 
 from ._version import __version__
 from .conventions import CONVENTION_NAMES, Convention
-from .violations import ErrorRegistry
 
 if sys.version_info >= (3, 11):
     import tomllib
@@ -44,9 +43,7 @@ BASE_ERROR_SELECTION_OPTIONS = ('ignore', 'select', 'convention')
 DEFAULT_MATCH_RE = r'(?!test_).*\.py'
 DEFAULT_MATCH_DIR_RE = r'[^\.].*'
 DEFAULT_IGNORE_DECORATORS_RE = ''
-DEFAULT_PROPERTY_DECORATORS = (
-    "property,cached_property,functools.cached_property"
-)
+DEFAULT_PROPERTY_DECORATORS = "property,cached_property,functools.cached_property"
 DEFAULT_CONVENTION = Convention()
 
 PROJECT_CONFIG_FILES = (
@@ -93,9 +90,7 @@ class Configuration:
     property_decorators: Set[str] = field(
         default_factory=lambda: set(DEFAULT_PROPERTY_DECORATORS.split(","))
     )
-    ignore_inline_noqa: bool = (
-        False  # Whether `# noqa` comments are respected or not.
-    )
+    ignore_inline_noqa: bool = False  # Whether `# noqa` comments are respected or not.
 
 
 class TomlParser:
@@ -179,16 +174,12 @@ class TomlParser:
             raise NoOptionError(option, section)
 
         if isinstance(value, dict):
-            raise TypeError(
-                f"Expected {section}.{option} to be an option, not a section."
-            )
+            raise TypeError(f"Expected {section}.{option} to be an option, not a section.")
 
         # toml should convert types automatically
         # don't manually convert, just check, that the type is correct
         if _conv is not None and not isinstance(value, _conv):
-            raise TypeError(
-                f"The type of {section}.{option} should be {_conv}"
-            )
+            raise TypeError(f"The type of {section}.{option} should be {_conv}")
 
         return value
 
@@ -299,17 +290,11 @@ class ConfigurationParser:
 
         def _get_ignore_decorators(conf):
             """Return the `ignore_decorators` as None or regex."""
-            return (
-                re(conf.ignore_decorators) if conf.ignore_decorators else None
-            )
+            return re(conf.ignore_decorators) if conf.ignore_decorators else None
 
         def _get_property_decorators(conf):
             """Return the `property_decorators` as None or set."""
-            return (
-                set(conf.property_decorators.split(","))
-                if conf.property_decorators
-                else None
-            )
+            return set(conf.property_decorators.split(",")) if conf.property_decorators else None
 
         for name in self._arguments:
             if os.path.isdir(name):
@@ -544,9 +529,7 @@ class ConfigurationParser:
             'ignore_decorators',
             'property_decorators',
         ):
-            kwargs[key] = getattr(child_options, key) or getattr(
-                parent_config, key
-            )
+            kwargs[key] = getattr(child_options, key) or getattr(parent_config, key)
         return CheckConfiguration(**kwargs)
 
     def _parse_args(self, args=None, values=None):
@@ -557,9 +540,7 @@ class ConfigurationParser:
     @staticmethod
     def _create_run_config(options):
         """Create a `RunConfiguration` object from `options`."""
-        values = {
-            opt: getattr(options, opt) for opt in RunConfiguration._fields
-        }
+        values = {opt: getattr(options, opt) for opt in RunConfiguration._fields}
         return RunConfiguration(**values)
 
     @classmethod
@@ -622,7 +603,7 @@ class ConfigurationParser:
     @classmethod
     def _get_exclusive_error_codes(cls, options):
         """Extract the error codes from the selected exclusive option."""
-        codes = set(ErrorRegistry.get_error_codes())
+        codes = get_all_error_codes()
         checked_codes = None
 
         if options.ignore is not None:
@@ -645,7 +626,7 @@ class ConfigurationParser:
     @staticmethod
     def _expand_error_codes(code_parts):
         """Return an expanded set of error codes to ignore."""
-        codes = set(ErrorRegistry.get_error_codes())
+        codes = get_all_error_codes()
         expanded_codes = set()
 
         try:
@@ -656,13 +637,10 @@ class ConfigurationParser:
                 if not part:
                     continue
 
-                codes_to_add = {
-                    code for code in codes if code.startswith(part)
-                }
+                codes_to_add = {code for code in codes if code.startswith(part)}
                 if not codes_to_add:
                     _logger.warning(
-                        'Error code passed is not a prefix of any '
-                        'known errors: %s',
+                        'Error code passed is not a prefix of any ' 'known errors: %s',
                         part,
                     )
                 expanded_codes.update(codes_to_add)
@@ -690,13 +668,10 @@ class ConfigurationParser:
         was selected.
 
         """
-        for opt1, opt2 in itertools.permutations(
-            BASE_ERROR_SELECTION_OPTIONS, 2
-        ):
+        for opt1, opt2 in itertools.permutations(BASE_ERROR_SELECTION_OPTIONS, 2):
             if getattr(options, opt1) and getattr(options, opt2):
                 _logger.error(
-                    'Cannot pass both {} and {}. They are '
-                    'mutually exclusive.'.format(opt1, opt2)
+                    'Cannot pass both {} and {}. They are ' 'mutually exclusive.'.format(opt1, opt2)
                 )
                 return False
 
@@ -712,12 +687,7 @@ class ConfigurationParser:
     @classmethod
     def _has_exclusive_option(cls, options):
         """Return `True` iff one or more exclusive options were selected."""
-        return any(
-            [
-                getattr(options, opt) is not None
-                for opt in BASE_ERROR_SELECTION_OPTIONS
-            ]
-        )
+        return any([getattr(options, opt) is not None for opt in BASE_ERROR_SELECTION_OPTIONS])
 
     @classmethod
     def _fix_set_options(cls, options):
@@ -735,9 +705,7 @@ class ConfigurationParser:
             """
             if isinstance(value_str, str):
                 value_str = value_str.split(",")
-            return cls._expand_error_codes(
-                {x.strip() for x in value_str} - {""}
-            )
+            return cls._expand_error_codes({x.strip() for x in value_str} - {""})
 
         for opt in optional_set_options:
             value = getattr(options, opt)
@@ -775,13 +743,6 @@ class ConfigurationParser:
             action='store_true',
             default=False,
             help='show explanation of each error',
-        )
-        option(
-            '-s',
-            '--source',
-            action='store_true',
-            default=False,
-            help='show source for each error',
         )
         option(
             '-d',
@@ -858,9 +819,7 @@ class ConfigurationParser:
             metavar='<name>',
             default=None,
             help='choose the basic list of checked errors by specifying '
-            'an existing convention. Possible conventions: {}.'.format(
-                ', '.join(CONVENTION_NAMES)
-            ),
+            'an existing convention. Possible conventions: {}.'.format(', '.join(CONVENTION_NAMES)),
         )
         add_check(
             '--add-select',
@@ -927,9 +886,7 @@ class ConfigurationParser:
                 "consider any method decorated with one of these "
                 "decorators as a property, and consequently allow "
                 "a docstring which is not in imperative mood; default "
-                "is --property-decorators='{}'".format(
-                    DEFAULT_PROPERTY_DECORATORS
-                )
+                "is --property-decorators='{}'".format(DEFAULT_PROPERTY_DECORATORS)
             ),
         )
 
@@ -958,5 +915,11 @@ class IllegalConfiguration(Exception):
 # General configurations for pydocstyle run.
 RunConfiguration = namedtuple(
     'RunConfiguration',
-    ('explain', 'source', 'debug', 'verbose', 'count', 'config'),
+    ('explain', 'debug', 'verbose', 'count', 'config'),
 )
+
+
+def get_all_error_codes() -> Set[str]:
+    from pydocstyle import get_checks
+
+    return set(check.error_code() for check in get_checks())

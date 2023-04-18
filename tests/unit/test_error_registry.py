@@ -1,4 +1,4 @@
-from pydocstyle.docstring_error import DocstringError
+from pydocstyle import DocstringError
 from pydocstyle.error_registry import ErrorGroup, ErrorRegistry
 
 

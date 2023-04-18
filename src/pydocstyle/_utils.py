@@ -7,11 +7,7 @@ from typing import Iterable, List, Set, Tuple, TypeVar, Union
 import astroid
 from astroid import ClassDef, FunctionDef, Module
 
-CHECKED_NODE_TYPE = Union[
-    astroid.ClassDef, astroid.FunctionDef, astroid.Module
-]
-NODES_TO_CHECK = (astroid.ClassDef, astroid.FunctionDef, astroid.Module)
-
+from pydocstyle import CHECKED_NODE_TYPES, Configuration
 
 #: Regular expression for stripping non-alphanumeric characters
 NON_ALPHANUMERIC_STRIP_RE = re.compile(r'[\W_]+')
@@ -19,6 +15,25 @@ NON_ALPHANUMERIC_STRIP_RE = re.compile(r'[\W_]+')
 VARIADIC_MAGIC_METHODS = ("__new__", "__init__", "__call__")
 
 T = TypeVar("T")
+
+__all__ = (
+    "VARIADIC_MAGIC_METHODS",
+    "is_blank",
+    "has_content",
+    "pairwise",
+    "common_prefix_length",
+    "strip_non_alphanumeric",
+    "leading_space",
+    "get_error_codes_to_skip",
+    "get_decorator_names",
+    "is_public",
+    "is_private",
+    "is_dunder",
+    "is_overloaded",
+    "get_leading_words",
+    "is_ascii",
+    "is_nested_class",
+)
 
 
 def is_blank(string: str) -> bool:
@@ -71,14 +86,18 @@ def leading_space(string: str) -> str:
     return match.group()
 
 
-def get_error_codes_to_skip(node: CHECKED_NODE_TYPE) -> Set[str]:
+def get_error_codes_to_skip(node: CHECKED_NODE_TYPES, config: Configuration) -> Set[str]:
     """Return the error codes to skip for the given node.
 
     {"all"} will be returned if all error codes should be skipped.
     """
+    # Check for inline ignores
+    if isinstance(node, (FunctionDef, ClassDef)) and not config.ignore_inline_noqa:
+        return _get_line_noqa(_get_definition_line(node))
+
     error_codes_to_skip: Set[str] = set()
 
-    # Check for blank ignore in module
+    # Check for noqa comments in module
     if isinstance(node, Module):
         ignore_all_regex = re.compile(r"^\s*#\s*pydoclint\s*:\s*noqa\s*$")
         specific_ignore_regex = re.compile(r"^\s*#\s*noqa\s*:[\sA-Z\d,]*D\d+")
@@ -90,10 +109,6 @@ def get_error_codes_to_skip(node: CHECKED_NODE_TYPE) -> Set[str]:
             for match in specific_ignore_regex.findall(line):
                 for error_code in re.findall(r"D\d{0,3}\b", match):
                     error_codes_to_skip.add(error_code)
-
-    # Check for inline ignores
-    if isinstance(node, (FunctionDef, ClassDef)):
-        return _get_line_noqa(_get_definition_line(node))
 
     return error_codes_to_skip
 
@@ -115,11 +130,7 @@ def _get_line_noqa(line: str) -> Set[str]:
 
 
 def _get_definition_line(node: Union[FunctionDef, ClassDef]) -> str:
-    lines = (
-        node.root()
-        .file_bytes.decode()
-        .splitlines()[node.lineno - 1 : node.end_lineno]
-    )
+    lines = node.root().file_bytes.decode().splitlines()[node.lineno - 1 : node.end_lineno]
     for line in lines:
         if line.lstrip().startswith(("def", "async def", "class")):
             return line
@@ -127,7 +138,7 @@ def _get_definition_line(node: Union[FunctionDef, ClassDef]) -> str:
     raise ValueError(f"'{node.name}' does not contain a definition line.")
 
 
-def get_decorator_names(node: CHECKED_NODE_TYPE) -> List[str]:
+def get_decorator_names(node: CHECKED_NODE_TYPES) -> List[str]:
     """Return the decorator names applied to a node."""
     decorator_names: List[str] = []
 
@@ -150,7 +161,7 @@ def get_decorator_names(node: CHECKED_NODE_TYPE) -> List[str]:
     return decorator_names
 
 
-def is_public(node: CHECKED_NODE_TYPE) -> bool:
+def is_public(node: CHECKED_NODE_TYPES) -> bool:
     """Return whether a node is public."""
     if is_dunder(node):
         return True
@@ -164,9 +175,7 @@ def is_public(node: CHECKED_NODE_TYPE) -> bool:
     ):
         return False
 
-    if isinstance(node, astroid.ClassDef) and isinstance(
-        node.parent, astroid.FunctionDef
-    ):
+    if isinstance(node, astroid.ClassDef) and isinstance(node.parent, astroid.FunctionDef):
         # Classes are not considered public if nested in a function
         return False
 
@@ -179,12 +188,12 @@ def is_public(node: CHECKED_NODE_TYPE) -> bool:
     return True
 
 
-def is_private(node: CHECKED_NODE_TYPE) -> bool:
+def is_private(node: CHECKED_NODE_TYPES) -> bool:
     """Return whether a node is private."""
     return not is_public(node)
 
 
-def is_dunder(node: CHECKED_NODE_TYPE) -> bool:
+def is_dunder(node: CHECKED_NODE_TYPES) -> bool:
     """Return whether a node has a '__dunder__' name."""
     return node.name.startswith('__') and node.name.endswith('__')
 
@@ -209,3 +218,8 @@ def get_leading_words(line: str) -> str:
 def is_ascii(string: str) -> bool:
     """Return a boolean indicating if `string` only has ascii characters."""
     return all(ord(char) < 128 for char in string)
+
+
+def is_nested_class(class_: ClassDef) -> bool:
+    """Return whether the class is nested in a function or class."""
+    return isinstance(class_.parent, (FunctionDef, ClassDef))

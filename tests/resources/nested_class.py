@@ -9,9 +9,7 @@ expect('PublicClass', 'D101: Missing docstring in public class')
 
 
 class PublicClass:
-    expect(
-        'PublicNestedClass', 'D106: Missing docstring in public nested class'
-    )
+    expect('PublicNestedClass', 'D106: Missing docstring in public nested class')
 
     class PublicNestedClass:
         expect(

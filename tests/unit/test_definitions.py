@@ -6,9 +6,8 @@ from pathlib import Path
 
 import pytest
 
+from pydocstyle._config import DEFAULT_PROPERTY_DECORATORS, Configuration
 from pydocstyle.check_source import check_source
-from pydocstyle.config import DEFAULT_PROPERTY_DECORATORS, Configuration
-from pydocstyle.violations import Error, ErrorRegistry
 
 
 @pytest.mark.parametrize(
@@ -51,6 +50,4 @@ def test_complex_file(test_case: str, resource_dir: Path) -> None:
     for error in results:
         assert isinstance(error, Error)
 
-    assert case_module.expectation.expected == {
-        (e.node_name, e.message) for e in results
-    }
+    assert case_module.expectation.expected == {(e.node_name, e.message) for e in results}

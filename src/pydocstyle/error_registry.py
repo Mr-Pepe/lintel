@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Iterable, List
 
-from pydocstyle.docstring_error import DocstringError
+from pydocstyle import DocstringError
 
 
 @dataclass
@@ -38,39 +38,8 @@ error_registry = ErrorRegistry()
 error_registry.add_group(ErrorGroup(name="Missing Docstrings", prefix="D1"))
 error_registry.add_group(ErrorGroup(name="Whitespace Issues", prefix="D2"))
 error_registry.add_group(ErrorGroup(name="Quotes Issues", prefix="D3"))
-error_registry.add_group(
-    ErrorGroup(name="Docstring Content Issues", prefix="D4")
-)
+error_registry.add_group(ErrorGroup(name="Docstring Content Issues", prefix="D4"))
 
-
-# D101 = D1xx.create_error(
-#     'D101',
-#     'Missing docstring in public class',
-# )
-# D102 = D1xx.create_error(
-#     'D102',
-#     'Missing docstring in public method',
-# )
-# D103 = D1xx.create_error(
-#     'D103',
-#     'Missing docstring in public function',
-# )
-# D104 = D1xx.create_error(
-#     'D104',
-#     'Missing docstring in public package',
-# )
-# D105 = D1xx.create_error(
-#     'D105',
-#     'Missing docstring in magic method',
-# )
-# D106 = D1xx.create_error(
-#     'D106',
-#     'Missing docstring in public nested class',
-# )
-# D107 = D1xx.create_error(
-#     'D107',
-#     'Missing docstring in __init__',
-# )
 
 # D2xx = ErrorRegistry.create_group('D2', 'Whitespace Issues')
 # D200 = D2xx.create_error(

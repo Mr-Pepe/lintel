@@ -6,11 +6,11 @@ from typing import List, Optional, Tuple, Union
 
 from astroid import ClassDef, FunctionDef
 
+from pydocstyle._config import Configuration
+from pydocstyle._docstring import Docstring
+from pydocstyle._docstring_error import D202, D204
+from pydocstyle._utils import is_blank
 from pydocstyle.checks import check
-from pydocstyle.config import Configuration
-from pydocstyle.docstring import Docstring
-from pydocstyle.utils import is_blank
-from pydocstyle.violations import D202, D204
 
 
 @check(FunctionDef)
@@ -30,9 +30,7 @@ def check_no_blank_lines_after_function_docstring(
     if _is_empty_definition(lines_after, n_blanks_after):
         return None
 
-    if _blank_line_followed_by_inner_function_or_class(
-        lines_after, n_blanks_after
-    ):
+    if _blank_line_followed_by_inner_function_or_class(lines_after, n_blanks_after):
         return None
 
     return D202(n_blanks_after)
@@ -77,7 +75,5 @@ def _blank_line_followed_by_inner_function_or_class(
     return (
         n_blanks_after == 1
         and len(lines_after) > 1
-        and lines_after[1]
-        .lstrip()
-        .startswith(("class", "def", "async def", "@"))
+        and lines_after[1].lstrip().startswith(("class", "def", "async def", "@"))
     )

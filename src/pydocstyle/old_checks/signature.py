@@ -4,10 +4,10 @@ from typing import Optional
 
 from astroid import FunctionDef
 
+from pydocstyle._config import Configuration
+from pydocstyle._docstring import Docstring
+from pydocstyle._docstring_error import D402
 from pydocstyle.checks import check
-from pydocstyle.config import Configuration
-from pydocstyle.docstring import Docstring
-from pydocstyle.violations import D402
 
 
 @check(FunctionDef)

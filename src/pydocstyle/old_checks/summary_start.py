@@ -5,11 +5,11 @@ from typing import Optional, Union
 
 from astroid import NodeNG
 
+from pydocstyle._config import Configuration
+from pydocstyle._docstring import Docstring
+from pydocstyle._docstring_error import D212, D213
+from pydocstyle._utils import is_blank
 from pydocstyle.checks import check
-from pydocstyle.config import Configuration
-from pydocstyle.docstring import Docstring
-from pydocstyle.utils import is_blank
-from pydocstyle.violations import D212, D213
 
 
 @check(NodeNG)

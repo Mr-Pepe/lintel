@@ -12,7 +12,7 @@ import pytest
 from tests.utils.parse_errors import parse_errors
 from tests.utils.sandbox_env import SandboxEnv
 
-from pydocstyle.config import Configuration
+from pydocstyle import Configuration
 
 __all__ = ()
 
@@ -216,11 +216,7 @@ def test_multiple_lined_config_file(env):
             )
         )
 
-    select_string = (
-        'D100,\n'
-        '  #D103,\n'
-        ' D204, D300 # Just remember - don\'t check D103!'
-    )
+    select_string = 'D100,\n' '  #D103,\n' ' D204, D300 # Just remember - don\'t check D103!'
     env.write_config(select=select_string)
 
     out, err, code = env.invoke()
@@ -292,9 +288,7 @@ def test_config_path(env):
     assert 'D100' not in out
     assert 'D103' in out
 
-    out, err, code = env.invoke(
-        '--config={} -d'.format(os.path.join(env.tempdir, config_name))
-    )
+    out, err, code = env.invoke('--config={} -d'.format(os.path.join(env.tempdir, config_name)))
     assert code == 1, out + err
     assert 'D100' in out
     assert 'D103' not in out
@@ -498,9 +492,7 @@ def test_bad_wildcard_add_ignore_cli(env):
     assert 'D203' in out
     assert 'D300' in out
     assert 'D3004' not in out
-    assert (
-        'Error code passed is not a prefix of any known errors: D3004' in err
-    )
+    assert 'Error code passed is not a prefix of any known errors: D3004' in err
 
 
 def test_overload_function(env):

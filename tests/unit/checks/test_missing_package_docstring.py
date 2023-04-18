@@ -5,7 +5,6 @@ def test_missing_docstring_in_package(env: SandboxEnv) -> None:
     """Make sure __init__.py files are treated as packages."""
     with env.open('__init__.py', 'wt') as init:
         init.write("# Well hello there")
-        pass  # an empty package file
 
     out, err, exit_code = env.invoke()
 

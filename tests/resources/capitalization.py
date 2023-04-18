@@ -6,10 +6,7 @@ expectation = Expectation()
 expect = expectation.expect
 
 
-@expect(
-    "D403: First word of the first line should be properly capitalized "
-    "('Do', not 'do')"
-)
+@expect("D403: First word of the first line should be properly capitalized " "('Do', not 'do')")
 def not_capitalized():
     """do something."""
 
@@ -53,8 +50,7 @@ def partial_caps():
 
 
 @expect(
-    "D403: First word of the first line should be properly capitalized "
-    "('Return', not 'ReTurn')"
+    "D403: First word of the first line should be properly capitalized " "('Return', not 'ReTurn')"
 )
 def more_partial_caps():
     """ReTurn the field."""

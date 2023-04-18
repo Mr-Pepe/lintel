@@ -41,24 +41,19 @@ expectation.expected.add(
     arg_count=3,
 )
 @expect(
-    "D401: First line should be in imperative mood "
-    "(perhaps 'Fetch', not 'Fetches')",
+    "D401: First line should be in imperative mood " "(perhaps 'Fetch', not 'Fetches')",
     arg_count=3,
 )
 @expect(
-    "D406: Section name should end with a newline "
-    "('Raises', not 'Raises:')",
+    "D406: Section name should end with a newline " "('Raises', not 'Raises:')",
     arg_count=3,
 )
 @expect(
-    "D406: Section name should end with a newline "
-    "('Returns', not 'Returns:')",
+    "D406: Section name should end with a newline " "('Returns', not 'Returns:')",
     arg_count=3,
 )
 @expect("D407: Missing dashed underline after section ('Raises')", arg_count=3)
-@expect(
-    "D407: Missing dashed underline after section ('Returns')", arg_count=3
-)
+@expect("D407: Missing dashed underline after section ('Returns')", arg_count=3)
 @expect("D413: Missing blank line after last section ('Raises')", arg_count=3)
 def fetch_bigtable_rows(big_table, keys, other_silly_variable=None):
     """Fetches rows from a Bigtable.
@@ -95,10 +90,7 @@ def fetch_bigtable_rows(big_table, keys, other_silly_variable=None):
 # https://google.github.io/styleguide/pyguide.html#384-classes
 @expect("D203: 1 blank line required before class docstring (found 0)")
 @expect("D213: Multi-line docstring summary should start at the second line")
-@expect(
-    "D406: Section name should end with a newline "
-    "('Attributes', not 'Attributes:')"
-)
+@expect("D406: Section name should end with a newline " "('Attributes', not 'Attributes:')")
 @expect("D407: Missing dashed underline after section ('Attributes')")
 @expect("D413: Missing blank line after last section ('Attributes')")
 class SampleClass:
@@ -113,8 +105,7 @@ class SampleClass:
     """
 
     @expect(
-        "D401: First line should be in imperative mood "
-        "(perhaps 'Init', not 'Inits')",
+        "D401: First line should be in imperative mood " "(perhaps 'Init', not 'Inits')",
         arg_count=2,
     )
     def __init__(self, likes_spam=False):
@@ -124,8 +115,7 @@ class SampleClass:
             self.eggs = 0
 
     @expect(
-        "D401: First line should be in imperative mood "
-        "(perhaps 'Perform', not 'Performs')",
+        "D401: First line should be in imperative mood " "(perhaps 'Perform', not 'Performs')",
         arg_count=1,
     )
     def public_method(self):

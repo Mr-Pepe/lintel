@@ -52,8 +52,7 @@ expect = expectation.expect
 expectation.expected.add(
     (
         os.path.normcase(__file__),
-        "D205: 1 blank line required between summary line and description "
-        "(found 0)",
+        "D205: 1 blank line required between summary line and description " "(found 0)",
     )
 )
 expectation.expected.add(
@@ -88,13 +87,10 @@ expectation.expected.add(
     arg_count=3,
 )
 @expect(
-    "D401: First line should be in imperative mood; try rephrasing "
-    "(found 'A')",
+    "D401: First line should be in imperative mood; try rephrasing " "(found 'A')",
     arg_count=3,
 )
-@expect(
-    "D413: Missing blank line after last section ('Examples')", arg_count=3
-)
+@expect("D413: Missing blank line after last section ('Examples')", arg_count=3)
 def foo(var1, var2, long_var_name='hi'):
     r"""A one-line summary that does not use variable names.
 

@@ -6,16 +6,14 @@ from typing import Optional
 
 from astroid import FunctionDef
 
+from pydocstyle._config import Configuration
+from pydocstyle._docstring import Docstring
+from pydocstyle._docstring_error import D403
 from pydocstyle.checks import check
-from pydocstyle.config import Configuration
-from pydocstyle.docstring import Docstring
-from pydocstyle.violations import D403
 
 
 @check(FunctionDef)
-def check_capitalized(
-    _: FunctionDef, docstring: Docstring, __: Configuration
-) -> Optional[D403]:
+def check_capitalized(_: FunctionDef, docstring: Docstring, __: Configuration) -> Optional[D403]:
     """D403: First word of the first line should be properly capitalized."""
     first_word: str = docstring.content.split()[0]
 

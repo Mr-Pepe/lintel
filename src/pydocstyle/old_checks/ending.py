@@ -4,16 +4,14 @@ from typing import Callable, Optional, Tuple, Union
 
 from astroid import NodeNG
 
+from pydocstyle._config import Configuration
+from pydocstyle._docstring import Docstring
+from pydocstyle._docstring_error import D400, D415, Error
 from pydocstyle.checks import check
-from pydocstyle.config import Configuration
-from pydocstyle.docstring import Docstring
-from pydocstyle.violations import D400, D415, Error
 
 
 @check(NodeNG)
-def check_ends_with_period(
-    _: NodeNG, docstring: Docstring, __: Configuration
-) -> Optional[D400]:
+def check_ends_with_period(_: NodeNG, docstring: Docstring, __: Configuration) -> Optional[D400]:
     """D400: First line should end with a period."""
     return _check_ends_with(docstring, '.', D400)
 

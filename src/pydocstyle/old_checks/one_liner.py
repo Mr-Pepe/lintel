@@ -5,17 +5,15 @@ from typing import Optional
 
 from astroid import NodeNG
 
+from pydocstyle._config import Configuration
+from pydocstyle._docstring import Docstring
+from pydocstyle._docstring_error import D200
+from pydocstyle._utils import has_content
 from pydocstyle.checks import check
-from pydocstyle.config import Configuration
-from pydocstyle.docstring import Docstring
-from pydocstyle.utils import has_content
-from pydocstyle.violations import D200
 
 
 @check(NodeNG)
-def check_one_liner(
-    _: NodeNG, docstring: Docstring, config: Configuration
-) -> Optional[D200]:
+def check_one_liner(_: NodeNG, docstring: Docstring, config: Configuration) -> Optional[D200]:
     """D200: One-liner docstrings have to fit on one line with quotes."""
     lines = docstring.content.split('\n')
 

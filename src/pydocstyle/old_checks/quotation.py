@@ -3,16 +3,16 @@
 import re
 from typing import Optional
 
+from pydocstyle._config import Configuration
+from pydocstyle._docstring import Docstring
+from pydocstyle._docstring_error import D300, D301
+from pydocstyle._utils import CHECKED_NODE_TYPES, NODES_TO_CHECK
 from pydocstyle.checks import check
-from pydocstyle.config import Configuration
-from pydocstyle.docstring import Docstring
-from pydocstyle.utils import CHECKED_NODE_TYPE, NODES_TO_CHECK
-from pydocstyle.violations import D300, D301
 
 
 @check(NODES_TO_CHECK)
 def check_triple_double_quotes(
-    _: CHECKED_NODE_TYPE, docstring: Docstring, __: Configuration
+    _: CHECKED_NODE_TYPES, docstring: Docstring, __: Configuration
 ) -> Optional[D300]:
     r'''D300: Use """triple double quotes""".
 
@@ -34,9 +34,7 @@ def check_triple_double_quotes(
     if regex.match(docstring.raw):
         return None
 
-    illegal_match = re.compile(r""".*?[uU]?[rR]?("+|'+).*""").match(
-        docstring.raw
-    )
+    illegal_match = re.compile(r""".*?[uU]?[rR]?("+|'+).*""").match(docstring.raw)
     assert illegal_match is not None
 
     illegal_quotes = illegal_match.group(1)
@@ -49,7 +47,7 @@ def check_triple_double_quotes(
 
 @check(NODES_TO_CHECK)
 def check_backslashes(
-    _: CHECKED_NODE_TYPE, docstring: Docstring, __: Configuration
+    _: CHECKED_NODE_TYPES, docstring: Docstring, __: Configuration
 ) -> Optional[D301]:
     r'''D301: Use r""" if any backslashes in a docstring.
 

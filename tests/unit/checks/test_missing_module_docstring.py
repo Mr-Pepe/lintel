@@ -5,9 +5,10 @@ def test_missing_docstring_in_module(env: SandboxEnv) -> None:
     with env.open('my_module.py', 'w', encoding="utf-8") as file:
         file.write("import os\n")
 
-    out, _, code = env.invoke()
+    out, err, code = env.invoke()
 
     print(out)
+    print(err)
     assert code == 1
     assert 'D100' in out
 

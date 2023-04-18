@@ -4,15 +4,20 @@
 import astroid
 import pytest
 
-from pydocstyle.docstring_error import DocstringError
+from pydocstyle import (
+    Configuration,
+    DocstringError,
+    get_docstring_from_doc_node,
+)
 
 FUNCTION_CODE = """def my_func() -> None:
         ...
     """
 
-CLASS_CODE = """class MyClass:
+CLASS_CODE = '''class MyClass:
+        """Docstring."""
         ...
-    """
+    '''
 
 module_node = astroid.parse(
     code=f"\n{FUNCTION_CODE}\n\n{CLASS_CODE}",
@@ -50,31 +55,33 @@ def test_node_name() -> None:
 def test_print_for_function_node() -> None:
     error = MyError(function_node)
 
-    assert (
-        str(error)
-        == "/path/to/my/file:2 in function 'my_func': D123 - some short description"
-    )
+    assert str(error) == "/path/to/my/file:2 in function 'my_func': D123 - some short description"
 
 
 def test_print_for_module_node() -> None:
     error = MyError(module_node)
 
-    assert (
-        str(error)
-        == "/path/to/my/file:0 in module 'my_module': D123 - some short description"
-    )
+    assert str(error) == "/path/to/my/file:0 in module 'my_module': D123 - some short description"
 
 
 def test_print_for_class_node() -> None:
     error = MyError(class_node)
 
-    assert (
-        str(error)
-        == "/path/to/my/file:6 in class 'MyClass': D123 - some short description"
-    )
+    assert str(error) == "/path/to/my/file:6 in class 'MyClass': D123 - some short description"
 
 
 def test_str_and_repr() -> None:
     error = MyError(class_node)
 
     assert str(error) == error.__repr__()
+
+
+def test_unimplemented_error_is_raised_if_check_is_missing() -> None:
+    error = MyError(class_node)
+
+    with pytest.raises(NotImplementedError):
+        error.check_implementation(
+            class_node,
+            get_docstring_from_doc_node(class_node),
+            Configuration(),
+        )

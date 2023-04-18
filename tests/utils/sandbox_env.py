@@ -50,9 +50,7 @@ class SandboxEnv:
         if name.endswith('.toml'):
 
             def convert_value(val):
-                return (
-                    repr(val).lower() if isinstance(val, bool) else repr(val)
-                )
+                return repr(val).lower() if isinstance(val, bool) else repr(val)
 
         else:
 
@@ -62,9 +60,7 @@ class SandboxEnv:
         with open(os.path.join(base, name), 'wt') as conf:
             conf.write(f"[{self.section_name}]\n")
             for k, v in kwargs.items():
-                conf.write(
-                    "{} = {}\n".format(k.replace('_', '-'), convert_value(v))
-                )
+                conf.write("{} = {}\n".format(k.replace('_', '-'), convert_value(v)))
 
     def open(self, path: str, *args: Any, **kwargs: Any) -> TextIOWrapper:
         """Open a file in the environment.
@@ -85,22 +81,12 @@ class SandboxEnv:
         the environment base folder.
 
         """
-        run_target = (
-            self.tempdir
-            if target is None
-            else os.path.join(self.tempdir, target)
-        )
+        run_target = self.tempdir if target is None else os.path.join(self.tempdir, target)
 
-        cmd = shlex.split(
-            "{} {} {}".format(self.script_name, run_target, args), posix=False
-        )
-        p = subprocess.Popen(
-            cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE
-        )
+        cmd = shlex.split("{} {} {}".format(self.script_name, run_target, args), posix=False)
+        p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out, err = p.communicate()
-        return self.Result(
-            out=out.decode('utf-8'), err=err.decode('utf-8'), code=p.returncode
-        )
+        return self.Result(out=out.decode('utf-8'), err=err.decode('utf-8'), code=p.returncode)
 
     def __enter__(self):
         self.tempdir = tempfile.mkdtemp()

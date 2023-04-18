@@ -4,18 +4,13 @@ import linecache
 import re
 from typing import List, Optional
 
-from pydocstyle.utils import (
-    CHECKED_NODE_TYPE,
-    has_content,
-    leading_space,
-    pairwise,
-)
+from pydocstyle import CHECKED_NODE_TYPES, has_content, leading_space, pairwise
 
 
 class Docstring:
     """A docstring representation."""
 
-    def __init__(self, parent_node: CHECKED_NODE_TYPE):
+    def __init__(self, parent_node: CHECKED_NODE_TYPES):
         """Initialize the docstring.
 
         Args:
@@ -25,9 +20,7 @@ class Docstring:
             ValueError: If the parent node does not have a doc node.
         """
         if parent_node.doc_node is None:
-            raise ValueError(
-                f"Node '{parent_node.name}' does not have a doc node."
-            )
+            raise ValueError(f"Node '{parent_node.name}' does not have a doc node.")
 
         self.parent_node = parent_node
         self.node = parent_node.doc_node
@@ -51,9 +44,7 @@ class Docstring:
     def indent(self) -> str:
         """The indentation used for the first line of the docstring."""
         # Get the text before the quotation marks on the first line of the docstring
-        pre_text = re.findall(
-            "(.*?)[uU]?[rR]?(\"\"\"|\'\'\')", self.raw.splitlines()[0]
-        )[0][0]
+        pre_text = re.findall("(.*?)[uU]?[rR]?(\"\"\"|\'\'\')", self.raw.splitlines()[0])[0][0]
 
         return "".join(' ' for _ in pre_text)
 
@@ -75,7 +66,7 @@ class Docstring:
 
 
 def get_docstring_from_doc_node(
-    node: CHECKED_NODE_TYPE,
+    node: CHECKED_NODE_TYPES,
 ) -> Optional[Docstring]:
     """Retrieve the docstring of an astroid node."""
     if node.doc_node is None:

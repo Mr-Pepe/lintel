@@ -4,17 +4,15 @@ from typing import Optional
 
 from astroid import NodeNG
 
+from pydocstyle._config import Configuration
+from pydocstyle._docstring import Docstring
+from pydocstyle._docstring_error import D404
+from pydocstyle._utils import strip_non_alphanumeric
 from pydocstyle.checks import check
-from pydocstyle.config import Configuration
-from pydocstyle.docstring import Docstring
-from pydocstyle.utils import strip_non_alphanumeric
-from pydocstyle.violations import D404
 
 
 @check(NodeNG)
-def check_starts_with_this(
-    _: NodeNG, docstring: Docstring, __: Configuration
-) -> Optional[D404]:
+def check_starts_with_this(_: NodeNG, docstring: Docstring, __: Configuration) -> Optional[D404]:
     """D404: First word of the docstring should not be `This`.
 
     Docstrings should use short, simple language. They should not begin

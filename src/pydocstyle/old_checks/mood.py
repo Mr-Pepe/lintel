@@ -4,15 +4,15 @@ from typing import Optional, Union
 
 from astroid import FunctionDef
 
-from pydocstyle.checks import check
-from pydocstyle.config import Configuration
-from pydocstyle.docstring import Docstring
-from pydocstyle.utils import (
+from pydocstyle._config import Configuration
+from pydocstyle._docstring import Docstring
+from pydocstyle._docstring_error import D401, D401b
+from pydocstyle._utils import (
     common_prefix_length,
     get_decorator_names,
     strip_non_alphanumeric,
 )
-from pydocstyle.violations import D401, D401b
+from pydocstyle.checks import check
 from pydocstyle.wordlists import IMPERATIVE_BLACKLIST, IMPERATIVE_VERBS, stem
 
 
@@ -59,6 +59,5 @@ def _is_test(function_: FunctionDef) -> bool:
 
 def _is_property(function_: FunctionDef, config: Configuration) -> bool:
     return any(
-        decorator in config.property_decorators
-        for decorator in get_decorator_names(function_)
+        decorator in config.property_decorators for decorator in get_decorator_names(function_)
     )

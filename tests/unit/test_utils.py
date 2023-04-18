@@ -3,34 +3,36 @@ from typing import List, Set
 import astroid
 import pytest
 
-from pydocstyle import utils
+from pydocstyle import _utils
+from pydocstyle._docstring_error import DocstringError
+from pydocstyle.checks import check
 
 __all__ = ()
 
 
 def test_common_prefix():
     """Test common prefix length of two strings."""
-    assert utils.common_prefix_length('abcd', 'abce') == 3
+    assert _utils.common_prefix_length('abcd', 'abce') == 3
 
 
 def test_no_common_prefix():
     """Test common prefix length of two strings that have no common prefix."""
-    assert utils.common_prefix_length('abcd', 'cdef') == 0
+    assert _utils.common_prefix_length('abcd', 'cdef') == 0
 
 
 def test_differ_length():
     """Test common prefix length of two strings differing in length."""
-    assert utils.common_prefix_length('abcd', 'ab') == 2
+    assert _utils.common_prefix_length('abcd', 'ab') == 2
 
 
 def test_empty_string():
     """Test common prefix length of two strings, one of them empty."""
-    assert utils.common_prefix_length('abcd', '') == 0
+    assert _utils.common_prefix_length('abcd', '') == 0
 
 
 def test_strip_non_alphanumeric():
     """Test strip of a string leaves only alphanumeric characters."""
-    assert utils.strip_non_alphanumeric("  1abcd1...") == "1abcd1"
+    assert _utils.strip_non_alphanumeric("  1abcd1...") == "1abcd1"
 
 
 @pytest.mark.parametrize(
@@ -57,7 +59,7 @@ def test_strip_non_alphanumeric():
 )
 def test_error_codes_to_skip_module(source: str, expected: bool) -> None:
     node = astroid.parse(source)
-    assert utils.get_error_codes_to_skip(node) == expected
+    assert _utils.get_error_codes_to_skip(node) == expected
 
 
 @pytest.mark.parametrize(
@@ -77,11 +79,9 @@ def test_error_codes_to_skip_module(source: str, expected: bool) -> None:
         ),
     ],
 )
-def test_error_codes_to_skip_class_and_function(
-    source: str, expected: bool
-) -> None:
+def test_error_codes_to_skip_class_and_function(source: str, expected: bool) -> None:
     node = next(astroid.parse(source).get_children())
-    assert utils.get_error_codes_to_skip(node) == expected
+    assert _utils.get_error_codes_to_skip(node) == expected
 
 
 @pytest.mark.parametrize(
@@ -95,7 +95,7 @@ def test_error_codes_to_skip_class_and_function(
     ],
 )
 def test_get_line_noqa(line: str, expected: List[str]) -> None:
-    assert utils._get_line_noqa(line) == expected
+    assert _utils._get_line_noqa(line) == expected
 
 
 @pytest.mark.parametrize(
@@ -118,8 +118,6 @@ def test_get_line_noqa(line: str, expected: List[str]) -> None:
     ],
 )
 def test_get_decorator_names(code: str, expected_decorators: Set[str]) -> None:
-    node = list(
-        f for f in astroid.parse(code).get_children() if f.name == "func"
-    )[0]
+    node = list(f for f in astroid.parse(code).get_children() if f.name == "func")[0]
     assert isinstance(node, astroid.FunctionDef)
-    assert utils.get_decorator_names(node) == expected_decorators
+    assert _utils.get_decorator_names(node) == expected_decorators
