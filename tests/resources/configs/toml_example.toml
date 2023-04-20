@@ -1,0 +1,10 @@
+[tool.pydocstyle]
+convention = "google"
+select = "D100,D200"
+ignore = "D100,D300"
+match = "abc"
+match_dir = "def"
+ignore_decorators = "[a-z].*"
+property_decorators = "abc,def"
+ignore_inline_noqa = true
+verbose = true
