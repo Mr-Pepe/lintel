@@ -14,6 +14,12 @@ def resource_dir_fixture() -> Path:
     return TESTS_DIR / "resources"
 
 
+@pytest.fixture(scope="session", name="discovery_dir")
+def file_discovery_dir_fixture(resource_dir: Path) -> Path:
+    """Return the path to the test resource directory for file discovery."""
+    return resource_dir / "file_discovery"
+
+
 @pytest.fixture(scope="function", params=['ini', 'toml'])
 def env(request):
     """Add a testing environment to a test method."""
