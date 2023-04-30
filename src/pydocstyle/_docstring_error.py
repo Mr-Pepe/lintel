@@ -5,7 +5,7 @@ from __future__ import annotations
 import os
 from typing import Any, List, Optional, Union
 
-from astroid import ClassDef, FunctionDef, Module
+from astroid import AsyncFunctionDef, ClassDef, FunctionDef, Module
 
 from pydocstyle import (
     CHECKED_NODE_TYPES,
@@ -16,7 +16,7 @@ from pydocstyle import (
 )
 
 
-class DocstringError(Exception):
+class DocstringError:
     """Linting error in docstring."""
 
     description: str
@@ -64,7 +64,12 @@ class DocstringError(Exception):
     @property
     def node_type(self) -> CHECKED_NODE_TYPES:
         """Return the node type this error belongs to."""
-        return {Module: "module", FunctionDef: "function", ClassDef: "class"}[type(self.node)]
+        return {
+            Module: "module",
+            FunctionDef: "function",
+            AsyncFunctionDef: "function",
+            ClassDef: "class",
+        }[type(self.node)]
 
     @property
     def message(self) -> str:
@@ -86,25 +91,30 @@ class DocstringError(Exception):
         return str(self)
 
     @classmethod
-    def check(cls, node: CHECKED_NODE_TYPES, config: Configuration) -> None:
+    def check(cls, node: CHECKED_NODE_TYPES, config: Configuration) -> List[DocstringError]:
         """Implement the actual check logic in the :py:meth:`.check_implementation` method."""
 
         if not isinstance(node, cls.applicable_nodes):
-            return None
+            return []
 
-        docstring = get_docstring_from_doc_node(node)
+        docstring = get_docstring_from_doc_node(node, config)
 
         if docstring is None and not cls.applicable_if_doc_string_is_missing:
-            return None
+            return []
 
         if (
             docstring is not None
             and docstring.content == ""
             and not cls.applicable_if_doc_string_is_empty
         ):
-            return None
+            return []
 
-        cls.check_implementation(node, docstring, config)
+        errors = cls.check_implementation(node, docstring, config)
+
+        if isinstance(errors, DocstringError):
+            errors = [errors]
+
+        return errors or []
 
     @classmethod
     def check_implementation(
@@ -112,6 +122,6 @@ class DocstringError(Exception):
         node: CHECKED_NODE_TYPES,
         docstring: Optional[Docstring],
         config: Configuration,
-    ) -> None:
+    ) -> Union[None, DocstringError, List[DocstringError]]:
         """Check a docstring."""
         raise NotImplementedError()

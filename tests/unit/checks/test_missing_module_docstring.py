@@ -5,19 +5,17 @@ def test_missing_docstring_in_module(env: SandboxEnv) -> None:
     with env.open('my_module.py', 'w', encoding="utf-8") as file:
         file.write("import os\n")
 
-    out, err, code = env.invoke()
+    result = env.invoke()
 
-    print(out)
-    print(err)
-    assert code == 1
-    assert 'D100' in out
+    assert result.exit_code == 1
+    assert 'D100' in result.stdout
 
 
 def test_private_module_is_ignored(env: SandboxEnv) -> None:
     with env.open('_my_module.py', 'w', encoding="utf-8") as file:
         file.write("import os\n")
 
-    out, _, code = env.invoke()
+    result = env.invoke()
 
-    assert code == 0
-    assert out == ""
+    assert result.exit_code == 0
+    assert result.stdout == ""

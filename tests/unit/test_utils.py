@@ -34,69 +34,6 @@ def test_strip_non_alphanumeric():
 
 
 @pytest.mark.parametrize(
-    ("source", "expected"),
-    [
-        ("# pydoclint: noqa", {"all"}),
-        ("#pydoclint:noqa", {"all"}),
-        ("#   pydoclint   :   noqa   ", {"all"}),
-        ("a = 1\n#pydoclint:noqa\n# Some more text", {"all"}),
-        ("# noqa: D100", {"D100"}),
-        ("# noqa: A123,D1234,D1,D100,D300", {"D1", "D100", "D300"}),
-        (
-            "def my_func(): # noqa: D1,D100,D300\n\t...",
-            set(),
-        ),
-        ("# Some text\n#pydoclint:noq\n# Some more text", set()),
-        ("# pydoclint: noqa # And something else", set()),
-        ("# And something else # pydoclint: noqa", set()),
-        ("", set()),
-        ("# noqa", set()),
-        ("#noqa", set()),
-        ("#pydoclint", set()),
-    ],
-)
-def test_error_codes_to_skip_module(source: str, expected: bool) -> None:
-    node = astroid.parse(source)
-    assert _utils.get_error_codes_to_skip(node, Configuration()) == expected
-
-
-@pytest.mark.parametrize(
-    ("source", "expected"),
-    [
-        (
-            "def my_func(): # noqa\n\t...",
-            {"all"},
-        ),
-        (
-            "def my_func():    #   noqa # and more\n\t...",
-            {"all"},
-        ),
-        (
-            "def my_func():    #   noqa: E501,D100,D200 # and more\n\t...",
-            {"D100", "D200"},
-        ),
-    ],
-)
-def test_error_codes_to_skip_class_and_function(source: str, expected: bool) -> None:
-    node = next(astroid.parse(source).get_children())
-    assert _utils.get_error_codes_to_skip(node) == expected
-
-
-@pytest.mark.parametrize(
-    ("line", "expected"),
-    [
-        ("def func(): # noqa", {"all"}),
-        ("def func(): #   noqa   ", {"all"}),
-        ("def func(): #   noqa  # Another comment", {"all"}),
-        ("def func(): # Another comment #   noqa", {"all"}),
-        ("def func(): # Another comment #   noqa something", set()),
-    ],
-)
-def test_get_line_noqa(line: str, expected: List[str]) -> None:
-    assert _utils._get_line_noqa(line) == expected
-
-
-@pytest.mark.parametrize(
     ("code", "expected_decorators"),
     [
         ("def func():\n\t...", []),

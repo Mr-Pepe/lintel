@@ -9,18 +9,17 @@ from pydocstyle import CHECKED_NODE_TYPES, Configuration, Docstring, DocstringEr
 
 
 class D200(DocstringError):
-    description = "One-line docstring should fit on one line with quotes, found {} lines."
+    description = "One-line docstring should fit on one line with quotes (found {} lines)."
 
     @classmethod
     def check_implementation(
         cls, node: CHECKED_NODE_TYPES, docstring: Docstring, config: Configuration
     ) -> None:
-        lines = docstring.content.split('\n')
-        non_empty_lines = sum(1 for l in lines if has_content(l))
+        non_empty_lines = sum(1 for l in docstring.lines if has_content(l))
 
         # If docstring should be a one-liner but has multiple lines
-        if non_empty_lines == 1 and len(lines) > 1:
+        if non_empty_lines == 1 and len(docstring.lines) > 1:
             error = cls(node)
-            error.parameters = [len(lines)]
+            error.parameters = [len(docstring.lines)]
 
-            raise error
+            return error

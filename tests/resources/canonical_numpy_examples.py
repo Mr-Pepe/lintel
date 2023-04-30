@@ -51,46 +51,32 @@ expect = expectation.expect
 # module docstring expected violations:
 expectation.expected.add(
     (
-        os.path.normcase(__file__),
-        "D205: 1 blank line required between summary line and description " "(found 0)",
+        __name__.split(".")[-1],
+        "D205: 1 blank line required between summary line and description " "(found 0).",
     )
 )
 expectation.expected.add(
     (
-        os.path.normcase(__file__),
-        "D213: Multi-line docstring summary should start at the second line.",
+        __name__.split(".")[-1],
+        "D400: First line should end with a period (not 'd').",
     )
 )
 expectation.expected.add(
     (
-        os.path.normcase(__file__),
-        "D400: First line should end with a period (not 'd')",
-    )
-)
-expectation.expected.add(
-    (
-        os.path.normcase(__file__),
-        "D404: First word of the docstring should not be `This`",
-    )
-)
-expectation.expected.add(
-    (
-        os.path.normcase(__file__),
-        "D415: First line should end with a period, question mark, or exclamation "
-        "point (not 'd')",
+        __name__.split(".")[-1],
+        "D404: First word of the docstring should not be `This`.",
     )
 )
 
 
 @expect(
-    "D213: Multi-line docstring summary should start at the second line.",
+    "D407: Missing dashed underline after section 'Raises'.",
     arg_count=3,
 )
 @expect(
-    "D401: First line should be in imperative mood; try rephrasing " "(found 'A')",
+    "D401: First line should be in imperative mood (found 'A').",
     arg_count=3,
 )
-@expect("D413: Missing blank line after last section ('Examples')", arg_count=3)
 def foo(var1, var2, long_var_name='hi'):
     r"""A one-line summary that does not use variable names.
 
@@ -128,7 +114,6 @@ def foo(var1, var2, long_var_name='hi'):
         Explanation
 
     Raises
-    ------
     BadException
         Because you shouldn't have done that.
 

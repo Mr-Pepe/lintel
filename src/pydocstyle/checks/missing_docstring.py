@@ -18,7 +18,7 @@ from pydocstyle import (
 
 
 class D100(DocstringError):
-    description = "Missing docstring in public module"
+    description = "Missing docstring in public module."
     explanation = "Public modules should have docstrings."
     applicable_nodes = astroid.Module
     applicable_if_doc_string_is_missing = True
@@ -32,11 +32,11 @@ class D100(DocstringError):
         config: Configuration,
     ) -> None:
         if docstring is None and is_public(module) and not module.package:
-            raise cls(module)
+            return cls(module)
 
 
 class D101(DocstringError):
-    description = "Missing docstring in public class"
+    description = "Missing docstring in public class."
     explanation = "Public classes should have docstrings."
     applicable_nodes = astroid.ClassDef
     applicable_if_doc_string_is_missing = True
@@ -50,11 +50,11 @@ class D101(DocstringError):
         config: Configuration,
     ) -> None:
         if docstring is None and is_public(class_) and not is_nested_class(class_):
-            raise cls(class_)
+            return cls(class_)
 
 
 class D102(DocstringError):
-    description = "Missing docstring in public method"
+    description = "Missing docstring in public method."
     explanation = "Public methods should have docstrings."
     applicable_nodes = astroid.FunctionDef
     applicable_if_doc_string_is_missing = True
@@ -72,13 +72,13 @@ class D102(DocstringError):
             and is_public(method)
             and not is_overloaded(method)
             and method.is_bound()
-            and not is_dunder(method)
+            and (not is_dunder(method) or method.name in ("__new__", "__call__"))
         ):
-            raise cls(method)
+            return cls(method)
 
 
 class D103(DocstringError):
-    description = "Missing docstring in public function"
+    description = "Missing docstring in public function."
     explanation = "Public functions should have docstrings."
     applicable_nodes = astroid.FunctionDef
     applicable_if_doc_string_is_missing = True
@@ -98,11 +98,11 @@ class D103(DocstringError):
             and not isinstance(function_.parent, astroid.FunctionDef)
             and not function_.is_bound()
         ):
-            raise cls(function_)
+            return cls(function_)
 
 
 class D104(DocstringError):
-    description = "Missing docstring in public package"
+    description = "Missing docstring in public package."
     explanation = "Public packages should have docstrings."
     applicable_nodes = astroid.Module
     applicable_if_doc_string_is_missing = True
@@ -116,11 +116,11 @@ class D104(DocstringError):
         config: Configuration,
     ) -> None:
         if docstring is None and is_public(module) and module.package:
-            raise cls(module)
+            return cls(module)
 
 
 class D105(DocstringError):
-    description = "Missing docstring in magic method"
+    description = "Missing docstring in magic method."
     explanation = "Magic methods should have docstrings."
     applicable_nodes = astroid.FunctionDef
     applicable_if_doc_string_is_missing = True
@@ -141,11 +141,11 @@ class D105(DocstringError):
             and is_dunder(method)
             and not method.name in VARIADIC_MAGIC_METHODS
         ):
-            raise cls(method)
+            return cls(method)
 
 
 class D106(DocstringError):
-    description = "Missing docstring in public nested class"
+    description = "Missing docstring in public nested class."
     explanation = "Public nested classes should have docstrings."
     applicable_nodes = astroid.ClassDef
     applicable_if_doc_string_is_missing = True
@@ -159,11 +159,11 @@ class D106(DocstringError):
         config: Configuration,
     ) -> None:
         if docstring is None and is_public(class_) and is_nested_class(class_):
-            raise cls(class_)
+            return cls(class_)
 
 
 class D107(DocstringError):
-    description = "Missing docstring in __init__ method"
+    description = "Missing docstring in __init__ method."
     explanation = "__init__ methods should have docstrings."
     applicable_nodes = astroid.FunctionDef
     applicable_if_doc_string_is_missing = True
@@ -183,4 +183,4 @@ class D107(DocstringError):
             and method.is_bound()
             and method.name == "__init__"
         ):
-            raise cls(method)
+            return cls(method)

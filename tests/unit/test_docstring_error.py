@@ -77,6 +77,6 @@ def test_unimplemented_error_is_raised_if_check_is_missing() -> None:
     with pytest.raises(NotImplementedError):
         error.check_implementation(
             class_node,
-            get_docstring_from_doc_node(class_node),
+            get_docstring_from_doc_node(class_node, Configuration()),
             Configuration(),
         )

@@ -17,7 +17,7 @@ class D206(DocstringError):
         if "\t" in docstring.indent or any(
             "\t" in line_indent for line_indent in docstring.line_indents
         ):
-            raise cls(node)
+            return cls(node)
 
 
 class D207(DocstringError):
@@ -34,7 +34,7 @@ class D207(DocstringError):
             return None
 
         if min(docstring.line_indents) < docstring.indent:
-            raise cls(node)
+            return cls(node)
 
 
 class D208(DocstringError):
@@ -53,4 +53,4 @@ class D208(DocstringError):
         if (
             len(docstring.line_indents) > 1 and min(docstring.line_indents[:-1]) > docstring.indent
         ) or docstring.line_indents[-1] > docstring.indent:
-            raise cls(node)
+            return cls(node)

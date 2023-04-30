@@ -14,7 +14,8 @@ class D209(DocstringError):
     def check_implementation(
         cls, node: CHECKED_NODE_TYPES, docstring: Optional[Docstring], config: Configuration
     ) -> None:
-        lines = [l for l in docstring.content.split('\n')]
-
-        if len(lines) > 1 and has_content(lines[-1]):
-            raise cls(node)
+        if len(docstring.lines) > 1 and docstring.raw.splitlines()[-1].strip() not in (
+            '"""',
+            "'''",
+        ):
+            return cls(node)

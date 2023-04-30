@@ -26,4 +26,4 @@ class D419(DocstringError):
         cls, node: CHECKED_NODE_TYPES, docstring: Optional[Docstring], config: Configuration
     ) -> None:
         if not has_content(docstring.content):
-            raise cls(node)
+            return cls(node)

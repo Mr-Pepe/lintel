@@ -9,7 +9,7 @@ from pydocstyle import Configuration, Docstring, DocstringError
 
 
 class D402(DocstringError):
-    description = 'First line should not be function\'s or method\'s "signature".'
+    description = 'First line should not be the function\'s or method\'s "signature".'
     explanation = """The one-line docstring should NOT be a "signature" reiterating the
                      function/method parameters (which can be obtained by introspection).
                      """
@@ -22,4 +22,4 @@ class D402(DocstringError):
         first_line = docstring.content.strip().split('\n')[0]
 
         if f"{function_.name}(" in first_line.replace(' ', ''):
-            raise cls(function_)
+            return cls(function_)

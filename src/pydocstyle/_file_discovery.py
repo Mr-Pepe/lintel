@@ -10,7 +10,7 @@ def discover_files(paths: List[Path], config: Configuration) -> List[Path]:
     discovered_files: Set[Path] = set()
 
     for path in paths:
-        if path.is_file():
+        if path.is_file() and re.compile(config.match).match(path.name):
             discovered_files.add(path)
 
         if path.is_dir():

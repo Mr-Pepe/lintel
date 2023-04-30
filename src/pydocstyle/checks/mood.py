@@ -41,9 +41,9 @@ class D401(DocstringError):
 
         if check_word in IMPERATIVE_BLACKLIST:
             error = cls(function_)
-            error.parameters = [f", found '{first_word}'"]
+            error.parameters = [f" (found '{first_word}')"]
 
-            raise error
+            return error
 
         correct_forms = IMPERATIVE_VERBS.get(stem(check_word))
 
@@ -58,7 +58,7 @@ class D401(DocstringError):
         error = cls(function_)
         error.parameters = [f" (perhaps '{best.capitalize()}', not '{first_word}')"]
 
-        raise error
+        return error
 
 
 def _is_test(function_: FunctionDef) -> bool:

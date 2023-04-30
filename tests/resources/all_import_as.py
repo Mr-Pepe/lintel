@@ -9,7 +9,7 @@ expect = expectation.expect
 __all__ = ('public_func',)
 
 
-@expect("D103: Missing docstring in public function")
+@expect("D103: Missing docstring in public function.")
 def public_func():
     pass
 

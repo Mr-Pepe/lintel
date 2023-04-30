@@ -14,7 +14,7 @@ class D400(DocstringError):
     def check_implementation(
         cls, node: CHECKED_NODE_TYPES, docstring: Docstring, config: Configuration
     ) -> None:
-        _check_ends_with(node, docstring, '.', cls)
+        return _check_ends_with(node, docstring, '.', cls)
 
 
 class D415(DocstringError):
@@ -26,7 +26,7 @@ class D415(DocstringError):
     def check_implementation(
         cls, node: CHECKED_NODE_TYPES, docstring: Docstring, config: Configuration
     ) -> None:
-        _check_ends_with(node, docstring, ('.', '!', '?'), cls)
+        return _check_ends_with(node, docstring, ('.', '!', '?'), cls)
 
 
 def _check_ends_with(
@@ -42,4 +42,4 @@ def _check_ends_with(
         error = error_class(node)
         error.parameters = [summary_line[-1]]
 
-        raise error
+        return error

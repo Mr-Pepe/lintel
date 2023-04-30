@@ -2,12 +2,12 @@
 
 import re
 from itertools import tee, zip_longest
-from typing import Iterable, List, Set, Tuple, TypeVar, Union
+from typing import Iterable, List, Set, Tuple, TypeVar
 
 import astroid
 from astroid import ClassDef, FunctionDef, Module
 
-from pydocstyle import CHECKED_NODE_TYPES, Configuration
+from pydocstyle import CHECKED_NODE_TYPES
 
 #: Regular expression for stripping non-alphanumeric characters
 NON_ALPHANUMERIC_STRIP_RE = re.compile(r'[\W_]+')
@@ -24,14 +24,11 @@ __all__ = (
     "common_prefix_length",
     "strip_non_alphanumeric",
     "leading_space",
-    "get_error_codes_to_skip",
     "get_decorator_names",
     "is_public",
     "is_private",
     "is_dunder",
     "is_overloaded",
-    "get_leading_words",
-    "is_ascii",
     "is_nested_class",
 )
 
@@ -84,58 +81,6 @@ def leading_space(string: str) -> str:
     assert match
 
     return match.group()
-
-
-def get_error_codes_to_skip(node: CHECKED_NODE_TYPES, config: Configuration) -> Set[str]:
-    """Return the error codes to skip for the given node.
-
-    {"all"} will be returned if all error codes should be skipped.
-    """
-    # Check for inline ignores
-    if isinstance(node, (FunctionDef, ClassDef)) and not config.ignore_inline_noqa:
-        return _get_line_noqa(_get_definition_line(node))
-
-    error_codes_to_skip: Set[str] = set()
-
-    # Check for noqa comments in module
-    if isinstance(node, Module):
-        ignore_all_regex = re.compile(r"^\s*#\s*pydoclint\s*:\s*noqa\s*$")
-        specific_ignore_regex = re.compile(r"^\s*#\s*noqa\s*:[\sA-Z\d,]*D\d+")
-
-        for line in node.file_bytes.decode().splitlines():
-            if ignore_all_regex.search(line):
-                return {"all"}
-
-            for match in specific_ignore_regex.findall(line):
-                for error_code in re.findall(r"D\d{0,3}\b", match):
-                    error_codes_to_skip.add(error_code)
-
-    return error_codes_to_skip
-
-
-def _get_line_noqa(line: str) -> Set[str]:
-    ignore_all_regex = re.compile(r".*#\s*noqa(\s*$|\s*#)")
-    specific_ignore_regex = re.compile(r".*#\s*noqa\s*:\s*([\sA-Z\d,]*D\d+)")
-
-    if ignore_all_regex.search(line):
-        return {"all"}
-
-    error_codes_to_skip: Set[str] = set()
-
-    for match in specific_ignore_regex.findall(line):
-        for error_code in re.findall(r"D\d{0,3}\b", match):
-            error_codes_to_skip.add(error_code)
-
-    return error_codes_to_skip
-
-
-def _get_definition_line(node: Union[FunctionDef, ClassDef]) -> str:
-    lines = node.root().file_bytes.decode().splitlines()[node.lineno - 1 : node.end_lineno]
-    for line in lines:
-        if line.lstrip().startswith(("def", "async def", "class")):
-            return line
-
-    raise ValueError(f"'{node.name}' does not contain a definition line.")
 
 
 def get_decorator_names(node: CHECKED_NODE_TYPES) -> List[str]:
@@ -201,23 +146,6 @@ def is_dunder(node: CHECKED_NODE_TYPES) -> bool:
 def is_overloaded(function_: FunctionDef) -> bool:
     """Return whether the function has an ``overload`` decorator."""
     return "overload" in get_decorator_names(function_)
-
-
-def get_leading_words(line: str) -> str:
-    """Return any leading set of words from `line`.
-
-    For example, if `line` is "  Hello world!!!", returns "Hello world".
-    """
-    result = re.compile(r"[\w ]+").match(line.strip())
-    if result is not None:
-        return result.group()
-
-    return ""
-
-
-def is_ascii(string: str) -> bool:
-    """Return a boolean indicating if `string` only has ascii characters."""
-    return all(ord(char) < 128 for char in string)
 
 
 def is_nested_class(class_: ClassDef) -> bool:

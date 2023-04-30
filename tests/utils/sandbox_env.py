@@ -2,13 +2,17 @@
 
 
 import os
-import shlex
 import shutil
-import subprocess
 import tempfile
-from collections import namedtuple
-from io import FileIO, TextIOWrapper
+from io import TextIOWrapper
 from typing import Any
+
+from click.testing import Result
+from typer.testing import CliRunner
+
+from pydocstyle.cli import app
+
+_runner = CliRunner(mix_stderr=False, env={"PYDOCSTYLE_TESTING": "True"})
 
 
 class SandboxEnv:
@@ -20,8 +24,6 @@ class SandboxEnv:
     files to the environment and changing the environment's configuration.
 
     """
-
-    Result = namedtuple('Result', ('out', 'err', 'code'))
 
     def __init__(
         self,
@@ -74,7 +76,7 @@ class SandboxEnv:
         """Create a directory in a path relative to the environment base."""
         os.makedirs(os.path.join(self.tempdir, path), *args, **kwargs)
 
-    def invoke(self, args="", target=None):
+    def invoke(self, args="", target=None) -> Result:
         """Run pydocstyle on the environment base folder with the given args.
 
         If `target` is not None, will run pydocstyle on `target` instead of
@@ -83,10 +85,7 @@ class SandboxEnv:
         """
         run_target = self.tempdir if target is None else os.path.join(self.tempdir, target)
 
-        cmd = shlex.split("{} {} {}".format(self.script_name, run_target, args), posix=False)
-        p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        out, err = p.communicate()
-        return self.Result(out=out.decode('utf-8'), err=err.decode('utf-8'), code=p.returncode)
+        return _runner.invoke(app, f"{run_target} {args}")
 
     def __enter__(self):
         self.tempdir = tempfile.mkdtemp()

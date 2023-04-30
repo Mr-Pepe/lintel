@@ -7,11 +7,11 @@ expectation = Expectation()
 expect = expectation.expect
 
 
-@expect("D103: Missing docstring in public function")
+@expect("D103: Missing docstring in public function.")
 def public_func():
     pass
 
 
-@expect("D103: Missing docstring in public function")
+@expect("D103: Missing docstring in public function.")
 def this():
     pass

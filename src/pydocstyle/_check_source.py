@@ -1,22 +1,19 @@
 """Parsed source code checkers for docstring violations."""
 
+import re
 from pathlib import Path
-from typing import Generator, List, Set
+from typing import List
 
 import astroid
 from astroid import Module
-from astroid.exceptions import AstroidSyntaxError
 
 from pydocstyle import (
     CHECKED_NODE_TYPES,
     NODES_TO_CHECK,
     Configuration,
     DocstringError,
-    IllegalConfiguration,
-    _docstring_error,
     get_checks,
     get_decorator_names,
-    get_docstring_from_doc_node,
     get_error_codes,
     get_error_codes_to_skip,
 )
@@ -25,27 +22,19 @@ from pydocstyle import (
 def check_source(
     file_path: Path,
     config: Configuration = Configuration(),
-) -> Generator[DocstringError, None, AstroidSyntaxError]:
+) -> List[DocstringError]:
     """Check a Python source file for docstring errors.
 
     Args:
         file_path: Path to the Python file.
         config: The configuration to use for error checking.
             Defaults to Configuration().
-
-    Raises:
-        IllegalConfiguration: If the configuration is invalid.
-
-    Yields:
-        AstroidSyntaxError: If the Python file can not be parsed.
-        DocstringError: If docstring errors are found.
     """
-    codes_to_check_base = _get_codes_to_check(config)
+    codes_to_check_base = get_error_codes(config)
     module = _parse_file(file_path)
-    module_wide_skipped_errors = get_error_codes_to_skip(module, config)
+    module_wide_skipped_errors = get_error_codes_to_skip(module)
 
-    if "all" in module_wide_skipped_errors:
-        return
+    errors: List[DocstringError] = []
 
     nodes = [module]
 
@@ -57,26 +46,20 @@ def check_source(
         if _skip_node(node, config):
             continue
 
-        error_codes_to_skip = module_wide_skipped_errors | get_error_codes_to_skip(node, config)
+        inline_skipped_errors = get_error_codes_to_skip(node, config.ignore_inline_noqa)
 
-        if "all" in error_codes_to_skip:
-            continue
-
-        codes_to_check = codes_to_check_base - error_codes_to_skip
+        codes_to_check = codes_to_check_base - module_wide_skipped_errors - inline_skipped_errors
 
         for check in get_checks():
             if check.error_code() in codes_to_check:
-                try:
-                    check.check(node, config)
-                except DocstringError as error:
-                    # _, _, explanation = check.explanation.partition('.\n')
+                found_errors = check.check(node, config)
 
-                    # check.set_context(explanation=explanation, node=node)
+                errors.extend(found_errors)
 
-                    yield error
+                if found_errors and check.terminal:
+                    break
 
-                    if check.terminal:
-                        break
+    return errors
 
 
 def _parse_file(file_path: Path) -> Module:
@@ -84,24 +67,6 @@ def _parse_file(file_path: Path) -> Module:
         source = file.read()
 
     return astroid.parse(source, module_name=file_path.stem, path=file_path.as_posix())
-
-
-def _get_codes_to_check(config: Configuration) -> Set[str]:
-    if config.select is not None and config.ignore is not None:
-        raise IllegalConfiguration(
-            'Cannot pass both select and ignore. ' 'They are mutually exclusive.'
-        )
-
-    if config.select is not None:
-        codes_to_check = config.select
-
-    elif config.ignore is not None:
-        codes_to_check = set(get_error_codes()) - set(config.ignore)
-
-    else:
-        codes_to_check = get_error_codes()
-
-    return codes_to_check
 
 
 def _get_child_nodes_to_check(
@@ -119,7 +84,7 @@ def _skip_node(node: CHECKED_NODE_TYPES, config: Configuration) -> bool:
     decorator_names = get_decorator_names(node)
 
     if config.ignore_decorators is not None and any(
-        len(config.ignore_decorators.findall(decorator_name)) > 0
+        len(re.compile(config.ignore_decorators).findall(decorator_name)) > 0
         for decorator_name in decorator_names
     ):
         return True

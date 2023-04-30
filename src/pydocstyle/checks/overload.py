@@ -19,4 +19,4 @@ class D418(DocstringError):
         cls, function_: astroid.FunctionDef, docstring: Optional[Docstring], config: Configuration
     ) -> None:
         if is_overloaded(function_):
-            raise cls(function_)
+            return cls(function_)

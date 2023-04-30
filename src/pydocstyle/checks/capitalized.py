@@ -28,4 +28,4 @@ class D403(DocstringError):
         error = cls(node)
         error.parameters = [first_word.capitalize(), first_word]
 
-        raise error
+        return error

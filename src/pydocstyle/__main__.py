@@ -5,4 +5,4 @@
 if __name__ == '__main__':
     from pydocstyle import cli
 
-    cli.main()
+    cli.app()

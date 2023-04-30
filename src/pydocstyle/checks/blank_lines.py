@@ -30,7 +30,7 @@ class D201(DocstringError):
             error = cls(function_)
             error.parameters = [n_blanks_before]
 
-            raise error
+            return error
 
 
 class D202(DocstringError):
@@ -51,7 +51,7 @@ class D202(DocstringError):
             error = cls(function_)
             error.parameters = [n_blanks_after]
 
-            raise error
+            return error
 
 
 class D203(DocstringError):
@@ -68,7 +68,7 @@ class D203(DocstringError):
             error = cls(class_)
             error.parameters = [n_blanks_before]
 
-            raise error
+            return error
 
 
 class D204(DocstringError):
@@ -85,7 +85,7 @@ class D204(DocstringError):
             error = cls(class_)
             error.parameters = [n_blanks_after]
 
-            raise error
+            return error
 
 
 class D205(DocstringError):
@@ -110,7 +110,7 @@ class D205(DocstringError):
             error = cls(node)
             error.parameters = [n_blanks]
 
-            raise error
+            return error
 
 
 class D211(DocstringError):
@@ -127,7 +127,7 @@ class D211(DocstringError):
             error = cls(class_)
             error.parameters = [n_blanks_before]
 
-            raise error
+            return error
 
 
 def _get_n_blanks_before_docstring(node: Union[astroid.FunctionDef, astroid.ClassDef]) -> int:

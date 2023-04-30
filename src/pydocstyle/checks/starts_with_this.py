@@ -29,4 +29,4 @@ class D404(DocstringError):
         first_word = strip_non_alphanumeric(stripped.split()[0])
 
         if first_word.lower() == 'this':
-            raise cls(node)
+            return cls(node)

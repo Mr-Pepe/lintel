@@ -42,7 +42,7 @@ class D300(DocstringError):
         error = cls(node)
         error.parameters = [illegal_quotes]
 
-        raise error
+        return error
 
 
 class D301(DocstringError):
@@ -67,4 +67,4 @@ class D301(DocstringError):
         if docstring.raw.strip().startswith(('r', 'ur')):
             return None
 
-        raise cls(node)
+        return cls(node)

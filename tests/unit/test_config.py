@@ -64,16 +64,16 @@ def test_raises_error_if_unparsable_file(tmp_path: Path) -> None:
 
 
 def test_discovery_in_same_folder(tmp_path: Path) -> None:
-    (tmp_path / "setup.cfg").write_text("[pydocstyle]\nselect=1\n")
-    (tmp_path / "tox.ini").write_text("[pydocstyle]\nselect=2\n")
-    (tmp_path / "pyproject.toml").write_text('[tool.pydocstyle]\nselect="3"\n')
+    (tmp_path / "setup.cfg").write_text("[pydocstyle]\nselect=D1\n")
+    (tmp_path / "tox.ini").write_text("[pydocstyle]\nselect=D2\n")
+    (tmp_path / "pyproject.toml").write_text('[tool.pydocstyle]\nselect="D3"\n')
 
-    assert load_config(tmp_path).select == set("1")
+    assert load_config(tmp_path).select == {"D1"}
 
     (tmp_path / "setup.cfg").unlink()
 
-    assert load_config(tmp_path).select == set("2")
+    assert load_config(tmp_path).select == {"D2"}
 
     (tmp_path / "tox.ini").unlink()
 
-    assert load_config(tmp_path).select == set("3")
+    assert load_config(tmp_path).select == {"D3"}
