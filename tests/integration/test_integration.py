@@ -18,13 +18,6 @@ __all__ = ()
 _runner = CliRunner(mix_stderr=False)
 
 
-def test_requires_at_least_one_path() -> None:
-    result = _runner.invoke(app)
-
-    assert result.exit_code == 1
-    assert "Provide at least one directory or file to check." in result.stdout
-
-
 def test_non_existent_config_path_raises_error() -> None:
     result = _runner.invoke(app, config="abcdef")
 

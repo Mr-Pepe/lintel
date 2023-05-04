@@ -46,8 +46,10 @@ def test_loads_ini_and_toml_files_if_specified(config_file: str, resource_dir: P
 def test_raises_error_if_configuration_is_missing_correct_section(
     config_file: str, resource_dir: Path
 ) -> None:
-    with pytest.raises(IllegalConfiguration):
-        load_config(resource_dir / "configs" / config_file)
+    config_path = resource_dir / "configs" / config_file
+
+    with pytest.raises(ValueError, match=f"No pydocstyle section found in '{config_path}'."):
+        load_config(config_path)
 
 
 @pytest.mark.parametrize("config_file", ["unknown_options.ini", "unknown_options.toml"])
@@ -57,10 +59,12 @@ def test_raises_error_if_unknown_options_are_present(config_file: str, resource_
 
 
 def test_raises_error_if_unparsable_file(tmp_path: Path) -> None:
-    (tmp_path / "weird.bla").write_text("/([)")
+    config_path = tmp_path / "weird.bla"
 
-    with pytest.raises(IllegalConfiguration):
-        load_config(tmp_path / "weird.bla")
+    config_path.write_text("/([)")
+
+    with pytest.raises(ValueError, match=f"No pydocstyle section found in '{config_path}'."):
+        load_config(config_path)
 
 
 def test_discovery_in_same_folder(tmp_path: Path) -> None:

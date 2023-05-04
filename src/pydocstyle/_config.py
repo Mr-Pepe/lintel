@@ -60,6 +60,14 @@ class Configuration(BaseModel):
     def parse_ignore(cls, v: str) -> Set[str]:
         return set(re.findall(r"D\d+\b", v))
 
+    @validator('add_select', pre=True)
+    def parse_add_select(cls, v: str) -> Set[str]:
+        return set(re.findall(r"D\d+\b", v))
+
+    @validator('add_ignore', pre=True)
+    def parse_add_ignore(cls, v: str) -> Set[str]:
+        return set(re.findall(r"D\d+\b", v))
+
     @validator('property_decorators', pre=True)
     def parse_property_decorators(cls, v: str) -> Set[str]:
         return set(v.split(",")) - {""}
@@ -78,7 +86,7 @@ def load_config(config_path: Path) -> Configuration:
     if config_path.is_file():
         try:
             return _load_config_file(config_path)
-        except IllegalConfiguration:
+        except ValueError:
             _logger.error(
                 "Configuration file %s does not contain a pydocstyle section.", config_path
             )
@@ -87,7 +95,7 @@ def load_config(config_path: Path) -> Configuration:
     for config_file in PROJECT_CONFIG_FILES:
         try:
             return _load_config_file(config_path / config_file)
-        except (FileNotFoundError, IllegalConfiguration):
+        except (FileNotFoundError, ValueError):
             pass
 
     return Configuration()
@@ -110,12 +118,15 @@ def _load_config_file(config_path: Path) -> Configuration:
     config_dict = toml or ini
 
     if config_dict is None:
-        raise IllegalConfiguration()
+        raise ValueError(f"No pydocstyle section found in '{config_path}'.")
+
+    # Replace dashes with underscores in keys
+    config_dict = {k.replace("-", "_"): v for k, v in config_dict.items()}
 
     try:
         return Configuration.parse_obj(config_dict)
     except ValidationError:
-        raise IllegalConfiguration()
+        raise IllegalConfiguration(f"Invalid pydocstyle settings in '{config_path}'.")
 
 
 class IllegalConfiguration(Exception):
