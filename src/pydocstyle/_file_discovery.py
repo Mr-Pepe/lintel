@@ -6,7 +6,7 @@ from typing import List, Set
 from pydocstyle import Configuration
 
 
-def discover_files(paths: List[Path], config: Configuration) -> List[Path]:
+def discover_files(paths: List[Path], config: Configuration) -> Set[Path]:
     discovered_files: Set[Path] = set()
 
     for path in paths:

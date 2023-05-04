@@ -5,7 +5,7 @@ import os
 import shutil
 import tempfile
 from io import TextIOWrapper
-from typing import Any
+from typing import Any, Optional
 
 from click.testing import Result
 from typer.testing import CliRunner
@@ -76,7 +76,7 @@ class SandboxEnv:
         """Create a directory in a path relative to the environment base."""
         os.makedirs(os.path.join(self.tempdir, path), *args, **kwargs)
 
-    def invoke(self, args="", target=None) -> Result:
+    def invoke(self, args: str = "", target: Optional[str] = None) -> Result:
         """Run pydocstyle on the environment base folder with the given args.
 
         If `target` is not None, will run pydocstyle on `target` instead of

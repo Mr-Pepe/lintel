@@ -18,8 +18,8 @@ class D300(DocstringError):
 
     @classmethod
     def check_implementation(
-        cls, node: CHECKED_NODE_TYPES, docstring: Optional[Docstring], config: Configuration
-    ) -> None:
+        cls, node: CHECKED_NODE_TYPES, docstring: Docstring, config: Configuration
+    ) -> Optional["D300"]:
         if '"""' in docstring.content:
             # Allow ''' quotes if docstring contains """, because
             # otherwise """ quotes could not be expressed inside
@@ -57,8 +57,8 @@ class D301(DocstringError):
 
     @classmethod
     def check_implementation(
-        cls, node: CHECKED_NODE_TYPES, docstring: Optional[Docstring], config: Configuration
-    ) -> None:
+        cls, node: CHECKED_NODE_TYPES, docstring: Docstring, config: Configuration
+    ) -> Optional["D301"]:
         # Just check that docstring is raw. D300 ensures the correct quotes.
         if not re.compile(r'\\[^\nuN]').search(docstring.content):
             # No backslash in docstring

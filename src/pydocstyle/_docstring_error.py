@@ -94,7 +94,8 @@ class DocstringError:
     def check(cls, node: CHECKED_NODE_TYPES, config: Configuration) -> List[DocstringError]:
         """Implement the actual check logic in the :py:meth:`.check_implementation` method."""
 
-        if not isinstance(node, cls.applicable_nodes):
+        # Mypy can apparently not resolve the correct type
+        if not isinstance(node, cls.applicable_nodes):  # type: ignore
             return []
 
         docstring = get_docstring_from_doc_node(node, config)

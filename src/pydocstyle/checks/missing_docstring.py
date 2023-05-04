@@ -30,9 +30,11 @@ class D100(DocstringError):
         module: astroid.Module,
         docstring: Optional[Docstring],
         config: Configuration,
-    ) -> None:
+    ) -> Optional["D100"]:
         if docstring is None and is_public(module) and not module.package:
             return cls(module)
+
+        return None
 
 
 class D101(DocstringError):
@@ -48,9 +50,11 @@ class D101(DocstringError):
         class_: astroid.ClassDef,
         docstring: Optional[Docstring],
         config: Configuration,
-    ) -> None:
+    ) -> Optional["D101"]:
         if docstring is None and is_public(class_) and not is_nested_class(class_):
             return cls(class_)
+
+        return None
 
 
 class D102(DocstringError):
@@ -66,7 +70,7 @@ class D102(DocstringError):
         method: astroid.FunctionDef,
         docstring: Optional[Docstring],
         config: Configuration,
-    ) -> None:
+    ) -> Optional["D102"]:
         if (
             docstring is None
             and is_public(method)
@@ -75,6 +79,8 @@ class D102(DocstringError):
             and (not is_dunder(method) or method.name in ("__new__", "__call__"))
         ):
             return cls(method)
+
+        return None
 
 
 class D103(DocstringError):
@@ -90,7 +96,7 @@ class D103(DocstringError):
         function_: astroid.FunctionDef,
         docstring: Optional[Docstring],
         config: Configuration,
-    ) -> None:
+    ) -> Optional["D103"]:
         if (
             docstring is None
             and is_public(function_)
@@ -99,6 +105,8 @@ class D103(DocstringError):
             and not function_.is_bound()
         ):
             return cls(function_)
+
+        return None
 
 
 class D104(DocstringError):
@@ -114,9 +122,11 @@ class D104(DocstringError):
         module: CHECKED_NODE_TYPES,
         docstring: Optional[Docstring],
         config: Configuration,
-    ) -> None:
+    ) -> Optional["D104"]:
         if docstring is None and is_public(module) and module.package:
             return cls(module)
+
+        return None
 
 
 class D105(DocstringError):
@@ -132,7 +142,7 @@ class D105(DocstringError):
         method: astroid.FunctionDef,
         docstring: Optional[Docstring],
         config: Configuration,
-    ) -> None:
+    ) -> Optional["D105"]:
         if (
             docstring is None
             and is_public(method)
@@ -142,6 +152,8 @@ class D105(DocstringError):
             and not method.name in VARIADIC_MAGIC_METHODS
         ):
             return cls(method)
+
+        return None
 
 
 class D106(DocstringError):
@@ -157,9 +169,11 @@ class D106(DocstringError):
         class_: CHECKED_NODE_TYPES,
         docstring: Optional[Docstring],
         config: Configuration,
-    ) -> None:
+    ) -> Optional["D106"]:
         if docstring is None and is_public(class_) and is_nested_class(class_):
             return cls(class_)
+
+        return None
 
 
 class D107(DocstringError):
@@ -175,7 +189,7 @@ class D107(DocstringError):
         method: astroid.FunctionDef,
         docstring: Optional[Docstring],
         config: Configuration,
-    ) -> None:
+    ) -> Optional["D107"]:
         if (
             docstring is None
             and is_public(method)
@@ -184,3 +198,5 @@ class D107(DocstringError):
             and method.name == "__init__"
         ):
             return cls(method)
+
+        return None

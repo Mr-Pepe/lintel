@@ -32,7 +32,6 @@ class class_:
     def overloaded_method(self, a: int) -> str:
         ...
 
-    expect("D417: Missing argument description for 'a'.", func_name="overloaded_method")
     @overload
     def overloaded_method(self, a: str) -> str:
         """Foo bar documentation."""
@@ -43,6 +42,7 @@ class class_:
         """Foo bar documentation."""
         return str(a)
 
+    expect("overloaded_method", "D417: Missing argument description for 'a'.")
     expect('overloaded_method',
            "D418: Functions/methods decorated with @overload"
            " shouldn't contain a docstring.")

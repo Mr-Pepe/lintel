@@ -12,10 +12,12 @@ class D209(DocstringError):
 
     @classmethod
     def check_implementation(
-        cls, node: CHECKED_NODE_TYPES, docstring: Optional[Docstring], config: Configuration
-    ) -> None:
+        cls, node: CHECKED_NODE_TYPES, docstring: Docstring, config: Configuration
+    ) -> Optional["D209"]:
         if len(docstring.lines) > 1 and docstring.raw.splitlines()[-1].strip() not in (
             '"""',
             "'''",
         ):
             return cls(node)
+
+        return None

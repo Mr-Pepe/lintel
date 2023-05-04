@@ -11,11 +11,13 @@ class D210(DocstringError):
 
     @classmethod
     def check_implementation(
-        cls, node: CHECKED_NODE_TYPES, docstring: Optional[Docstring], config: Configuration
-    ) -> None:
+        cls, node: CHECKED_NODE_TYPES, docstring: Docstring, config: Configuration
+    ) -> Optional["D210"]:
         if (
             docstring.lines[0].startswith(' ')
             or len(docstring.lines) == 1
             and docstring.lines[0].endswith(' ')
         ):
             return cls(node)
+
+        return None

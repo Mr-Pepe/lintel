@@ -63,7 +63,7 @@ class Docstring:
         self.parent_node = parent_node
         self.node = parent_node.doc_node
         self.convention = convention
-        self._sections = []
+        self._sections: List[Section] = []
 
         self._parameters: List[str] = []
 
@@ -197,7 +197,7 @@ def _get_leading_words(line: str) -> str:
     return ""
 
 
-def _is_docstring_section(section: Section):
+def _is_docstring_section(section: Section) -> bool:
     """Check if the suspected context is really a section header.
 
     Lets have a look at the following example docstring:
@@ -339,7 +339,7 @@ def _parse_google_parameters(section: Section) -> List[str]:
         )
     ).strip()
 
-    args_sections = []
+    args_sections: List[str] = []
     for line in args_content.splitlines(keepends=True):
         if not line[:1].isspace():
             # This line is the start of documentation for the next
@@ -350,8 +350,8 @@ def _parse_google_parameters(section: Section) -> List[str]:
             # parameter because it does start with whitespace.
             args_sections[-1] += line
 
-    for section in args_sections:
-        match = GOOGLE_ARGS_REGEX.match(section)
+    for args_section in args_sections:
+        match = GOOGLE_ARGS_REGEX.match(args_section)
         if match:
             docstring_args.append(match.group(1))
 

@@ -17,6 +17,8 @@ class D418(DocstringError):
     @classmethod
     def check_implementation(
         cls, function_: astroid.FunctionDef, docstring: Optional[Docstring], config: Configuration
-    ) -> None:
+    ) -> Optional["D418"]:
         if is_overloaded(function_):
             return cls(function_)
+
+        return None

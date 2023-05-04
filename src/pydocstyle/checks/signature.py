@@ -18,8 +18,10 @@ class D402(DocstringError):
     @classmethod
     def check_implementation(
         cls, function_: astroid.FunctionDef, docstring: Docstring, config: Configuration
-    ) -> None:
+    ) -> Optional["D402"]:
         first_line = docstring.content.strip().split('\n')[0]
 
         if f"{function_.name}(" in first_line.replace(' ', ''):
             return cls(function_)
+
+        return None

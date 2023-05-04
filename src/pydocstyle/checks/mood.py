@@ -1,6 +1,8 @@
 """Contains a check for the mood of a docstring."""
 
 
+from typing import Optional
+
 import astroid
 from astroid import FunctionDef
 
@@ -27,7 +29,7 @@ class D401(DocstringError):
     @classmethod
     def check_implementation(
         cls, function_: astroid.FunctionDef, docstring: Docstring, config: Configuration
-    ) -> None:
+    ) -> Optional["D401"]:
         if _is_test(function_) or _is_property(function_, config):
             return None
 

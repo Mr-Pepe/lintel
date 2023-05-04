@@ -2,7 +2,7 @@
 
 import linecache
 from itertools import takewhile
-from typing import List, Tuple, Union
+from typing import List, Optional, Tuple, Union
 
 import astroid
 
@@ -23,7 +23,7 @@ class D201(DocstringError):
     @classmethod
     def check_implementation(
         cls, function_: astroid.FunctionDef, docstring: Docstring, config: Configuration
-    ) -> None:
+    ) -> Optional["D201"]:
         n_blanks_before = _get_n_blanks_before_docstring(function_)
 
         if n_blanks_before != 0:
@@ -31,6 +31,8 @@ class D201(DocstringError):
             error.parameters = [n_blanks_before]
 
             return error
+
+        return None
 
 
 class D202(DocstringError):
@@ -40,7 +42,7 @@ class D202(DocstringError):
     @classmethod
     def check_implementation(
         cls, function_: astroid.FunctionDef, docstring: Docstring, config: Configuration
-    ) -> None:
+    ) -> Optional["D202"]:
         lines_after, _, n_blanks_after = _get_stuff_after_docstring(function_)
 
         if (
@@ -53,6 +55,8 @@ class D202(DocstringError):
 
             return error
 
+        return None
+
 
 class D203(DocstringError):
     description = "Class docstrings should have 1 blank line before them (found {})."
@@ -61,7 +65,7 @@ class D203(DocstringError):
     @classmethod
     def check_implementation(
         cls, class_: astroid.ClassDef, docstring: Docstring, config: Configuration
-    ) -> None:
+    ) -> Optional["D203"]:
         n_blanks_before = _get_n_blanks_before_docstring(class_)
 
         if n_blanks_before != 1:
@@ -69,6 +73,8 @@ class D203(DocstringError):
             error.parameters = [n_blanks_before]
 
             return error
+
+        return None
 
 
 class D204(DocstringError):
@@ -78,7 +84,7 @@ class D204(DocstringError):
     @classmethod
     def check_implementation(
         cls, class_: astroid.ClassDef, docstring: Docstring, config: Configuration
-    ) -> None:
+    ) -> Optional["D204"]:
         lines_after, _, n_blanks_after = _get_stuff_after_docstring(class_)
 
         if n_blanks_after != 1 and not _is_empty_definition(lines_after, n_blanks_after):
@@ -86,6 +92,8 @@ class D204(DocstringError):
             error.parameters = [n_blanks_after]
 
             return error
+
+        return None
 
 
 class D205(DocstringError):
@@ -97,11 +105,11 @@ class D205(DocstringError):
     @classmethod
     def check_implementation(
         cls, node: NODES_TO_CHECK, docstring: Docstring, config: Configuration
-    ) -> None:
+    ) -> Optional["D205"]:
         lines = docstring.content.strip().split('\n')
 
         if len(lines) <= 1:
-            return
+            return None
 
         blanks = list(takewhile(is_blank, lines[1:]))
         n_blanks = len(blanks)
@@ -112,6 +120,8 @@ class D205(DocstringError):
 
             return error
 
+        return None
+
 
 class D211(DocstringError):
     description = "No blank lines allowed before class docstring (found {})."
@@ -120,7 +130,7 @@ class D211(DocstringError):
     @classmethod
     def check_implementation(
         cls, class_: astroid.ClassDef, docstring: Docstring, config: Configuration
-    ) -> None:
+    ) -> Optional["D211"]:
         n_blanks_before = _get_n_blanks_before_docstring(class_)
 
         if n_blanks_before != 0:
@@ -128,6 +138,8 @@ class D211(DocstringError):
             error.parameters = [n_blanks_before]
 
             return error
+
+        return None
 
 
 def _get_n_blanks_before_docstring(node: Union[astroid.FunctionDef, astroid.ClassDef]) -> int:

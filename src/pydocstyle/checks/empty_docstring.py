@@ -23,7 +23,9 @@ class D419(DocstringError):
 
     @classmethod
     def check_implementation(
-        cls, node: CHECKED_NODE_TYPES, docstring: Optional[Docstring], config: Configuration
-    ) -> None:
+        cls, node: CHECKED_NODE_TYPES, docstring: Docstring, config: Configuration
+    ) -> Optional["D419"]:
         if not has_content(docstring.content):
             return cls(node)
+
+        return None

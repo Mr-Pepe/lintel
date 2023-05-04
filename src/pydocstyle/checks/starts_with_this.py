@@ -19,8 +19,8 @@ class D404(DocstringError):
 
     @classmethod
     def check_implementation(
-        cls, node: CHECKED_NODE_TYPES, docstring: Optional[Docstring], config: Configuration
-    ) -> None:
+        cls, node: CHECKED_NODE_TYPES, docstring: Docstring, config: Configuration
+    ) -> Optional["D404"]:
         stripped = docstring.content.strip()
 
         if not stripped:
@@ -30,3 +30,5 @@ class D404(DocstringError):
 
         if first_word.lower() == 'this':
             return cls(node)
+
+        return None

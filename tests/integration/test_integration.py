@@ -129,7 +129,7 @@ def test_run_as_named_module():
     assert p.returncode == 0, out.decode('utf-8') + err.decode('utf-8')
 
 
-def test_config_file(env: SandboxEnv):
+def test_config_file(env: SandboxEnv) -> None:
     """Test that options are correctly loaded from a config file.
 
     This test create a temporary directory and creates two files in it: a
@@ -167,7 +167,7 @@ def test_config_file(env: SandboxEnv):
     assert 'D103' not in result.stdout
 
 
-def test_missing_pydocstyle_section(env: SandboxEnv, caplog):
+def test_missing_pydocstyle_section(env: SandboxEnv) -> None:
     """Test that config files without a valid section name issue a warning."""
     with env.open('config.ini', 'wt') as conf:
         conf.write('[bla]')
@@ -206,7 +206,7 @@ def test_missing_pydocstyle_section(env: SandboxEnv, caplog):
     ['ini'],
     indirect=True,
 )
-def test_multiple_lined_config_file(env: SandboxEnv):
+def test_multiple_lined_config_file(env: SandboxEnv) -> None:
     """Test that .ini files with multi-lined entries are parsed correctly."""
     with env.open('example.py', 'wt') as example:
         example.write(
@@ -238,7 +238,7 @@ def test_multiple_lined_config_file(env: SandboxEnv):
     ['toml'],
     indirect=True,
 )
-def test_accepts_select_error_code_list(env: SandboxEnv):
+def test_accepts_select_error_code_list(env: SandboxEnv) -> None:
     """Test that .ini files with multi-lined entries are parsed correctly."""
     with env.open('example.py', 'wt') as example:
         example.write(
@@ -262,7 +262,7 @@ def test_accepts_select_error_code_list(env: SandboxEnv):
     assert 'D103' not in result.stdout
 
 
-def test_config_path(env: SandboxEnv):
+def test_config_path(env: SandboxEnv) -> None:
     """Test that options are correctly loaded from a specific config file.
 
     Make sure that a config file passed via --config is actually used and that
@@ -297,7 +297,7 @@ def test_config_path(env: SandboxEnv):
     assert 'D103' not in result.stdout
 
 
-def test_verbose(env: SandboxEnv):
+def test_verbose(env: SandboxEnv) -> None:
     """Test that passing --verbose prints more information."""
     with env.open('example.py', 'wt') as example:
         example.write('"""Module docstring."""\n')
@@ -311,7 +311,7 @@ def test_verbose(env: SandboxEnv):
     assert 'example.py' in result.stdout
 
 
-def test_select_cli(env: SandboxEnv):
+def test_select_cli(env: SandboxEnv) -> None:
     """Test choosing error codes with `--select` in the CLI."""
     with env.open('example.py', 'wt') as example:
         example.write(
@@ -329,7 +329,7 @@ def test_select_cli(env: SandboxEnv):
     assert 'D103' not in result.stdout
 
 
-def test_select_config(env: SandboxEnv):
+def test_select_config(env: SandboxEnv) -> None:
     """Test choosing error codes with `select` in the config file."""
     with env.open('example.py', 'wt') as example:
         example.write(
@@ -351,7 +351,7 @@ def test_select_config(env: SandboxEnv):
     assert 'D103' not in result.stdout
 
 
-def test_add_select_cli(env: SandboxEnv):
+def test_add_select_cli(env: SandboxEnv) -> None:
     """Test choosing error codes with --add-select in the CLI."""
     with env.open('example.py', 'wt') as example:
         example.write(
@@ -374,7 +374,7 @@ def test_add_select_cli(env: SandboxEnv):
     assert 'D103' not in result.stdout
 
 
-def test_add_ignore_cli(env: SandboxEnv):
+def test_add_ignore_cli(env: SandboxEnv) -> None:
     """Test choosing error codes with --add-ignore in the CLI."""
     with env.open('example.py', 'wt') as example:
         example.write(
@@ -402,7 +402,7 @@ def test_add_ignore_cli(env: SandboxEnv):
     ['toml'],
     indirect=True,
 )
-def test_accepts_ignore_error_code_list(env: SandboxEnv):
+def test_accepts_ignore_error_code_list(env: SandboxEnv) -> None:
     with env.open('example.py', 'wt') as example:
         example.write("class Foo(object):\n    'Doc string'")
     env.write_config(ignore='D100,D300')
@@ -412,7 +412,7 @@ def test_accepts_ignore_error_code_list(env: SandboxEnv):
     assert result.stderr == ''
 
 
-def test_bad_wildcard_add_ignore_cli(env: SandboxEnv):
+def test_bad_wildcard_add_ignore_cli(env: SandboxEnv) -> None:
     """Test adding a non-existent error codes with --add-ignore."""
     with env.open('example.py', 'wt') as example:
         example.write(
@@ -433,7 +433,7 @@ def test_bad_wildcard_add_ignore_cli(env: SandboxEnv):
     )
 
 
-def test_overload_function(env: SandboxEnv):
+def test_overload_function(env: SandboxEnv) -> None:
     """Functions decorated with @overload trigger D418 error."""
     with env.open('example.py', 'wt') as example:
         example.write(
@@ -467,7 +467,7 @@ def test_overload_function(env: SandboxEnv):
     assert 'D103' not in result.stdout
 
 
-def test_overload_async_function(env: SandboxEnv):
+def test_overload_async_function(env: SandboxEnv) -> None:
     """Async functions decorated with @overload trigger D418 error."""
     with env.open('example.py', 'wt') as example:
         example.write(
@@ -501,7 +501,7 @@ def test_overload_async_function(env: SandboxEnv):
     assert 'D103' not in result.stdout
 
 
-def test_overload_method(env: SandboxEnv):
+def test_overload_method(env: SandboxEnv) -> None:
     """Methods decorated with @overload trigger D418 error."""
     with env.open('example.py', 'wt') as example:
         example.write(
@@ -536,7 +536,7 @@ def test_overload_method(env: SandboxEnv):
     assert 'D103' not in result.stdout
 
 
-def test_overload_method_valid(env: SandboxEnv):
+def test_overload_method_valid(env: SandboxEnv) -> None:
     """Valid case for overload decorated Methods.
 
     This shouldn't throw any errors.
@@ -572,7 +572,7 @@ def test_overload_method_valid(env: SandboxEnv):
     assert result.exit_code == 0
 
 
-def test_overload_function_valid(env: SandboxEnv):
+def test_overload_function_valid(env: SandboxEnv) -> None:
     """Valid case for overload decorated functions.
 
     This shouldn't throw any errors.
@@ -606,7 +606,7 @@ def test_overload_function_valid(env: SandboxEnv):
     assert result.exit_code == 0
 
 
-def test_overload_async_function_valid(env: SandboxEnv):
+def test_overload_async_function_valid(env: SandboxEnv) -> None:
     """Valid case for overload decorated async functions.
 
     This shouldn't throw any errors.
@@ -640,7 +640,7 @@ def test_overload_async_function_valid(env: SandboxEnv):
     assert result.exit_code == 0
 
 
-def test_overload_nested_function(env: SandboxEnv):
+def test_overload_nested_function(env: SandboxEnv) -> None:
     """Nested functions decorated with @overload trigger D418 error."""
     with env.open('example.py', 'wt') as example:
         example.write(
@@ -674,7 +674,7 @@ def test_overload_nested_function(env: SandboxEnv):
     assert 'D103' not in result.stdout
 
 
-def test_overload_nested_function_valid(env: SandboxEnv):
+def test_overload_nested_function_valid(env: SandboxEnv) -> None:
     """Valid case for overload decorated nested functions.
 
     This shouldn't throw any errors.
@@ -708,7 +708,7 @@ def test_overload_nested_function_valid(env: SandboxEnv):
     assert result.exit_code == 0
 
 
-def test_pep257_convention(env: SandboxEnv):
+def test_pep257_convention(env: SandboxEnv) -> None:
     """Test that the 'pep257' convention options has the correct errors."""
     with env.open('example.py', 'wt') as example:
         example.write(
@@ -748,7 +748,7 @@ def test_pep257_convention(env: SandboxEnv):
     assert 'D413' not in result.stdout
 
 
-def test_numpy_convention(env: SandboxEnv):
+def test_numpy_convention(env: SandboxEnv) -> None:
     """Test that the 'numpy' convention options has the correct errors."""
     with env.open('example.py', 'wt') as example:
         example.write(
@@ -824,7 +824,7 @@ def test_google_convention(env: SandboxEnv) -> None:
     assert 'D417' in result.stdout
 
 
-def test_syntax_error_multiple_files(env: SandboxEnv):
+def test_syntax_error_multiple_files(env: SandboxEnv) -> None:
     """Test that a syntax error in a file doesn't prevent further checking."""
     for filename in ('first.py', 'second.py'):
         with env.open(filename, 'wt') as file:
@@ -836,7 +836,7 @@ def test_syntax_error_multiple_files(env: SandboxEnv):
     assert 'second.py: Cannot parse file' in result.stdout
 
 
-def test_indented_function(env: SandboxEnv):
+def test_indented_function(env: SandboxEnv) -> None:
     """Test that nested functions do not cause IndentationError."""
     with env.open("test.py", 'wt') as file:
         file.write(
@@ -859,7 +859,7 @@ def test_indented_function(env: SandboxEnv):
     assert "IndentationError: unexpected indent" not in result.stderr
 
 
-def test_only_comment_file(env: SandboxEnv):
+def test_only_comment_file(env: SandboxEnv) -> None:
     """Test that file with only comments does only cause D100."""
     with env.open('comments.py', 'wt') as comments:
         comments.write(
@@ -877,7 +877,7 @@ def test_only_comment_file(env: SandboxEnv):
     assert result.exit_code == 1
 
 
-def test_comment_plus_docstring_file(env: SandboxEnv):
+def test_comment_plus_docstring_file(env: SandboxEnv) -> None:
     """Test that file with comments and docstring does not cause errors."""
     with env.open('comments_plus.py', 'wt') as comments_plus:
         comments_plus.write(
@@ -893,7 +893,7 @@ def test_comment_plus_docstring_file(env: SandboxEnv):
     assert result.exit_code == 0
 
 
-def test_only_comment_with_noqa_file(env: SandboxEnv):
+def test_only_comment_with_noqa_file(env: SandboxEnv) -> None:
     """Test that file with noqa and only comments does not cause errors."""
     with env.open('comments.py', 'wt') as comments:
         comments.write(
@@ -909,7 +909,7 @@ def test_only_comment_with_noqa_file(env: SandboxEnv):
     assert result.exit_code == 0
 
 
-def test_comment_with_noqa_plus_docstring_file(env: SandboxEnv):
+def test_comment_with_noqa_plus_docstring_file(env: SandboxEnv) -> None:
     """Test that file with comments, noqa, docstring does not cause errors."""
     with env.open('comments_plus.py', 'wt') as comments_plus:
         comments_plus.write(
@@ -926,7 +926,7 @@ def test_comment_with_noqa_plus_docstring_file(env: SandboxEnv):
     assert result.exit_code == 0
 
 
-def test_comment_with_blank_noqa_for_single_line(env: SandboxEnv):
+def test_comment_with_blank_noqa_for_single_line(env: SandboxEnv) -> None:
     """Test that a blank noqa comment ignores errors for that node."""
     with env.open('example.py', 'wt') as example:
         example.write(

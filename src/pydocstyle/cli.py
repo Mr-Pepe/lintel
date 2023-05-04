@@ -25,7 +25,7 @@ __all__ = ('main',)
 _logger = logging.getLogger(__name__)
 
 
-app = Typer(rich_help_panel=True)
+app = Typer()
 
 
 @app.command()
@@ -122,12 +122,12 @@ def run(
         help="Whether to show more detailed output.",
         show_default=False,
     ),
-):
+) -> None:
     """Check docstring style.
 
     Options passed via the CLI take precedence over values set in a configuration file.
     """
-    configure_logging(verbose)
+    configure_logging(verbose or False)
 
     if not paths:
         _logger.error("Provide at least one directory or file to check.")
@@ -175,7 +175,7 @@ def run(
     raise Exit(exit_code)
 
 
-def configure_logging(verbose: bool):
+def configure_logging(verbose: bool) -> None:
     """Set up logging."""
 
     stdout_handler = RichHandler(

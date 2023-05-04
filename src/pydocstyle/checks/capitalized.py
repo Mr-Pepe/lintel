@@ -11,8 +11,8 @@ class D403(DocstringError):
 
     @classmethod
     def check_implementation(
-        cls, node: CHECKED_NODE_TYPES, docstring: Optional[Docstring], config: Configuration
-    ) -> None:
+        cls, node: CHECKED_NODE_TYPES, docstring: Docstring, config: Configuration
+    ) -> Optional["D403"]:
         first_word: str = docstring.content.split()[0]
 
         if first_word in (first_word.upper(), first_word.capitalize()):

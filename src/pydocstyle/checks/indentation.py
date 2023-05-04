@@ -1,6 +1,8 @@
 """Contains a check for proper docstring indentation."""
 
 
+from typing import Optional
+
 from pydocstyle import CHECKED_NODE_TYPES, Configuration, Docstring, DocstringError
 
 
@@ -10,7 +12,7 @@ class D206(DocstringError):
     @classmethod
     def check_implementation(
         cls, node: CHECKED_NODE_TYPES, docstring: Docstring, config: Configuration
-    ) -> None:
+    ) -> Optional["D206"]:
         if len(docstring.line_indents) == 0:
             return None
 
@@ -18,6 +20,8 @@ class D206(DocstringError):
             "\t" in line_indent for line_indent in docstring.line_indents
         ):
             return cls(node)
+
+        return None
 
 
 class D207(DocstringError):
@@ -29,12 +33,14 @@ class D207(DocstringError):
     @classmethod
     def check_implementation(
         cls, node: CHECKED_NODE_TYPES, docstring: Docstring, config: Configuration
-    ) -> None:
+    ) -> Optional["D207"]:
         if len(docstring.line_indents) == 0:
             return None
 
         if min(docstring.line_indents) < docstring.indent:
             return cls(node)
+
+        return None
 
 
 class D208(DocstringError):
@@ -46,7 +52,7 @@ class D208(DocstringError):
     @classmethod
     def check_implementation(
         cls, node: CHECKED_NODE_TYPES, docstring: Docstring, config: Configuration
-    ) -> None:
+    ) -> Optional["D208"]:
         if len(docstring.line_indents) == 0:
             return None
 
@@ -54,3 +60,5 @@ class D208(DocstringError):
             len(docstring.line_indents) > 1 and min(docstring.line_indents[:-1]) > docstring.indent
         ) or docstring.line_indents[-1] > docstring.indent:
             return cls(node)
+
+        return None

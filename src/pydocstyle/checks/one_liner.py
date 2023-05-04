@@ -14,7 +14,7 @@ class D200(DocstringError):
     @classmethod
     def check_implementation(
         cls, node: CHECKED_NODE_TYPES, docstring: Docstring, config: Configuration
-    ) -> None:
+    ) -> Optional["D200"]:
         non_empty_lines = sum(1 for l in docstring.lines if has_content(l))
 
         # If docstring should be a one-liner but has multiple lines
@@ -23,3 +23,5 @@ class D200(DocstringError):
             error.parameters = [len(docstring.lines)]
 
             return error
+
+        return None

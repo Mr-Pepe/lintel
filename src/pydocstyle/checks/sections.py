@@ -19,8 +19,8 @@ class D214(DocstringError):
     @classmethod
     def check_implementation(
         cls, node: CHECKED_NODE_TYPES, docstring: Docstring, config: Configuration
-    ) -> None:
-        errors: List[cls] = []
+    ) -> List["D214"]:
+        errors: List["D214"] = []
 
         for section in docstring.sections:
             if leading_space(section.line) > docstring.indent:
@@ -39,7 +39,7 @@ class D215(DocstringError):
     def check_implementation(
         cls, node: CHECKED_NODE_TYPES, docstring: Docstring, config: Configuration
     ) -> List["D215"]:
-        errors: List[cls] = []
+        errors: List["D215"] = []
 
         for section in docstring.sections:
             if section.underline and leading_space(section.underline.line) > docstring.indent:
@@ -58,7 +58,7 @@ class D405(DocstringError):
     def check_implementation(
         cls, node: CHECKED_NODE_TYPES, docstring: Docstring, config: Configuration
     ) -> List["D405"]:
-        errors: List[cls] = []
+        errors: List["D405"] = []
 
         for section in docstring.sections:
             if section.name != section.name.title():
@@ -77,7 +77,7 @@ class D406(DocstringError):
     def check_implementation(
         cls, node: CHECKED_NODE_TYPES, docstring: Docstring, config: Configuration
     ) -> List["D406"]:
-        errors: List[cls] = []
+        errors: List["D406"] = []
 
         for section in docstring.sections:
             suffix = section.line.strip().lstrip(section.name)
@@ -98,7 +98,7 @@ class D407(DocstringError):
     def check_implementation(
         cls, node: CHECKED_NODE_TYPES, docstring: Docstring, config: Configuration
     ) -> List["D407"]:
-        errors: List[cls] = []
+        errors: List["D407"] = []
 
         for section in docstring.sections:
             if not section.underline:
@@ -117,7 +117,7 @@ class D408(DocstringError):
     def check_implementation(
         cls, node: CHECKED_NODE_TYPES, docstring: Docstring, config: Configuration
     ) -> List["D408"]:
-        errors: List[cls] = []
+        errors: List["D408"] = []
 
         for section in docstring.sections:
             if section.underline and set(section.following_lines[0].strip()) != {"-"}:
@@ -136,7 +136,7 @@ class D409(DocstringError):
     def check_implementation(
         cls, node: CHECKED_NODE_TYPES, docstring: Docstring, config: Configuration
     ) -> List["D409"]:
-        errors: List[cls] = []
+        errors: List["D409"] = []
 
         for section in docstring.sections:
             if section.underline and len(section.underline.line.strip()) != len(section.name):
@@ -155,7 +155,7 @@ class D410(DocstringError):
     def check_implementation(
         cls, node: CHECKED_NODE_TYPES, docstring: Docstring, config: Configuration
     ) -> List["D410"]:
-        errors: List[cls] = []
+        errors: List["D410"] = []
 
         for section in docstring.sections:
             no_content = not section.content_lines or has_content(section.content_lines[-1])
@@ -176,7 +176,7 @@ class D411(DocstringError):
     def check_implementation(
         cls, node: CHECKED_NODE_TYPES, docstring: Docstring, config: Configuration
     ) -> List["D411"]:
-        errors: List[cls] = []
+        errors: List["D411"] = []
 
         for section in docstring.sections:
             if has_content(section.previous_line):
@@ -195,7 +195,7 @@ class D412(DocstringError):
     def check_implementation(
         cls, node: CHECKED_NODE_TYPES, docstring: Docstring, config: Configuration
     ) -> List["D412"]:
-        errors: List[cls] = []
+        errors: List["D412"] = []
 
         for section in docstring.sections:
             if len(section.content_lines) == 0:
@@ -219,7 +219,7 @@ class D413(DocstringError):
     def check_implementation(
         cls, node: CHECKED_NODE_TYPES, docstring: Docstring, config: Configuration
     ) -> List["D413"]:
-        errors: List[cls] = []
+        errors: List["D413"] = []
 
         for section in docstring.sections:
             if section.is_last_section and (
@@ -240,7 +240,7 @@ class D414(DocstringError):
     def check_implementation(
         cls, node: CHECKED_NODE_TYPES, docstring: Docstring, config: Configuration
     ) -> List["D414"]:
-        errors: List[cls] = []
+        errors: List["D414"] = []
 
         for section in docstring.sections:
             if not section.content_lines or all(is_blank(line) for line in section.content_lines):
@@ -259,7 +259,7 @@ class D416(DocstringError):
     def check_implementation(
         cls, node: CHECKED_NODE_TYPES, docstring: Docstring, config: Configuration
     ) -> List["D416"]:
-        errors: List[cls] = []
+        errors: List["D416"] = []
 
         for section in docstring.sections:
             suffix = section.line.strip().lstrip(section.name)
@@ -303,3 +303,5 @@ class D417(DocstringError):
             ]
 
             return error
+
+        return None
