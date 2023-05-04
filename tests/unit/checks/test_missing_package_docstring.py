@@ -20,4 +20,3 @@ def test_package_with_docstring_has_no_error(env: SandboxEnv) -> None:
     result = env.invoke()
 
     assert result.exit_code == 0
-    assert result.stdout == ""

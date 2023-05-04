@@ -18,4 +18,3 @@ def test_private_module_is_ignored(env: SandboxEnv) -> None:
     result = env.invoke()
 
     assert result.exit_code == 0
-    assert result.stdout == ""

@@ -1,3 +1,5 @@
+"""Sphinx configuration."""
+
 # pydocstyle documentation build configuration file, created by
 # sphinx-quickstart on Fri Jan 30 20:30:42 2015.
 #

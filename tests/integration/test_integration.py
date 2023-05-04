@@ -882,7 +882,6 @@ def test_comment_plus_docstring_file(env: SandboxEnv) -> None:
         )
 
     result = env.invoke()
-    assert '' == result.stdout
     assert result.exit_code == 0
 
 
@@ -915,7 +914,6 @@ def test_comment_with_noqa_plus_docstring_file(env: SandboxEnv) -> None:
         )
 
     result = env.invoke()
-    assert '' == result.stdout
     assert result.exit_code == 0
 
 
@@ -953,7 +951,22 @@ def test_match_considers_base_names_for_path_args(env: SandboxEnv) -> None:
     with env.open('test_a.py', 'wt') as test:
         test.write('')
 
-    # env.invoke calls pydocstyle with full path to test_a.py
     result = env.invoke(target='test_a.py')
-    assert '' == result.stdout
     assert result.exit_code == 0
+
+
+@pytest.mark.parametrize(
+    ("content", "exit_code", "output"),
+    [
+        ("", 1, "💥 Found 1 error in 1 file.\n"),
+        ('"""Docstring."""', 0, "🚀 Found 0 errors in 1 file.\n"),
+    ],
+)
+def test_run_summary(content: str, exit_code: int, output: str, env: SandboxEnv) -> None:
+    # Create an empty module (violates D100)
+    with env.open('test.py', 'wt') as test:
+        test.write(content)
+
+    result = env.invoke(target='test.py')
+    assert result.exit_code == exit_code
+    assert result.stdout.endswith(output)

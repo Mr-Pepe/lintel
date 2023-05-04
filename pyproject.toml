@@ -40,7 +40,7 @@ data_file = "reports/.coverage"
 # Maps coverage measured in site-packages to source files in src
 source = ["src/", ".tox/*/lib/python*/site-packages/"]
 
-[tool.pydocstyles]
+[tool.pydocstyle]
 convention="pep257"
 # Ignore hidden directories and some other directories
 match-dir = "(?!venv|\\.|build|dist|resources).*"

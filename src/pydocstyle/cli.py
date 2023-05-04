@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import List, Optional
 
 from astroid.exceptions import AstroidSyntaxError
+from rich import print
 from rich.console import Console
 from rich.logging import RichHandler
 from typer import Abort, Argument, Exit, Option, Typer
@@ -156,8 +157,7 @@ def run(
     """
     configure_logging(verbose or False)
 
-    if paths is None:
-        paths = [Path().cwd()]
+    paths = paths or [Path().cwd()]
 
     try:
         config_path = config_path or paths[0] if paths and paths[0].is_dir() else None
@@ -186,18 +186,33 @@ def run(
     _logger.info(f"Using configuration: {config}")
 
     exit_code = 0
+    error_count = 0
 
-    for filename in discover_files(paths, config):
+    files_to_check = discover_files(paths, config)
+
+    for filename in files_to_check:
         _logger.info("Checking file: %s" % filename)
 
         try:
             for error in check_source(Path(filename), config):
                 _logger.error(error)
                 exit_code = 1
+                error_count += 1
 
         except AstroidSyntaxError:
             _logger.error(f"{filename}: Cannot parse file")
             exit_code = 1
+
+    n_checked_files = len(files_to_check)
+
+    if error_count > 0:
+        print()
+
+    print(
+        f"{'💥' if error_count> 0 else '🚀'} "
+        f"Found {error_count} error{'s' if error_count > 1  or error_count == 0 else ''} "
+        f"in {n_checked_files} file{'s' if n_checked_files > 1 or n_checked_files == 0 else ''}."
+    )
 
     raise Exit(exit_code)
 
@@ -231,4 +246,4 @@ def configure_logging(verbose: bool) -> None:
 
 
 if __name__ == "__main__":
-    run(paths=[Path(".")])
+    run()
