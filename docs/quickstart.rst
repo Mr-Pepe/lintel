@@ -5,13 +5,13 @@ Quick Start
 
     .. code::
 
-        pip install pydocstyle
+        pip install pydoclint
 
 2. Run
 
     .. code::
 
-        $ pydocstyle test.py
+        $ pydoclint test.py
         test.py:18 in private nested class `meta`:
                 D101: Docstring missing
         test.py:27 in public function `get_user`:

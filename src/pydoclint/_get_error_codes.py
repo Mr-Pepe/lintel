@@ -4,7 +4,7 @@ from typing import Set, Union
 
 from astroid import ClassDef, FunctionDef, Module
 
-from pydocstyle import CHECKED_NODE_TYPES, CONVENTION_ERRORS, Configuration, Convention, get_checks
+from pydoclint import CHECKED_NODE_TYPES, CONVENTION_ERRORS, Configuration, Convention, get_checks
 
 _logger = logging.getLogger(__name__)
 

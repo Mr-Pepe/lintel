@@ -6,16 +6,16 @@ from functools import lru_cache
 from types import ModuleType
 from typing import Generator, Iterator, List, Set, Type
 
-import pydocstyle.checks
-from pydocstyle import DocstringError
+import pydoclint.checks
+from pydoclint import DocstringError
 
 
 @lru_cache
 def get_checks() -> List[Type[DocstringError]]:
-    """Discovers docstring checks in the 'pydocstyle.checks' namespace."""
+    """Discovers docstring checks in the 'pydoclint.checks' namespace."""
     errors: List[DocstringError] = []
 
-    for _, module_name, _ in _iter_namespace(pydocstyle.checks):
+    for _, module_name, _ in _iter_namespace(pydoclint.checks):
         module = importlib.import_module(module_name)
 
         errors.extend(_get_checks_from_module(module))

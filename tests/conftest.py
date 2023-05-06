@@ -25,11 +25,11 @@ def env(request):
     """Add a testing environment to a test method."""
     sandbox_settings = {
         'ini': {
-            'section_name': 'pydocstyle',
+            'section_name': 'pydoclint',
             'config_name': 'tox.ini',
         },
         'toml': {
-            'section_name': 'tool.pydocstyle',
+            'section_name': 'tool.pydoclint',
             'config_name': 'pyproject.toml',
         },
     }[request.param]

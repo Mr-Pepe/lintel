@@ -2,7 +2,7 @@
 
 from typing import Optional
 
-from pydocstyle import CHECKED_NODE_TYPES, Configuration, Docstring, DocstringError, has_content
+from pydoclint import CHECKED_NODE_TYPES, Configuration, Docstring, DocstringError, has_content
 
 
 class D209(DocstringError):

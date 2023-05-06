@@ -10,7 +10,7 @@ from typing import Optional, Set
 
 from pydantic import BaseModel, Extra, ValidationError, validator
 
-from pydocstyle import Convention
+from pydoclint import Convention
 
 from ._version import __version__
 
@@ -88,7 +88,7 @@ def load_config(config_path: Path) -> Configuration:
             return _load_config_file(config_path)
         except ValueError:
             _logger.error(
-                "Configuration file %s does not contain a pydocstyle section.", config_path
+                "Configuration file %s does not contain a pydoclint section.", config_path
             )
             raise
 
@@ -103,7 +103,7 @@ def load_config(config_path: Path) -> Configuration:
 
 def _load_config_file(config_path: Path) -> Configuration:
     try:
-        toml = tomllib.loads(config_path.read_text())["tool"]["pydocstyle"]
+        toml = tomllib.loads(config_path.read_text())["tool"]["pydoclint"]
     except (tomllib.TOMLDecodeError, KeyError):
         toml = None
 
@@ -111,14 +111,14 @@ def _load_config_file(config_path: Path) -> Configuration:
         parser = ConfigParser()
         parser.read(config_path)
 
-        ini = parser["pydocstyle"]
+        ini = parser["pydoclint"]
     except (ConfigParserError, KeyError):
         ini = None
 
     config_dict = toml or ini
 
     if config_dict is None:
-        raise ValueError(f"No pydocstyle section found in '{config_path}'.")
+        raise ValueError(f"No pydoclint section found in '{config_path}'.")
 
     # Replace dashes with underscores in keys
     config_dict = {k.replace("-", "_"): v for k, v in config_dict.items()}
@@ -126,7 +126,7 @@ def _load_config_file(config_path: Path) -> Configuration:
     try:
         return Configuration.parse_obj(config_dict)
     except ValidationError:
-        raise IllegalConfiguration(f"Invalid pydocstyle settings in '{config_path}'.")
+        raise IllegalConfiguration(f"Invalid pydoclint settings in '{config_path}'.")
 
 
 class IllegalConfiguration(Exception):

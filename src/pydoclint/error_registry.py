@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Iterable, List
 
-from pydocstyle import DocstringError
+from pydoclint import DocstringError
 
 
 @dataclass

@@ -6,7 +6,7 @@ from typing import List, Optional, Tuple, Union
 
 import astroid
 
-from pydocstyle import (
+from pydoclint import (
     NODES_TO_CHECK,
     Configuration,
     Docstring,

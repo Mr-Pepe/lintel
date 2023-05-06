@@ -3,7 +3,7 @@ from typing import List
 import astroid
 import pytest
 
-from pydocstyle import (
+from pydoclint import (
     CONVENTION_ERRORS,
     Configuration,
     Convention,

@@ -1,31 +1,31 @@
-``pydocstyle`` supports *ini*-like and *toml* configuration files.
-In order for ``pydocstyle`` to use a configuration file automatically, it must
+``pydoclint`` supports *ini*-like and *toml* configuration files.
+In order for ``pydoclint`` to use a configuration file automatically, it must
 be named one of the following options.
 
 * ``setup.cfg``
 * ``tox.ini``
-* ``.pydocstyle``
-* ``.pydocstyle.ini``
-* ``.pydocstylerc``
-* ``.pydocstylerc.ini``
+* ``.pydoclint``
+* ``.pydoclint.ini``
+* ``.pydoclintrc``
+* ``.pydoclintrc.ini``
 * ``pyproject.toml``
 
-When searching for a configuration file, ``pydocstyle`` looks for one of the
+When searching for a configuration file, ``pydoclint`` looks for one of the
 file specified above *in that exact order*. *ini*-like configuration files must
-have a ``[pydocstyle]`` section while *toml* configuration files must have a
-``[tool.pydocstyle]`` section. If a configuration file was not found,
-``pydocstyle`` keeps looking for one up the directory tree until one is found
+have a ``[pydoclint]`` section while *toml* configuration files must have a
+``[tool.pydoclint]`` section. If a configuration file was not found,
+``pydoclint`` keeps looking for one up the directory tree until one is found
 or uses the default configuration.
 
 .. note::
 
     *toml* configuration file support is only enabled if the ``toml`` python
     package is installed. You can ensure that this is the case by installing
-    the ``pydocstyle[toml]`` optional dependency.
+    the ``pydoclint[toml]`` optional dependency.
 
 .. note::
 
-    For backwards compatibility purposes, **pydocstyle** supports configuration
+    For backwards compatibility purposes, **pydoclint** supports configuration
     files named ``.pep257``, as well as section header ``[pep257]``. However,
     these are considered deprecated and support will be removed in the next
     major version.
@@ -51,7 +51,7 @@ See the :ref:`cli_usage` section for more information.
 Inheritance
 ###########
 
-By default, when finding a configuration file, ``pydocstyle`` tries to inherit
+By default, when finding a configuration file, ``pydoclint`` tries to inherit
 the parent directory's configuration and merge them to the local ones.
 
 The merge process is as follows:
@@ -79,7 +79,7 @@ Example
 
 .. code::
 
-    [pydocstyle]
+    [pydoclint]
     inherit = false
     ignore = D100,D203,D405
     match = .*\.py

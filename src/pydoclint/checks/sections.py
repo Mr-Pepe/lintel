@@ -2,7 +2,7 @@ from typing import List, Optional, Tuple
 
 import astroid
 
-from pydocstyle import (
+from pydoclint import (
     CHECKED_NODE_TYPES,
     Configuration,
     Docstring,

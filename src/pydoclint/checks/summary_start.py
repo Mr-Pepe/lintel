@@ -3,7 +3,7 @@
 
 from typing import Optional
 
-from pydocstyle import CHECKED_NODE_TYPES, Configuration, Docstring, DocstringError
+from pydoclint import CHECKED_NODE_TYPES, Configuration, Docstring, DocstringError
 
 EMPTY_FIRST_LINES = ('"""', "'''", "r'''", 'r"""', "R'''", 'R"""')
 

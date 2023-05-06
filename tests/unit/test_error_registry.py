@@ -1,5 +1,5 @@
-from pydocstyle import DocstringError
-from pydocstyle.error_registry import ErrorGroup, ErrorRegistry
+from pydoclint import DocstringError
+from pydoclint.error_registry import ErrorGroup, ErrorRegistry
 
 
 class MyError(DocstringError):

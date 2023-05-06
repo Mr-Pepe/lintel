@@ -10,11 +10,11 @@ Default conventions
 -------------------
 
 Not all error codes are checked for by default.  There are three conventions
-that may be used by pydocstyle: ``pep257``, ``numpy`` and ``google``.
+that may be used by pydoclint: ``pep257``, ``numpy`` and ``google``.
 
 The ``pep257`` convention (specified in `PEP257
 <http://www.python.org/dev/peps/pep-0257/>`_), which is enabled by default in
-pydocstyle, checks for all of the above errors except for D203, D212, D213,
+pydoclint, checks for all of the above errors except for D203, D212, D213,
 D214, D215, D404, D405, D406, D407, D408, D409, D410, D411, D413, D415, D416
 and D417.
 
@@ -28,7 +28,7 @@ all the errors except D203, D204, D213, D215, D400, D401, D404, D406, D407,
 D408, D409 and D413.
 
 These conventions may be specified using ``--convention=<name>`` when
-running pydocstyle from the command line or by specifying the
+running pydoclint from the command line or by specifying the
 convention in a configuration file.  See the :ref:`cli_usage` section
 for more details.
 
@@ -40,7 +40,7 @@ for more details.
 
   The reason ``numpy`` style takes precedence over ``google`` is that the
   heuristics of detecting it are better, and we don't want to enforce users to
-  provide external hints to `pydocstyle` in order to let it know which style
+  provide external hints to `pydoclint` in order to let it know which style
   docstrings are written in.
 
 Publicity

@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from pydocstyle import Configuration, discover_files
+from pydoclint import Configuration, discover_files
 
 
 def test_file_discovery(discovery_dir: Path) -> None:

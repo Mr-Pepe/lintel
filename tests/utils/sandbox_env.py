@@ -10,15 +10,15 @@ from typing import Any, Optional
 from click.testing import Result
 from typer.testing import CliRunner
 
-from pydocstyle.cli import app
+from pydoclint.cli import app
 
-_runner = CliRunner(mix_stderr=False, env={"PYDOCSTYLE_TESTING": "True"})
+_runner = CliRunner(mix_stderr=False, env={"PYDOCLINT_TESTING": "True"})
 
 
 class SandboxEnv:
-    """An isolated environment where pydocstyle can be run.
+    """An isolated environment where pydoclint can be run.
 
-    Since running pydocstyle as a script is affected by local config files,
+    Since running pydoclint as a script is affected by local config files,
     it's important that tests will run in an isolated environment. This class
     should be used as a context manager and offers utility methods for adding
     files to the environment and changing the environment's configuration.
@@ -27,8 +27,8 @@ class SandboxEnv:
 
     def __init__(
         self,
-        script_name='pydocstyle',
-        section_name='pydocstyle',
+        script_name='pydoclint',
+        section_name='pydoclint',
         config_name='tox.ini',
     ):
         """Initialize the object."""
@@ -77,9 +77,9 @@ class SandboxEnv:
         os.makedirs(os.path.join(self.tempdir, path), *args, **kwargs)
 
     def invoke(self, args: str = "", target: Optional[str] = None) -> Result:
-        """Run pydocstyle on the environment base folder with the given args.
+        """Run pydoclint on the environment base folder with the given args.
 
-        If `target` is not None, will run pydocstyle on `target` instead of
+        If `target` is not None, will run pydoclint on `target` instead of
         the environment base folder.
 
         """

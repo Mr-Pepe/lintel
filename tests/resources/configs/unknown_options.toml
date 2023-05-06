@@ -1,2 +1,2 @@
-[tool.pydocstyle]
+[tool.pydoclint]
 unknown_option = "abc"

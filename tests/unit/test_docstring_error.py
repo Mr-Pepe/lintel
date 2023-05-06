@@ -4,7 +4,7 @@
 import astroid
 import pytest
 
-from pydocstyle import Configuration, DocstringError, get_docstring_from_doc_node
+from pydoclint import Configuration, DocstringError, get_docstring_from_doc_node
 
 FUNCTION_CODE = """def my_func() -> None:
         ...

@@ -5,7 +5,7 @@ from typing import Optional
 
 from astroid import NodeNG
 
-from pydocstyle import (
+from pydoclint import (
     CHECKED_NODE_TYPES,
     NODES_TO_CHECK,
     Configuration,

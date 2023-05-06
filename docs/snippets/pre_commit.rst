@@ -1,12 +1,12 @@
-**pydocstyle** can be included as a hook for `pre-commit`_.  The easiest way to get
+**pydoclint** can be included as a hook for `pre-commit`_.  The easiest way to get
 started is to add this configuration to your ``.pre-commit-config.yaml``:
 
 .. parsed-literal::
 
-    -   repo: https://github.com/pycqa/pydocstyle
+    -   repo: https://github.com/Mr-Pepe/pydoclint
         rev: \ |version| \  # pick a git hash / tag to point to
         hooks:
-        -   id: pydocstyle
+        -   id: pydoclint
 
 See the `pre-commit docs`_ for how to customize this configuration.
 
@@ -16,7 +16,7 @@ to achieve the same effect with less files.
 
 .. code-block:: yaml
 
-    - id: pydocstyle
+    - id: pydoclint
       args:
       - --ignore=D100,D203,D405
       # or multiline

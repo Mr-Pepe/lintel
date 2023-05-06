@@ -2,7 +2,7 @@
 
 from typing import Optional
 
-from pydocstyle import (
+from pydoclint import (
     CHECKED_NODE_TYPES,
     Configuration,
     Docstring,

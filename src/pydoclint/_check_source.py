@@ -7,7 +7,7 @@ from typing import List
 import astroid
 from astroid import Module
 
-from pydocstyle import (
+from pydoclint import (
     CHECKED_NODE_TYPES,
     NODES_TO_CHECK,
     Configuration,

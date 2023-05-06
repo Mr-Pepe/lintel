@@ -4,7 +4,7 @@ from typing import Optional
 
 import astroid
 
-from pydocstyle import (
+from pydoclint import (
     CHECKED_NODE_TYPES,
     VARIADIC_MAGIC_METHODS,
     Configuration,

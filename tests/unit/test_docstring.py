@@ -1,7 +1,7 @@
 import pytest
 from astroid import Module
 
-from pydocstyle import Docstring
+from pydoclint import Docstring
 
 
 def test_raises_error_if_node_has_no_doc_node() -> None:
