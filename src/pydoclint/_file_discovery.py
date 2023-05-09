@@ -7,8 +7,6 @@ from pydoclint import Configuration
 
 
 def discover_files(paths: List[Path], config: Configuration) -> Set[Path]:
-    print(paths)
-
     discovered_files: Set[Path] = set()
 
     for path in paths:

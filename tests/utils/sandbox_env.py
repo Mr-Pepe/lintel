@@ -70,6 +70,7 @@ class SandboxEnv:
         The file path should be relative to the base of the environment.
 
         """
+        print("Opening:", os.path.join(self.tempdir, path))
         return open(os.path.join(self.tempdir, path), *args, **kwargs)
 
     def makedirs(self, path, *args, **kwargs):
