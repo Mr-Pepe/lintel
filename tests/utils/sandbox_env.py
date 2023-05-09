@@ -87,9 +87,9 @@ class SandboxEnv:
         run_target = self.tempdir if target is None else os.path.join(self.tempdir, target)
 
         print("Run target:", run_target)
-        print("Arguments:", f"{run_target} {args}")
+        print("Arguments:", f'"{run_target}" {args}')
 
-        return _runner.invoke(app, f"{run_target} {args}")
+        return _runner.invoke(app, f'"{run_target}" {args}')
 
     def __enter__(self):
         self.tempdir = tempfile.mkdtemp()
