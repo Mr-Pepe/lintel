@@ -70,7 +70,6 @@ class SandboxEnv:
         The file path should be relative to the base of the environment.
 
         """
-        print("Opening:", os.path.join(self.tempdir, path))
         return open(os.path.join(self.tempdir, path), *args, **kwargs)
 
     def makedirs(self, path, *args, **kwargs):
@@ -85,9 +84,6 @@ class SandboxEnv:
 
         """
         run_target = self.tempdir if target is None else os.path.join(self.tempdir, target)
-
-        print("Run target:", run_target)
-        print("Arguments:", f'"{run_target}" {args}')
 
         return _runner.invoke(app, f'"{run_target}" {args}')
 
