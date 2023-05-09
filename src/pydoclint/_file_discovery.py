@@ -7,9 +7,13 @@ from pydoclint import Configuration
 
 
 def discover_files(paths: List[Path], config: Configuration) -> Set[Path]:
+    print(paths)
+
     discovered_files: Set[Path] = set()
 
     for path in paths:
+        print(path, ":", list(path.rglob("*")))
+
         if path.is_file() and re.compile(config.match).match(path.name):
             discovered_files.add(path)
 
