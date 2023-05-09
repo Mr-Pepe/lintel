@@ -1,31 +1,26 @@
 Usage
 =====
 
-Installation
-------------
+Install pydoclint and learn about its usage::
 
-.. include:: snippets/install.rst
+    pip install pydoclint
 
-
-Command Line Interface
-----------------------
-
-.. include:: snippets/cli.rst
+    pydoclint --help
 
 
 Configuration Files
-^^^^^^^^^^^^^^^^^^^
+-------------------
 
 .. include:: snippets/config.rst
 
 
-In-file configuration
-^^^^^^^^^^^^^^^^^^^^^
+Ignore error codes in-file
+--------------------------
 
-.. include:: snippets/in_file.rst
+.. include:: snippets/noqa.rst
 
 
-Usage with the `pre-commit`_ git hooks framework
-------------------------------------------------
+Usage with `pre-commit`_
+------------------------
 
 .. include:: snippets/pre_commit.rst
