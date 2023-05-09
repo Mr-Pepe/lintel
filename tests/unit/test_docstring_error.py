@@ -2,7 +2,6 @@
 
 
 import os
-from pathlib import Path
 
 import astroid
 import pytest
@@ -18,7 +17,7 @@ CLASS_CODE = '''class MyClass:
         ...
     '''
 
-module_path = Path("/path/to/my/file").absolute()
+module_path = os.path.abspath("/path/to/my/file")
 
 module_node = astroid.parse(
     code=f"\n{FUNCTION_CODE}\n\n{CLASS_CODE}",
