@@ -7,6 +7,8 @@ from ._version import __version__
 
 
 class Convention(Enum):
+    """The supported docstring conventions."""
+
     NONE = "none"
     ALL = "all"
     PEP257 = "pep257"

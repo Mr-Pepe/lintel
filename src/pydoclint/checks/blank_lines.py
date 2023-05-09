@@ -7,7 +7,7 @@ from typing import List, Optional, Tuple, Union
 import astroid
 
 from pydoclint import (
-    NODES_TO_CHECK,
+    CHECKED_NODE_TYPES,
     Configuration,
     Docstring,
     DocstringError,
@@ -104,7 +104,7 @@ class D205(DocstringError):
 
     @classmethod
     def check_implementation(
-        cls, node: NODES_TO_CHECK, docstring: Docstring, config: Configuration
+        cls, node: CHECKED_NODE_TYPES, docstring: Docstring, config: Configuration
     ) -> Optional["D205"]:
         lines = docstring.content.strip().split('\n')
 

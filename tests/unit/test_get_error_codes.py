@@ -34,7 +34,7 @@ def test_error_codes_of_conventions() -> None:
 
 
 def test_raises_error_if_specified_error_is_not_registered() -> None:
-    config = Configuration(convention=Convention.NONE, select="D1234567890")
+    config = Configuration(convention=Convention.NONE, select={"D1234567890"})
 
     with pytest.raises(
         ValueError,
@@ -45,13 +45,13 @@ def test_raises_error_if_specified_error_is_not_registered() -> None:
 
 
 def test_error_codes_are_added() -> None:
-    config = Configuration(convention=Convention.NONE, select="D100")
+    config = Configuration(convention=Convention.NONE, select={"D100"})
 
     assert get_error_codes(config) == {"D100"}
 
 
 def test_error_codes_are_removed() -> None:
-    config = Configuration(convention=Convention.ALL, ignore="D100")
+    config = Configuration(convention=Convention.ALL, ignore={"D100"})
 
     error_codes = get_error_codes(config)
 
@@ -60,13 +60,13 @@ def test_error_codes_are_removed() -> None:
 
 
 def test_ignore_takes_precedence_over_select() -> None:
-    config = Configuration(convention=Convention.NONE, select="D100", ignore="D100")
+    config = Configuration(convention=Convention.NONE, select={"D100"}, ignore={"D100"})
 
     assert get_error_codes(config) == set()
 
 
 def test_raises_error_if_ignored_error_code_has_no_check() -> None:
-    config = Configuration(convention=Convention.NONE, ignore="D1234567890")
+    config = Configuration(convention=Convention.NONE, ignore={"D1234567890"})
 
     with pytest.raises(
         ValueError,
@@ -76,7 +76,7 @@ def test_raises_error_if_ignored_error_code_has_no_check() -> None:
 
 
 def test_ignoring_unselected_error_does_not_crash() -> None:
-    config = Configuration(convention=Convention.NONE, ignore="D100")
+    config = Configuration(convention=Convention.NONE, ignore={"D100"})
 
     assert get_error_codes(config) == set()
 

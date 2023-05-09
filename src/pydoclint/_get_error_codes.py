@@ -14,7 +14,7 @@ def get_all_error_codes() -> Set[str]:
 
 
 def get_error_codes(config: Configuration) -> Set[str]:
-    """Returns the error codes applicable according to the provided configuration."""
+    """Return the error codes applicable according to the provided configuration."""
     all_error_codes = get_all_error_codes()
 
     error_codes: Set[str] = all_error_codes if config.convention == Convention.ALL else set()

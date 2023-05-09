@@ -13,12 +13,12 @@ from pydoclint import DocstringError
 @lru_cache
 def get_checks() -> List[Type[DocstringError]]:
     """Discovers docstring checks in the 'pydoclint.checks' namespace."""
-    errors: List[DocstringError] = []
+    errors: List[Type[DocstringError]] = []
 
     for _, module_name, _ in _iter_namespace(pydoclint.checks):
         module = importlib.import_module(module_name)
 
-        errors.extend(_get_checks_from_module(module))
+        errors.extend(list(_get_checks_from_module(module)))
 
     counts = dict(Counter(error.error_code() for error in errors))
     duplicates = {key: value for key, value in counts.items() if value > 1}
@@ -32,7 +32,7 @@ def get_checks() -> List[Type[DocstringError]]:
 
 
 def _iter_namespace(ns_pkg: ModuleType) -> Iterator[pkgutil.ModuleInfo]:
-    """Iterates over the modules in a given package namespace."""
+    """Iterate over the modules in a given package namespace."""
     return pkgutil.iter_modules(ns_pkg.__path__, ns_pkg.__name__ + ".")
 
 

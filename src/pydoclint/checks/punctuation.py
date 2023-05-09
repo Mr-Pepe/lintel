@@ -1,6 +1,6 @@
 """Contains checks for proper punctuation at the end of the first line."""
 
-from typing import Callable, Optional, Tuple, Type, Union
+from typing import Callable, Optional, Tuple, Type, TypeVar, Union
 
 from astroid import NodeNG
 
@@ -13,7 +13,7 @@ class D400(DocstringError):
     @classmethod
     def check_implementation(
         cls, node: CHECKED_NODE_TYPES, docstring: Docstring, config: Configuration
-    ) -> None:
+    ) -> Optional["D400"]:
         return _check_ends_with(node, docstring, '.', cls)
 
 
@@ -25,16 +25,19 @@ class D415(DocstringError):
     @classmethod
     def check_implementation(
         cls, node: CHECKED_NODE_TYPES, docstring: Docstring, config: Configuration
-    ) -> None:
+    ) -> Optional["D415"]:
         return _check_ends_with(node, docstring, ('.', '!', '?'), cls)
+
+
+T = TypeVar("T", bound=DocstringError)
 
 
 def _check_ends_with(
     node: CHECKED_NODE_TYPES,
     docstring: Docstring,
     chars: Union[str, Tuple[str, ...]],
-    error_class: Type[DocstringError],
-) -> None:
+    error_class: Type[T],
+) -> Optional[T]:
     """Raise error of type `error_class` if first line of docstring does not end with `chars`."""
     summary_line: str = docstring.content.strip().split('\n')[0]
 
@@ -43,3 +46,5 @@ def _check_ends_with(
         error.parameters = [summary_line[-1]]
 
         return error
+
+    return None

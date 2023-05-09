@@ -19,6 +19,11 @@ line_length = 100
 ignore_missing_imports = true
 strict_optional = true
 disallow_incomplete_defs = true
+exclude = [
+    "venv.*/",
+    "build/",
+    "dist/",
+    ]
 
 [tool.pytest.ini_options]
 norecursedirs = ["docs", ".tox"]
@@ -43,5 +48,5 @@ source = ["src/", ".tox/*/lib/python*/site-packages/"]
 [tool.pydoclint]
 convention="pep257"
 # Ignore hidden directories and some other directories
-match-dir = "(?!venv|\\.|build|dist|resources).*"
+match-dir = "(?!venv|\\.|build|dist|resources|checks).*"
 add-ignore = "D104,D105"

@@ -6,7 +6,7 @@ import sys
 from configparser import ConfigParser
 from configparser import Error as ConfigParserError
 from pathlib import Path
-from typing import Optional, Set
+from typing import Optional, Set, Union
 
 from pydantic import BaseModel, Extra, ValidationError, validator
 
@@ -53,24 +53,34 @@ class Configuration(BaseModel):
     verbose: bool = False
 
     @validator('select', pre=True)
-    def parse_select(cls, v: str) -> Set[str]:
-        return set(re.findall(r"D\d+\b", v))
+    def parse_select(cls, v: Union[str, Set[str]]) -> Set[str]:
+        if isinstance(v, str):
+            return set(re.findall(r"D\d+\b", v))
+        return v
 
     @validator('ignore', pre=True)
-    def parse_ignore(cls, v: str) -> Set[str]:
-        return set(re.findall(r"D\d+\b", v))
+    def parse_ignore(cls, v: Union[str, Set[str]]) -> Set[str]:
+        if isinstance(v, str):
+            return set(re.findall(r"D\d+\b", v))
+        return v
 
     @validator('add_select', pre=True)
-    def parse_add_select(cls, v: str) -> Set[str]:
-        return set(re.findall(r"D\d+\b", v))
+    def parse_add_select(cls, v: Union[str, Set[str]]) -> Set[str]:
+        if isinstance(v, str):
+            return set(re.findall(r"D\d+\b", v))
+        return v
 
     @validator('add_ignore', pre=True)
-    def parse_add_ignore(cls, v: str) -> Set[str]:
-        return set(re.findall(r"D\d+\b", v))
+    def parse_add_ignore(cls, v: Union[str, Set[str]]) -> Set[str]:
+        if isinstance(v, str):
+            return set(re.findall(r"D\d+\b", v))
+        return v
 
     @validator('property_decorators', pre=True)
-    def parse_property_decorators(cls, v: str) -> Set[str]:
-        return set(v.split(",")) - {""}
+    def parse_property_decorators(cls, v: Union[str, Set[str]]) -> Set[str]:
+        if isinstance(v, str):
+            return set(v.split(",")) - {""}
+        return v
 
     class Config:
         extra = Extra.forbid

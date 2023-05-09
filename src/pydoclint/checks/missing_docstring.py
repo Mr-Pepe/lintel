@@ -28,10 +28,10 @@ class D100(DocstringError):
     def check_implementation(
         cls,
         module: astroid.Module,
-        docstring: Optional[Docstring],
+        docstring: Docstring,
         config: Configuration,
     ) -> Optional["D100"]:
-        if docstring is None and is_public(module) and not module.package:
+        if module.doc_node is None and is_public(module) and not module.package:
             return cls(module)
 
         return None
@@ -48,10 +48,10 @@ class D101(DocstringError):
     def check_implementation(
         cls,
         class_: astroid.ClassDef,
-        docstring: Optional[Docstring],
+        docstring: Docstring,
         config: Configuration,
     ) -> Optional["D101"]:
-        if docstring is None and is_public(class_) and not is_nested_class(class_):
+        if class_.doc_node is None and is_public(class_) and not is_nested_class(class_):
             return cls(class_)
 
         return None
@@ -68,11 +68,11 @@ class D102(DocstringError):
     def check_implementation(
         cls,
         method: astroid.FunctionDef,
-        docstring: Optional[Docstring],
+        docstring: Docstring,
         config: Configuration,
     ) -> Optional["D102"]:
         if (
-            docstring is None
+            method.doc_node is None
             and is_public(method)
             and not is_overloaded(method)
             and method.is_bound()
@@ -94,11 +94,11 @@ class D103(DocstringError):
     def check_implementation(
         cls,
         function_: astroid.FunctionDef,
-        docstring: Optional[Docstring],
+        docstring: Docstring,
         config: Configuration,
     ) -> Optional["D103"]:
         if (
-            docstring is None
+            function_.doc_node is None
             and is_public(function_)
             and not is_overloaded(function_)
             and not isinstance(function_.parent, astroid.FunctionDef)
@@ -120,10 +120,10 @@ class D104(DocstringError):
     def check_implementation(
         cls,
         module: CHECKED_NODE_TYPES,
-        docstring: Optional[Docstring],
+        docstring: Docstring,
         config: Configuration,
     ) -> Optional["D104"]:
-        if docstring is None and is_public(module) and module.package:
+        if module.doc_node is None and is_public(module) and module.package:
             return cls(module)
 
         return None
@@ -140,11 +140,11 @@ class D105(DocstringError):
     def check_implementation(
         cls,
         method: astroid.FunctionDef,
-        docstring: Optional[Docstring],
+        docstring: Docstring,
         config: Configuration,
     ) -> Optional["D105"]:
         if (
-            docstring is None
+            method.doc_node is None
             and is_public(method)
             and not is_overloaded(method)
             and method.is_bound()
@@ -167,10 +167,10 @@ class D106(DocstringError):
     def check_implementation(
         cls,
         class_: CHECKED_NODE_TYPES,
-        docstring: Optional[Docstring],
+        docstring: Docstring,
         config: Configuration,
     ) -> Optional["D106"]:
-        if docstring is None and is_public(class_) and is_nested_class(class_):
+        if class_.doc_node is None and is_public(class_) and is_nested_class(class_):
             return cls(class_)
 
         return None
@@ -187,11 +187,11 @@ class D107(DocstringError):
     def check_implementation(
         cls,
         method: astroid.FunctionDef,
-        docstring: Optional[Docstring],
+        docstring: Docstring,
         config: Configuration,
     ) -> Optional["D107"]:
         if (
-            docstring is None
+            method.doc_node is None
             and is_public(method)
             and not is_overloaded(method)
             and method.is_bound()

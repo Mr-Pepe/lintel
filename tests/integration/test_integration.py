@@ -63,7 +63,7 @@ def test_ignore_list(tmp_path: Path) -> None:
     ignored = {'D100', 'D213', "D415"}
     errors = check_source(
         test_file_path,
-        Configuration(convention=Convention.ALL, ignore=",".join(ignored)),
+        Configuration(convention=Convention.ALL, ignore=ignored),
     )
 
     error_codes = {error.error_code() for error in errors}

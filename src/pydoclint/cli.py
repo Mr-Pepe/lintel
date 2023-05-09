@@ -176,7 +176,9 @@ def run(
     config.match = match or config.match
     config.match_dir = match_dir or config.match_dir
     config.ignore_decorators = ignore_decorators or config.ignore_decorators
-    config.property_decorators = property_decorators or config.property_decorators
+    config.property_decorators = (
+        set(property_decorators.split(",")) if property_decorators else config.property_decorators
+    )
     config.ignore_inline_noqa = ignore_inline_noqa or config.ignore_inline_noqa
     config.verbose = verbose or config.verbose
 
@@ -219,7 +221,6 @@ def run(
 
 def configure_logging(verbose: bool) -> None:
     """Set up logging."""
-
     stdout_handler = RichHandler(
         console=Console(
             width=500 if "PYDOCLINT_TESTING" in os.environ else None,
@@ -243,7 +244,3 @@ def configure_logging(verbose: bool) -> None:
 
     logging.getLogger("pydoclint").setLevel(logging.DEBUG if verbose else logging.WARNING)
     logging.getLogger("pydoclint").handlers = [stdout_handler, stderr_handler]
-
-
-if __name__ == "__main__":
-    run()

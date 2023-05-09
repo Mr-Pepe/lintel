@@ -147,7 +147,7 @@ class Docstring:
         # Trim the `following lines` field to only reach the next section name.
         for this_section, next_section in pairwise(sections, None):
             end = -1 if next_section is None else next_section.i_line
-            this_section.following_lines = self.lines[this_section.i_line + 1 : end]
+            this_section.following_lines = self.lines[this_section.i_line + 1 : end]  # type: ignore
 
         # Determine section underline and content lines
         for section in sections:
@@ -177,10 +177,10 @@ class Docstring:
 def get_docstring_from_doc_node(
     node: CHECKED_NODE_TYPES,
     config: Configuration,
-) -> Optional[Docstring]:
+) -> Docstring:
     """Retrieve the docstring of an astroid node."""
     if node.doc_node is None:
-        return None
+        raise ValueError("Node does not have a doc node.")
 
     return Docstring(node, config.convention)
 

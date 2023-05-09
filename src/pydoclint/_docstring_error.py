@@ -24,7 +24,7 @@ class DocstringError:
     The description is formatted using the provided `parameters`."""
     explanation: str = ""
     """A more detailed explanation of the error."""
-    applicable_nodes: Union[CHECKED_NODE_TYPES, List[CHECKED_NODE_TYPES]] = NODES_TO_CHECK
+    applicable_nodes: Union[CHECKED_NODE_TYPES, List[CHECKED_NODE_TYPES]] = NODES_TO_CHECK  # type: ignore
     """The node classes this error is applicable for."""
     applicable_if_doc_string_is_missing = False
     """Whether this error should be checked for if the node does not have a docstring."""
@@ -81,7 +81,6 @@ class DocstringError:
 
     def __str__(self) -> str:
         """Return the string output for this error."""
-
         return (
             f"{self.file_name}:{self.line} in {self.node_type} '{self.node_name}' -> "
             + self.message
@@ -93,12 +92,14 @@ class DocstringError:
     @classmethod
     def check(cls, node: CHECKED_NODE_TYPES, config: Configuration) -> List[DocstringError]:
         """Implement the actual check logic in the :py:meth:`.check_implementation` method."""
-
         # Mypy can apparently not resolve the correct type
         if not isinstance(node, cls.applicable_nodes):  # type: ignore
             return []
 
-        docstring = get_docstring_from_doc_node(node, config)
+        try:
+            docstring = get_docstring_from_doc_node(node, config)
+        except ValueError:
+            docstring = None
 
         if docstring is None and not cls.applicable_if_doc_string_is_missing:
             return []
@@ -110,7 +111,9 @@ class DocstringError:
         ):
             return []
 
-        errors = cls.check_implementation(node, docstring, config)
+        # Most checks expect a docstring to be present.
+        # The checks that explicitly allow a missing docstring must make sure not to use it.
+        errors = cls.check_implementation(node, docstring, config)  # type: ignore
 
         if isinstance(errors, DocstringError):
             errors = [errors]
@@ -121,7 +124,7 @@ class DocstringError:
     def check_implementation(
         cls,
         node: CHECKED_NODE_TYPES,
-        docstring: Optional[Docstring],
+        docstring: Docstring,
         config: Configuration,
     ) -> Union[None, DocstringError, List[DocstringError]]:
         """Check a docstring."""
