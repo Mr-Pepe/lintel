@@ -17,12 +17,12 @@ CLASS_CODE = '''class MyClass:
         ...
     '''
 
-module_path = os.path.abspath("/path/to/my/file")
+module_path = os.path.normcase(os.path.abspath("/path/to/my/file"))
 
 module_node = astroid.parse(
     code=f"\n{FUNCTION_CODE}\n\n{CLASS_CODE}",
     module_name="my_module",
-    path=str(module_path),
+    path=module_path,
 )
 
 function_node = list(module_node.get_children())[0]
