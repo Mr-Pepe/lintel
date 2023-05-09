@@ -86,6 +86,8 @@ class SandboxEnv:
         """
         run_target = self.tempdir if target is None else os.path.join(self.tempdir, target)
 
+        print("Run target:", run_target)
+
         return _runner.invoke(app, f"{run_target} {args}")
 
     def __enter__(self):
