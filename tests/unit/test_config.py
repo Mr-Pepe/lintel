@@ -50,7 +50,7 @@ def test_raises_error_if_configuration_is_missing_correct_section(
     config_path = resource_dir / "configs" / config_file
 
     with pytest.raises(
-        ValueError, match=f"No pydoclint section found in '{re.escape(config_path)}'."
+        ValueError, match=f"No pydoclint section found in '{re.escape(str(config_path))}'."
     ):
         load_config(config_path)
 
@@ -67,7 +67,7 @@ def test_raises_error_if_unparsable_file(tmp_path: Path) -> None:
     config_path.write_text("/([)")
 
     with pytest.raises(
-        ValueError, match=f"No pydoclint section found in '{re.escape(config_path)}'."
+        ValueError, match=f"No pydoclint section found in '{re.escape(str(config_path))}'."
     ):
         load_config(config_path)
 
