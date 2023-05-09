@@ -166,7 +166,7 @@ def test_missing_pydoclint_section(env: SandboxEnv) -> None:
         conf.write('[bla]')
         config_path = conf.name
 
-    result = env.invoke(f'--config={config_path}')
+    result = env.invoke(f'--config="{config_path}"')
     assert result.exit_code == 1
     assert (
         f'Configuration file {config_path} does not contain a pydoclint section.' in result.stdout
@@ -284,7 +284,7 @@ def test_config_path(env: SandboxEnv) -> None:
     assert 'D100' not in result.stdout
     assert 'D103' in result.stdout
 
-    result = env.invoke('--config={}'.format(os.path.join(env.tempdir, config_name)))
+    result = env.invoke(f'--config="{os.path.join(env.tempdir, config_name)}"')
     assert result.exit_code == 1, result.stdout + result.stderr
     assert 'D100' in result.stdout
     assert 'D103' not in result.stdout
