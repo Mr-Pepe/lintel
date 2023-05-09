@@ -1,6 +1,9 @@
 """Tests for the violations.Error class."""
 
 
+import os
+from pathlib import Path
+
 import astroid
 import pytest
 
@@ -15,10 +18,12 @@ CLASS_CODE = '''class MyClass:
         ...
     '''
 
+module_path = Path("/path/to/my/file")
+
 module_node = astroid.parse(
     code=f"\n{FUNCTION_CODE}\n\n{CLASS_CODE}",
     module_name="my_module",
-    path="/path/to/my/file",
+    path=str(module_path),
 )
 
 function_node = list(module_node.get_children())[0]
@@ -32,7 +37,7 @@ class D123(DocstringError):
 def test_file_name() -> None:
     error = D123(module_node)
 
-    assert error.file_name == "/path/to/my/file"
+    assert error.file_name == str(module_path)
 
 
 def test_line() -> None:
@@ -50,19 +55,19 @@ def test_node_name() -> None:
 def test_print_for_function_node() -> None:
     error = D123(function_node)
 
-    assert str(error) == "/path/to/my/file:2 in function 'my_func' -> D123: some short description"
+    assert str(error) == f"{module_path}:2 in function 'my_func' -> D123: some short description"
 
 
 def test_print_for_module_node() -> None:
     error = D123(module_node)
 
-    assert str(error) == "/path/to/my/file:0 in module 'my_module' -> D123: some short description"
+    assert str(error) == f"{module_path}:0 in module 'my_module' -> D123: some short description"
 
 
 def test_print_for_class_node() -> None:
     error = D123(class_node)
 
-    assert str(error) == "/path/to/my/file:6 in class 'MyClass' -> D123: some short description"
+    assert str(error) == f"{module_path}:6 in class 'MyClass' -> D123: some short description"
 
 
 def test_str_and_repr() -> None:

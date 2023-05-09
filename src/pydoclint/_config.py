@@ -128,7 +128,7 @@ def _load_config_file(config_path: Path) -> Configuration:
     config_dict = toml or ini
 
     if config_dict is None:
-        raise ValueError(f"No pydoclint section found in '{config_path}'.")
+        raise ValueError(f"No pydoclint section found in '{str(config_path)}'.")
 
     # Replace dashes with underscores in keys
     config_dict = {k.replace("-", "_"): v for k, v in config_dict.items()}
