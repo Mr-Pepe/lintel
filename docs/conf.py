@@ -14,6 +14,7 @@
 
 import os
 import sys
+from pathlib import Path
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -49,7 +50,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'pydoclint'
-copyright = '2020, Amir Rachum, Sambhav Kothari'
+copyright = '2023, Felipe Peter'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -252,10 +253,54 @@ texinfo_documents = [
 
 def generate_error_code_table():
     """Add a table of all pydoclint errors to the documentation."""
-    from pydoclint.error_registry import ErrorRegistry
+    from pydoclint import get_checks
 
-    with open(os.path.join('snippets', 'error_code_table.rst'), 'wt') as outf:
-        outf.write(ErrorRegistry.to_rst())
+    checks = sorted(get_checks(), key=lambda x: x.error_code())
+
+    max_len = max(len(check.description) for check in checks)
+
+    sep_line = '+' + 6 * '-' + '+' + '-' * (max_len + 2) + '+\n'
+
+    blank_line = '|' + (max_len + 9) * ' ' + '|\n'
+
+    table = ''
+
+    groups = {
+        "D1": "Missing Docstrings",
+        "D2": "Whitespace Issues",
+        "D3": "Quotes Issues",
+        "D4": "Docstring Content Issues",
+        "": "Others",
+    }
+
+    for prefix, name in groups.items():
+        table += sep_line
+        table += blank_line
+        table += '|' + f'**{name}**'.center(max_len + 9) + '|\n'
+        table += blank_line
+
+        checks_to_remove = []
+
+        for check in checks:
+            if check.error_code().startswith(prefix):
+                table += sep_line
+                table += (
+                    '|'
+                    + check.error_code().center(6)
+                    + '| '
+                    + check.description.ljust(max_len + 1)
+                    + '|\n'
+                )
+                checks_to_remove.append(check)
+
+        for check in checks_to_remove:
+            checks.remove(check)
+
+    table += sep_line
+    return table
 
 
-generate_error_code_table()
+with open(
+    Path(__file__).parent / "snippets" / "error_code_table.rst", mode="w", encoding="utf-8"
+) as file:
+    file.write(generate_error_code_table())

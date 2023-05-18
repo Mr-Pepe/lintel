@@ -1,6 +1,11 @@
 pydoclint - docstring style checker
 ====================================
 
+[![Type checks: mypy](http://www.mypy-lang.org/static/mypy_badge.svg)](http://mypy-lang.org/)
+[![Imports: isort](https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=555555)](https://pycqa.github.io/isort/)
+<a href="https://github.com/psf/black"><img alt="Code style: black" src="https://img.shields.io/badge/code%20style-black-000000.svg"></a>
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 
 .. image:: https://github.com/PyCQA/pydoclint/workflows/Run%20tests/badge.svg
     :target: https://github.com/PyCQA/pydoclint/actions?query=workflow%3A%22Run+tests%22+branch%3Amaster
@@ -8,9 +13,6 @@ pydoclint - docstring style checker
 .. image:: https://readthedocs.org/projects/pydoclint/badge/?version=latest
     :target: https://readthedocs.org/projects/pydoclint/?badge=latest
     :alt: Documentation Status
-
-.. image:: https://img.shields.io/pypi/pyversions/pydoclint.svg
-    :target: https://pypi.org/project/pydoclint
 
 .. image:: https://pepy.tech/badge/pydoclint
     :target: https://pepy.tech/project/pydoclint
@@ -21,84 +23,22 @@ pydoclint - docstring style checker
 .. image:: https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336
     :target: https://pycqa.github.io/isort/
 
-.. image:: https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod
-    :target: https://gitpod.io/#https://github.com/PyCQA/pydoclint
-    :alt: Gitpod ready-to-code
 
 **pydoclint** is a static analysis tool for checking compliance with Python
 docstring conventions.
 
-**pydoclint** supports most of
-`PEP 257 <http://www.python.org/dev/peps/pep-0257/>`_ out of the box, but it
-should not be considered a reference implementation.
+It started as a fork of `pydocstyle <https://github.com/PyCQA/pydocstyle>` with the goal to
+eventually also cover the functionality provided by `pylint's <https://github.com/PyCQA/pylint>`
+`docparams extension <https://pylint.pycqa.org/en/latest/user_guide/checkers/extensions.html#pylint-extensions-docparams>`.
 
-**pydoclint** supports Python 3.6+.
-
-
-Quick Start
------------
-
-Install
-^^^^^^^
-
-.. code::
-
-    pip install pydoclint
-
-
-Run
-^^^
-
-.. code::
-
-    $ pydoclint test.py
-    test.py:18 in private nested class `meta`:
-            D101: Docstring missing
-    test.py:27 in public function `get_user`:
-        D300: Use """triple double quotes""" (found '''-quotes)
-    test:75 in public function `init_database`:
-        D201: No blank lines allowed before function docstring (found 1)
-    ...
-
-Develop
-^^^^^^^
-
-You can use Gitpod to run pre-configured dev environment in the cloud right from your browser -
-
-.. image:: https://gitpod.io/button/open-in-gitpod.svg
-    :target: https://gitpod.io/#https://github.com/PyCQA/pydoclint
-    :alt: Open in Gitpod
-    
-Before submitting a PR make sure that you run `make all`.
-
-Links
------
-
-* `Read the full documentation here <https://pydoclint.org/en/stable/>`_.
-
-* `Fork pydoclint on GitHub <https://github.com/PyCQA/pydoclint>`_.
-
-* `PyPI project page <https://pypi.python.org/pypi/pydoclint>`_.
-
+Read the docs at ...
 
 Todos:
 
-# TODO: Add check for descriptive mood
-# TODO: Add descriptive mood check to Google convention
-# TODO: Use astroid
-# TODO: Make applicable conventions a check property
-# TODO: Make select and ignore usable together
-# TODO: Switch to GPL
-# TODO: Rename to pydoclint
+- TODO: Add check for descriptive mood
 
-# TODO Use noqa as used by Flake 8
-    [x] '# pydoclint: noqa' Skips entire file
-    [ ] '# noqa' excludes line
-    [ ] '# noqa: D234' ignores single error on line
-    [ ] '# noqa: D234,D345' ignores multiple errors on line
-    [ ] Add behavior to docs
-        - File-level noqa can not specify single error codes anymore -> It should maybe?
+- Try out pre-commit
 
-# TODO: Add to doc that decorator stuff is probably not working the same anymore
+- Rename pep257 to default
 
-# TODO: Import docstring tests from pylint
+- Create error table
