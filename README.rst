@@ -9,7 +9,7 @@ lintel - docstring style checker
     :target: https://codecov.io/github/Mr-Pepe/lintel
 
 .. image:: https://readthedocs.org/projects/lintel/badge/?version=latest
-    :target: https://readthedocs.org/projects/lintel/?badge=latest
+    :target: https://lintel.readthedocs.io/en/latest/
 
 .. image:: https://pepy.tech/badge/lintel
     :target: https://pepy.tech/project/lintel
@@ -34,10 +34,12 @@ It started as a fork of `pydocstyle <https://github.com/PyCQA/pydocstyle>`_ with
 eventually also cover the functionality provided by `pylint's <https://github.com/PyCQA/pylint>`_
 `docparams extension <https://pylint.pycqa.org/en/latest/user_guide/checkers/extensions.html#pylint-extensions-docparams>`_.
 
-Read the docs at ...
+Install Lintel with::
 
-Todos:
+    pip install lintel
 
-- TODO: Add check for descriptive mood
+Find out how to use it by executing::
 
-- Try out pre-commit
+    lintel --help
+
+Get more information in the `official documentation <https://lintel.readthedocs.io/en/latest/>`_.
