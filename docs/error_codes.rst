@@ -10,7 +10,7 @@ Not all error codes are checked for by default. There are three conventions
 that may be used by Lintel: ``default``, ``numpy`` and ``google``.
 
 The ``default`` convention supports parts of `PEP257
-<http://www.python.org/dev/peps/pep-0257/>`_) and is used by default.
+<http://www.python.org/dev/peps/pep-0257/>`_ and is used by default.
 
 The ``numpy`` convention supports the `numpydoc docstring
 <https://github.com/numpy/numpydoc>`_ standard.
