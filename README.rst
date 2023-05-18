@@ -12,14 +12,14 @@ lintel - docstring style checker
 .. image:: https://pepy.tech/badge/lintel
     :target: https://pepy.tech/project/lintel
 
-.. image:: http://www.mypy-lang.org/static/mypy_badge.svg
-    :target: http://mypy-lang.org/
-
 .. image:: https://img.shields.io/badge/code%20style-black-000000.svg
     :target: https://github.com/psf/black
 
-.. image:: https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336
+.. image:: https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat
     :target: https://pycqa.github.io/isort/
+
+.. image:: http://www.mypy-lang.org/static/mypy_badge.svg
+    :target: http://mypy-lang.org/
 
 .. image:: https://img.shields.io/badge/License-MIT-yellow.svg
     :target: https://opensource.org/licenses/MIT
