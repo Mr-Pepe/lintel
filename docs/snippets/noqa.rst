@@ -1,7 +1,7 @@
-``lintel`` supports module-level or inline commenting to skip specific checks on
+Lintel supports module-level or inline commenting to skip specific checks on
 specific modules, classes, or functions/methods. The supported comments that can be added are:
 
-1. ``# lintel: noqa`` on the module level deactivates lintel for a module.
+1. ``# lintel: noqa`` on the module level deactivates Lintel for a module.
 
 2. ``# noqa: D100`` on the module level deactivates the D100 check for a module.
 

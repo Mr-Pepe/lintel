@@ -1,7 +1,7 @@
 Usage
 =====
 
-Install lintel and learn about its usage::
+Install Lintel and learn about its usage::
 
     pip install lintel
 

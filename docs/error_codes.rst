@@ -7,7 +7,7 @@ Conventions
 -----------
 
 Not all error codes are checked for by default. There are three conventions
-that may be used by lintel: ``default``, ``numpy`` and ``google``.
+that may be used by Lintel: ``default``, ``numpy`` and ``google``.
 
 The ``default`` convention supports parts of `PEP257
 <http://www.python.org/dev/peps/pep-0257/>`_) and is used by default.
@@ -19,7 +19,7 @@ The ``google`` convention supports the `Google Python Style
 Guide <https://google.github.io/styleguide/pyguide.html>`_.
 
 These conventions may be specified using ``--convention=<name>`` when
-running lintel from the command line or by specifying the
+running Lintel from the command line or by specifying the
 convention in a configuration file.
 
 Two more conventions can be used: ``all`` and ``none``.
