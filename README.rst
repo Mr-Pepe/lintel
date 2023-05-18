@@ -26,6 +26,7 @@ lintel - docstring style checker
 .. image:: https://img.shields.io/badge/License-MIT-yellow.svg
     :target: https://opensource.org/licenses/MIT
 
+
 **Lintel** is a static analysis tool for checking compliance with Python
 docstring conventions.
 
