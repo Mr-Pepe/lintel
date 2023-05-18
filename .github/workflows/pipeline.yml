@@ -42,7 +42,6 @@ jobs:
         path: reports/.coverage
 
   coverage:
-    name: Coverage
     runs-on: ubuntu-latest
     timeout-minutes: 5
     needs: test
@@ -87,4 +86,3 @@ jobs:
 
     - name: Run static checks
       run: tox -e lint
-
