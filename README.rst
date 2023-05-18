@@ -2,12 +2,11 @@ lintel - docstring style checker
 ====================================
 
 
-.. image:: https://github.com/PyCQA/lintel/workflows/Run%20tests/badge.svg
-    :target: https://github.com/PyCQA/lintel/actions?query=workflow%3A%22Run+tests%22+branch%3Amaster
+.. image:: https://github.com/Mr-Pepe/lintel/actions/workflows/pipeline.yml/badge.svg?branch=main
+    :target: https://github.com/Mr-Pepe/lintel/actions?query=workflow%3A%22CI+Pipeline%22+branch%3Amain
 
 .. image:: https://readthedocs.org/projects/lintel/badge/?version=latest
     :target: https://readthedocs.org/projects/lintel/?badge=latest
-    :alt: Documentation Status
 
 .. image:: https://pepy.tech/badge/lintel
     :target: https://pepy.tech/project/lintel
@@ -24,7 +23,7 @@ lintel - docstring style checker
 .. image:: https://img.shields.io/badge/License-MIT-yellow.svg
     :target: https://opensource.org/licenses/MIT
 
-**lintel** is a static analysis tool for checking compliance with Python
+**Lintel** is a static analysis tool for checking compliance with Python
 docstring conventions.
 
 It started as a fork of `pydocstyle <https://github.com/PyCQA/pydocstyle>` with the goal to
