@@ -160,6 +160,7 @@ def run(
     paths = paths or [Path().cwd()]
 
     try:
+        config_path = config_path or paths[0] if paths and paths[0].is_dir() else None
         config_path = config_path or Path().cwd()
         config = load_config(config_path or Path().cwd())
     except IllegalConfiguration as config_error:
