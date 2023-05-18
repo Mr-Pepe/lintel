@@ -9,7 +9,7 @@ from pydoclint import Configuration, Convention, IllegalConfiguration, load_conf
 def test_default_config() -> None:
     config = Configuration()
 
-    assert config.convention == Convention.PEP257
+    assert config.convention == Convention.DEFAULT
     assert config.select == set()
     assert config.ignore == set()
     assert config.match != ""

@@ -1,11 +1,11 @@
 class Expectation:
-    """Hold expectation for pep257 violations in tests."""
+    """Hold expectation for docstring violations in tests."""
 
     def __init__(self):
         self.expected = set()
 
     def expect(self, *args, arg_count=0, func_name=""):
-        """Decorator that expects a certain PEP 257 violation."""
+        """Decorator that expects a certain docstring violation."""
         # The `arg_count` parameter helps the decorator
         # with functions that have positional arguments.
         if len(args) == 1:

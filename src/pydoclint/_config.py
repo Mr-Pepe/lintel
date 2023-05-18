@@ -40,7 +40,7 @@ DEFAULT_PROPERTY_DECORATORS = {
 class Configuration(BaseModel):
     """The docstring checker configuration."""
 
-    convention: Convention = Convention.PEP257
+    convention: Convention = Convention.DEFAULT
     select: Set[str] = set()
     ignore: Set[str] = set()
     add_select: Set[str] = set()

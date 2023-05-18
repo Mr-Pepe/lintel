@@ -22,10 +22,10 @@ from pydoclint import Configuration, Convention, DocstringError, check_source
         ('noqa', Convention.ALL),
         ('numpy_sections', Convention.NUMPY),
         ('google_sections', Convention.GOOGLE),
-        ('functions', Convention.PEP257),
+        ('functions', Convention.DEFAULT),
         ('canonical_google_examples', Convention.GOOGLE),
         ('canonical_numpy_examples', Convention.NUMPY),
-        ('canonical_pep257_examples', Convention.PEP257),
+        ('canonical_pep257_examples', Convention.DEFAULT),
     ],
 )
 def test_complex_file(test_case: str, convention: Convention, resource_dir: Path) -> None:

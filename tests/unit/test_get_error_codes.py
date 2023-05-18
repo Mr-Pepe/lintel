@@ -20,8 +20,8 @@ def test_error_codes_of_conventions() -> None:
 
     # Make sure that all error codes from the conventions are shipped by default
     assert (
-        get_error_codes(Configuration(convention=Convention.PEP257))
-        == CONVENTION_ERRORS[Convention.PEP257]
+        get_error_codes(Configuration(convention=Convention.DEFAULT))
+        == CONVENTION_ERRORS[Convention.DEFAULT]
     )
     assert (
         get_error_codes(Configuration(convention=Convention.NUMPY))

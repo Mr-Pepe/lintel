@@ -11,7 +11,7 @@ class Convention(Enum):
 
     NONE = "none"
     ALL = "all"
-    PEP257 = "pep257"
+    DEFAULT = "default"
     NUMPY = "numpy"
     GOOGLE = "google"
 
@@ -31,7 +31,7 @@ NODES_TO_CHECK = (
 
 
 CONVENTION_ERRORS = {
-    Convention.PEP257: {
+    Convention.DEFAULT: {
         "D100",
         "D101",
         "D102",

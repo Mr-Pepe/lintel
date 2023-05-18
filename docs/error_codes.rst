@@ -1,18 +1,15 @@
 Error Codes
 ===========
 
-Grouping
---------
-
 .. include:: snippets/error_code_table.rst
 
 Conventions
 -----------
 
 Not all error codes are checked for by default. There are three conventions
-that may be used by pydoclint: ``pep257``, ``numpy`` and ``google``.
+that may be used by pydoclint: ``default``, ``numpy`` and ``google``.
 
-The ``pep257`` convention supports `PEP257
+The ``default`` convention supports parts of `PEP257
 <http://www.python.org/dev/peps/pep-0257/>`_) and is used by default.
 
 The ``numpy`` convention supports the `numpydoc docstring
