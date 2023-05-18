@@ -200,7 +200,6 @@ man_pages = [('index', 'lintel', 'lintel Documentation', ['Amir Rachum'], 1)]
 # man_show_urls = False
 
 
-
 def generate_error_code_table():
     """Add a table of all lintel errors to the documentation."""
     from lintel import get_checks
