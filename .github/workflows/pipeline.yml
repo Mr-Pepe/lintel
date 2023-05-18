@@ -33,6 +33,7 @@ jobs:
       run: tox
 
     - name: Upload coverage artifact
+      if: matrix.os == 'ubuntu-latest'
       uses: actions/upload-artifact@v3.1.2
       with:
         name: coverage-${{ matrix.python-version }}
