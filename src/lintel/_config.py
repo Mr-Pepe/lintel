@@ -97,9 +97,7 @@ def load_config(config_path: Path) -> Configuration:
         try:
             return _load_config_file(config_path)
         except ValueError:
-            _logger.error(
-                "Configuration file %s does not contain a lintel section.", config_path
-            )
+            _logger.error("Configuration file %s does not contain a lintel section.", config_path)
             raise
 
     for config_file in PROJECT_CONFIG_FILES:

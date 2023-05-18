@@ -5,6 +5,12 @@ from pathlib import Path
 from typing import List, Optional
 
 from astroid.exceptions import AstroidSyntaxError
+from rich import print
+from rich.console import Console
+from rich.logging import RichHandler
+from typer import Abort, Argument, Exit, Option, Typer
+from typing_extensions import Annotated
+
 from lintel import (
     DEFAULT_MATCH,
     DEFAULT_MATCH_DIR,
@@ -15,11 +21,6 @@ from lintel import (
     discover_files,
     load_config,
 )
-from rich import print
-from rich.console import Console
-from rich.logging import RichHandler
-from typer import Abort, Argument, Exit, Option, Typer
-from typing_extensions import Annotated
 
 __all__ = ('main',)
 

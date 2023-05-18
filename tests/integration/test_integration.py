@@ -166,9 +166,7 @@ def test_missing_lintel_section(env: SandboxEnv) -> None:
 
     result = env.invoke(f'--config="{config_path}"')
     assert result.exit_code == 1
-    assert (
-        f'Configuration file {config_path} does not contain a lintel section.' in result.stdout
-    )
+    assert f'Configuration file {config_path} does not contain a lintel section.' in result.stdout
 
     with env.open('example.py', 'wt') as example:
         example.write(

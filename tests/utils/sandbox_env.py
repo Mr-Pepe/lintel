@@ -8,8 +8,9 @@ from io import TextIOWrapper
 from typing import Any, Optional
 
 from click.testing import Result
-from lintel.cli import app
 from typer.testing import CliRunner
+
+from lintel.cli import app
 
 _runner = CliRunner(mix_stderr=False, env={"LINTEL_TESTING": "True"})
 
