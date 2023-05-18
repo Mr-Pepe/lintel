@@ -57,7 +57,7 @@ jobs:
 
       - name: Combine coverage results
         run: |
-          python -m pip install --upgrade pip coverage
+          python -m pip install --upgrade pip coverage[toml]
           coverage combine coverage*/.coverage
           coverage xml
 
