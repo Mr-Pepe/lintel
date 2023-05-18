@@ -7,7 +7,7 @@ from typing import Any, List, Optional, Union
 
 from astroid import AsyncFunctionDef, ClassDef, FunctionDef, Module
 
-from pydoclint import (
+from lintel import (
     CHECKED_NODE_TYPES,
     NODES_TO_CHECK,
     Configuration,

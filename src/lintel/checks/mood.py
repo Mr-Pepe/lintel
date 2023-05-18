@@ -6,7 +6,7 @@ from typing import Optional
 import astroid
 from astroid import FunctionDef
 
-from pydoclint import (
+from lintel import (
     IMPERATIVE_BLACKLIST,
     IMPERATIVE_VERBS,
     Configuration,

@@ -4,7 +4,7 @@ from typing import Callable, Optional, Tuple, Type, TypeVar, Union
 
 from astroid import NodeNG
 
-from pydoclint import CHECKED_NODE_TYPES, Configuration, Docstring, DocstringError
+from lintel import CHECKED_NODE_TYPES, Configuration, Docstring, DocstringError
 
 
 class D400(DocstringError):

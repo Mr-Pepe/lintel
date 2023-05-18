@@ -1,4 +1,4 @@
-"""Command line interface for pydoclint."""
+"""Command line interface for lintel."""
 import logging
 import os
 from pathlib import Path
@@ -11,7 +11,7 @@ from rich.logging import RichHandler
 from typer import Abort, Argument, Exit, Option, Typer
 from typing_extensions import Annotated
 
-from pydoclint import (
+from lintel import (
     DEFAULT_MATCH,
     DEFAULT_MATCH_DIR,
     DEFAULT_PROPERTY_DECORATORS,
@@ -222,7 +222,7 @@ def configure_logging(verbose: bool) -> None:
     """Set up logging."""
     stdout_handler = RichHandler(
         console=Console(
-            width=500 if "PYDOCLINT_TESTING" in os.environ else None,
+            width=500 if "LINTEL_TESTING" in os.environ else None,
         ),
         rich_tracebacks=True,
         show_time=False,
@@ -232,7 +232,7 @@ def configure_logging(verbose: bool) -> None:
 
     stderr_handler = RichHandler(
         console=Console(
-            stderr=True, quiet=True, width=500 if "PYDOCLINT_TESTING" in os.environ else None
+            stderr=True, quiet=True, width=500 if "LINTEL_TESTING" in os.environ else None
         ),
         level=logging.WARNING,
         rich_tracebacks=True,
@@ -241,5 +241,5 @@ def configure_logging(verbose: bool) -> None:
     )
     stderr_handler.setFormatter(logging.Formatter("%(message)s"))
 
-    logging.getLogger("pydoclint").setLevel(logging.DEBUG if verbose else logging.WARNING)
-    logging.getLogger("pydoclint").handlers = [stdout_handler, stderr_handler]
+    logging.getLogger("lintel").setLevel(logging.DEBUG if verbose else logging.WARNING)
+    logging.getLogger("lintel").handlers = [stdout_handler, stderr_handler]

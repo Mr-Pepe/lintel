@@ -3,7 +3,7 @@
 import re
 from typing import Optional
 
-from pydoclint import CHECKED_NODE_TYPES, Configuration, Docstring, DocstringError
+from lintel import CHECKED_NODE_TYPES, Configuration, Docstring, DocstringError
 
 
 class D300(DocstringError):

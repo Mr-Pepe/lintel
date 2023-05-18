@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pytest
 
-from pydoclint import Configuration, Convention, IllegalConfiguration, load_config
+from lintel import Configuration, Convention, IllegalConfiguration, load_config
 
 
 def test_default_config() -> None:
@@ -50,7 +50,7 @@ def test_raises_error_if_configuration_is_missing_correct_section(
     config_path = resource_dir / "configs" / config_file
 
     with pytest.raises(
-        ValueError, match=f"No pydoclint section found in '{re.escape(str(config_path))}'."
+        ValueError, match=f"No lintel section found in '{re.escape(str(config_path))}'."
     ):
         load_config(config_path)
 
@@ -67,15 +67,15 @@ def test_raises_error_if_unparsable_file(tmp_path: Path) -> None:
     config_path.write_text("/([)")
 
     with pytest.raises(
-        ValueError, match=f"No pydoclint section found in '{re.escape(str(config_path))}'."
+        ValueError, match=f"No lintel section found in '{re.escape(str(config_path))}'."
     ):
         load_config(config_path)
 
 
 def test_discovery_in_same_folder(tmp_path: Path) -> None:
-    (tmp_path / "setup.cfg").write_text("[pydoclint]\nselect=D1\n")
-    (tmp_path / "tox.ini").write_text("[pydoclint]\nselect=D2\n")
-    (tmp_path / "pyproject.toml").write_text('[tool.pydoclint]\nselect="D3"\n')
+    (tmp_path / "setup.cfg").write_text("[lintel]\nselect=D1\n")
+    (tmp_path / "tox.ini").write_text("[lintel]\nselect=D2\n")
+    (tmp_path / "pyproject.toml").write_text('[tool.lintel]\nselect="D3"\n')
 
     assert load_config(tmp_path).select == {"D1"}
 

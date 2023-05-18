@@ -25,11 +25,11 @@ def env(request):
     """Add a testing environment to a test method."""
     sandbox_settings = {
         'ini': {
-            'section_name': 'pydoclint',
+            'section_name': 'lintel',
             'config_name': 'tox.ini',
         },
         'toml': {
-            'section_name': 'tool.pydoclint',
+            'section_name': 'tool.lintel',
             'config_name': 'pyproject.toml',
         },
     }[request.param]

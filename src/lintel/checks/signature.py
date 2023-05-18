@@ -5,7 +5,7 @@ from typing import Optional
 import astroid
 from astroid import FunctionDef
 
-from pydoclint import Configuration, Docstring, DocstringError
+from lintel import Configuration, Docstring, DocstringError
 
 
 class D402(DocstringError):

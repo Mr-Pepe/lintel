@@ -1,11 +1,11 @@
 Usage
 =====
 
-Install pydoclint and learn about its usage::
+Install lintel and learn about its usage::
 
-    pip install pydoclint
+    pip install lintel
 
-    pydoclint --help
+    lintel --help
 
 
 Configuration Files

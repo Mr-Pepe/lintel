@@ -3,6 +3,6 @@
 
 
 if __name__ == '__main__':
-    from pydoclint import cli
+    from lintel import cli
 
     cli.app()
