@@ -8,17 +8,16 @@ from io import TextIOWrapper
 from typing import Any, Optional
 
 from click.testing import Result
+from lintel.cli import app
 from typer.testing import CliRunner
 
-from pydoclint.cli import app
-
-_runner = CliRunner(mix_stderr=False, env={"PYDOCLINT_TESTING": "True"})
+_runner = CliRunner(mix_stderr=False, env={"LINTEL_TESTING": "True"})
 
 
 class SandboxEnv:
-    """An isolated environment where pydoclint can be run.
+    """An isolated environment where lintel can be run.
 
-    Since running pydoclint as a script is affected by local config files,
+    Since running lintel as a script is affected by local config files,
     it's important that tests will run in an isolated environment. This class
     should be used as a context manager and offers utility methods for adding
     files to the environment and changing the environment's configuration.
@@ -27,8 +26,8 @@ class SandboxEnv:
 
     def __init__(
         self,
-        script_name='pydoclint',
-        section_name='pydoclint',
+        script_name='lintel',
+        section_name='lintel',
         config_name='tox.ini',
     ):
         """Initialize the object."""
@@ -77,9 +76,9 @@ class SandboxEnv:
         os.makedirs(os.path.join(self.tempdir, path), *args, **kwargs)
 
     def invoke(self, args: str = "", target: Optional[str] = None) -> Result:
-        """Run pydoclint on the environment base folder with the given args.
+        """Run lintel on the environment base folder with the given args.
 
-        If `target` is not None, will run pydoclint on `target` instead of
+        If `target` is not None, will run lintel on `target` instead of
         the environment base folder.
 
         """

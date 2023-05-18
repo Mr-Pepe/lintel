@@ -7,7 +7,7 @@ from typing import Dict, List, Optional, Set, Tuple
 
 from pydantic import BaseModel
 
-from pydoclint import (
+from lintel import (
     CHECKED_NODE_TYPES,
     Configuration,
     Convention,

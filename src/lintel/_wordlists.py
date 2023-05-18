@@ -26,7 +26,7 @@ def load_wordlist(name: str) -> Iterator[str]:
     Whitespace and #-prefixed comments are stripped from each line.
 
     """
-    data = pkgutil.get_data('pydoclint', 'data/' + name)
+    data = pkgutil.get_data('lintel', 'data/' + name)
     if data is not None:
         text = data.decode('utf8')
         for line in text.splitlines():

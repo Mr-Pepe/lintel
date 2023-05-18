@@ -1,7 +1,7 @@
 import pytest
 from astroid import Module
 
-from pydoclint import Convention, Docstring
+from lintel import Convention, Docstring
 
 
 def test_raises_error_if_node_has_no_doc_node() -> None:

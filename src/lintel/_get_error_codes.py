@@ -4,7 +4,7 @@ from typing import Set, Union
 
 from astroid import ClassDef, FunctionDef, Module
 
-from pydoclint import CHECKED_NODE_TYPES, CONVENTION_ERRORS, Configuration, Convention, get_checks
+from lintel import CHECKED_NODE_TYPES, CONVENTION_ERRORS, Configuration, Convention, get_checks
 
 _logger = logging.getLogger(__name__)
 
@@ -58,7 +58,7 @@ def get_error_codes_to_skip(node: CHECKED_NODE_TYPES, ignore_inline_noqa: bool =
 
     # Check for noqa comments in module
     if isinstance(node, Module):
-        ignore_all_regex = re.compile(r"^\s*#\s*pydoclint\s*:\s*noqa\s*$")
+        ignore_all_regex = re.compile(r"^\s*#\s*lintel\s*:\s*noqa\s*$")
         specific_ignore_regex = re.compile(r"^\s*#\s*noqa\s*:[\sA-Z\d,]*D\d+")
 
         for line in node.file_bytes.decode().splitlines():

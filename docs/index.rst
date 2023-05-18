@@ -1,7 +1,7 @@
-pydoclint's documentation
+lintel's documentation
 ==========================
 
-**pydoclint** is a static analysis tool for checking compliance with Python
+**lintel** is a static analysis tool for checking compliance with Python
 docstring conventions.
 
 .. toctree::
@@ -15,9 +15,9 @@ docstring conventions.
 Credits
 =======
 
-Pydocstyle started as a fork of `pydocstyle <https://github.com/PyCQA/pydocstyle>`_ with the goal to
+Lintel started as a fork of `pydocstyle <https://github.com/PyCQA/pydocstyle>`_ with the goal to
 eventually also cover the functionality provided by `pylint's <https://github.com/PyCQA/pylint>`_
 `docparams extension <https://pylint.pycqa.org/en/latest/user_guide/checkers/extensions.html#pylint-extensions-docparams>`_.
 
-Pydoclint behaves very similar to pydocstyle in terms of docstring checks but it lacks some
+Lintel behaves very similar to pydocstyle in terms of docstring checks but it lacks some
 of the more advanced configuration options, e.g., configuration inheritance.

@@ -12,7 +12,7 @@ skip-string-normalization = true
 
 [tool.isort]
 profile = "black"
-src_paths = ["src/pydoclint"]
+src_paths = ["src/lintel"]
 line_length = 100
 
 [tool.mypy]
@@ -31,7 +31,7 @@ addopts = """
     -vv
     --doctest-modules
     --junitxml=reports/pytest.xml
-    --cov=pydoclint
+    --cov=lintel
     --cov-config=pyproject.toml
     --cov-report xml:reports/coverage.xml
     --cov-report html:reports/coverage_html
@@ -45,7 +45,7 @@ data_file = "reports/.coverage"
 # Maps coverage measured in site-packages to source files in src
 source = ["src/", ".tox/*/lib/python*/site-packages/"]
 
-[tool.pydoclint]
+[tool.lintel]
 convention="default"
 # Ignore hidden directories and some other directories
 match-dir = "(?!venv|\\.|build|dist|resources|checks).*"

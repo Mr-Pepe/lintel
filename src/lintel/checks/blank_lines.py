@@ -6,7 +6,7 @@ from typing import List, Optional, Tuple, Union
 
 import astroid
 
-from pydoclint import (
+from lintel import (
     CHECKED_NODE_TYPES,
     Configuration,
     Docstring,

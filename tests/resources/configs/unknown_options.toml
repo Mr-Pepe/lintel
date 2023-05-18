@@ -1,2 +1,2 @@
-[tool.pydoclint]
+[tool.lintel]
 unknown_option = "abc"

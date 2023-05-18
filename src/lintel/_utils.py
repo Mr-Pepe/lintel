@@ -7,7 +7,7 @@ from typing import Iterable, List, Set, Tuple, TypeVar
 import astroid
 from astroid import ClassDef, FunctionDef, Module
 
-from pydoclint import CHECKED_NODE_TYPES
+from lintel import CHECKED_NODE_TYPES
 
 #: Regular expression for stripping non-alphanumeric characters
 NON_ALPHANUMERIC_STRIP_RE = re.compile(r'[\W_]+')

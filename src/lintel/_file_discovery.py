@@ -3,7 +3,7 @@ import re
 from pathlib import Path
 from typing import List, Set
 
-from pydoclint import Configuration
+from lintel import Configuration
 
 
 def discover_files(paths: List[Path], config: Configuration) -> Set[Path]:

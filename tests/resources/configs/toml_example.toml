@@ -1,4 +1,4 @@
-[tool.pydoclint]
+[tool.lintel]
 convention = "google"
 select = "D100,D200"
 ignore = "D100,D300"

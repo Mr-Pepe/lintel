@@ -2,7 +2,7 @@
 
 from typing import Optional
 
-from pydoclint import (
+from lintel import (
     CHECKED_NODE_TYPES,
     Configuration,
     Docstring,

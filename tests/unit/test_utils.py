@@ -3,7 +3,7 @@ from typing import List, Set
 import astroid
 import pytest
 
-from pydoclint import Configuration, _utils
+from lintel import Configuration, _utils
 
 __all__ = ()
 

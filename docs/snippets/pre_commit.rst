@@ -1,12 +1,12 @@
-**pydoclint** can be included as a hook for `pre-commit`_.  The easiest way to get
+**lintel** can be included as a hook for `pre-commit`_.  The easiest way to get
 started is to add this configuration to your ``.pre-commit-config.yaml``:
 
 .. parsed-literal::
 
-    -   repo: https://github.com/Mr-Pepe/pydoclint
+    -   repo: https://github.com/Mr-Pepe/lintel
         rev: \ |version| \  # pick a git hash / tag to point to
         hooks:
-        -   id: pydoclint
+        -   id: lintel
 
 See the `pre-commit docs`_ for how to customize this configuration.
 

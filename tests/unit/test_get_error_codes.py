@@ -3,7 +3,7 @@ from typing import List
 import astroid
 import pytest
 
-from pydoclint import (
+from lintel import (
     CONVENTION_ERRORS,
     Configuration,
     Convention,
@@ -84,23 +84,23 @@ def test_ignoring_unselected_error_does_not_crash() -> None:
 @pytest.mark.parametrize(
     ("source", "expected"),
     [
-        ("# pydoclint: noqa", get_all_error_codes()),
-        ("#pydoclint:noqa", get_all_error_codes()),
-        ("#   pydoclint   :   noqa   ", get_all_error_codes()),
-        ("a = 1\n#pydoclint:noqa\n# Some more text", get_all_error_codes()),
+        ("# lintel: noqa", get_all_error_codes()),
+        ("#lintel:noqa", get_all_error_codes()),
+        ("#   lintel   :   noqa   ", get_all_error_codes()),
+        ("a = 1\n#lintel:noqa\n# Some more text", get_all_error_codes()),
         ("# noqa: D100", {"D100"}),
         ("# noqa: A123,D1234,D1,D100,D300", {"D1", "D100", "D300"}),
         (
             "def my_func(): # noqa: D1,D100,D300\n\t...",
             set(),
         ),
-        ("# Some text\n#pydoclint:noq\n# Some more text", set()),
-        ("# pydoclint: noqa # And something else", set()),
-        ("# And something else # pydoclint: noqa", set()),
+        ("# Some text\n#lintel:noq\n# Some more text", set()),
+        ("# lintel: noqa # And something else", set()),
+        ("# And something else # lintel: noqa", set()),
         ("", set()),
         ("# noqa", set()),
         ("#noqa", set()),
-        ("#pydoclint", set()),
+        ("#lintel", set()),
     ],
 )
 def test_error_codes_to_skip_module(source: str, expected: bool) -> None:

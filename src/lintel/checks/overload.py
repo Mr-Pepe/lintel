@@ -4,7 +4,7 @@ from typing import Optional
 
 import astroid
 
-from pydoclint import Configuration, Docstring, DocstringError, is_overloaded
+from lintel import Configuration, Docstring, DocstringError, is_overloaded
 
 
 class D418(DocstringError):

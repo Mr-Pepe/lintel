@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from pydoclint import Configuration, discover_files
+from lintel import Configuration, discover_files
 
 
 def test_file_discovery(discovery_dir: Path) -> None:

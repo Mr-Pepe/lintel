@@ -5,7 +5,7 @@ from typing import Optional
 
 from astroid import NodeNG
 
-from pydoclint import CHECKED_NODE_TYPES, Configuration, Docstring, DocstringError, has_content
+from lintel import CHECKED_NODE_TYPES, Configuration, Docstring, DocstringError, has_content
 
 
 class D200(DocstringError):

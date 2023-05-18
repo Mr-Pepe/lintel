@@ -10,8 +10,8 @@ import pytest
 from tests.utils.sandbox_env import SandboxEnv
 from typer.testing import CliRunner
 
-from pydoclint import Configuration, Convention, check_source
-from pydoclint.cli import app
+from lintel import Configuration, Convention, check_source
+from lintel.cli import app
 
 __all__ = ()
 
@@ -107,14 +107,14 @@ def test_skip_errors(tmp_path: Path) -> None:
 
 
 def test_run_as_named_module():
-    """Test that pydoclint can be run as a "named module".
+    """Test that lintel can be run as a "named module".
 
-    This means that the following should run pydoclint:
+    This means that the following should run lintel:
 
-        python -m pydoclint
+        python -m lintel
 
     """
-    cmd = [sys.executable, "-m", "pydoclint", "--help"]
+    cmd = [sys.executable, "-m", "lintel", "--help"]
     p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out, err = p.communicate()
     assert p.returncode == 0, out.decode('utf-8') + err.decode('utf-8')
@@ -158,7 +158,7 @@ def test_config_file(env: SandboxEnv) -> None:
     assert 'D103' not in result.stdout
 
 
-def test_missing_pydoclint_section(env: SandboxEnv) -> None:
+def test_missing_lintel_section(env: SandboxEnv) -> None:
     """Test that config files without a valid section name issue a warning."""
     with env.open('config.ini', 'wt') as conf:
         conf.write('[bla]')
@@ -167,7 +167,7 @@ def test_missing_pydoclint_section(env: SandboxEnv) -> None:
     result = env.invoke(f'--config="{config_path}"')
     assert result.exit_code == 1
     assert (
-        f'Configuration file {config_path} does not contain a pydoclint section.' in result.stdout
+        f'Configuration file {config_path} does not contain a lintel section.' in result.stdout
     )
 
     with env.open('example.py', 'wt') as example:
@@ -187,7 +187,7 @@ def test_missing_pydoclint_section(env: SandboxEnv) -> None:
     result = env.invoke()
     assert result.exit_code == 1
     assert 'D100' in result.stdout
-    assert 'does not contain a pydoclint section' not in result.stderr
+    assert 'does not contain a lintel section' not in result.stderr
 
 
 @pytest.mark.parametrize(
@@ -891,7 +891,7 @@ def test_only_comment_with_noqa_file(env: SandboxEnv) -> None:
             '# -*- coding: utf-8 -*-\n'
             '# Useless comment\n'
             '# Just another useless comment\n'
-            '# pydoclint: noqa\n'
+            '# lintel: noqa\n'
         )
 
     result = env.invoke()
@@ -907,7 +907,7 @@ def test_comment_with_noqa_plus_docstring_file(env: SandboxEnv) -> None:
             '# -*- coding: utf-8 -*-\n'
             '# Useless comment\n'
             '# Just another useless comment\n'
-            '# pydoclint : noqa\n'
+            '# lintel : noqa\n'
             '"""Module docstring without period"""\n'
         )
 
@@ -938,7 +938,7 @@ def test_match_considers_base_names_for_path_args(env: SandboxEnv) -> None:
 
     The test environment consists of a single empty module `test_a.py`. The
     match option is set to a pattern that ignores test_ prefixed .py filenames.
-    When pydoclint is invoked with full path to `test_a.py`, we expect it to
+    When lintel is invoked with full path to `test_a.py`, we expect it to
     succeed since match option will match against just the file name and not
     full path.
     """

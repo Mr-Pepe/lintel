@@ -1,6 +1,6 @@
--   id: pydoclint
-    name: pydoclint
-    description: pydoclint is a static analysis tool for checking compliance with Python docstring conventions.
-    entry: pydoclint
+-   id: lintel
+    name: lintel
+    description: lintel is a static analysis tool for checking compliance with Python docstring conventions.
+    entry: lintel
     language: python
     types: [python]

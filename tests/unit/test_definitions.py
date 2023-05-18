@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from pydoclint import Configuration, Convention, DocstringError, check_source
+from lintel import Configuration, Convention, DocstringError, check_source
 
 
 @pytest.mark.parametrize(
