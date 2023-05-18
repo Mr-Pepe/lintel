@@ -5,6 +5,9 @@ lintel - docstring style checker
 .. image:: https://github.com/Mr-Pepe/lintel/actions/workflows/pipeline.yml/badge.svg?branch=main
     :target: https://github.com/Mr-Pepe/lintel/actions?query=workflow%3A%22CI+Pipeline%22+branch%3Amain
 
+.. image:: https://codecov.io/github/Mr-Pepe/lintel/branch/main/graph/badge.svg?token=WVIRUBOOEC
+    :target: https://codecov.io/github/Mr-Pepe/lintel
+
 .. image:: https://readthedocs.org/projects/lintel/badge/?version=latest
     :target: https://readthedocs.org/projects/lintel/?badge=latest
 
