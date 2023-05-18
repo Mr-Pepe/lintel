@@ -1,7 +1,7 @@
-lintel's documentation
+Lintel's documentation
 ==========================
 
-**lintel** is a static analysis tool for checking compliance with Python
+**Lintel** is a static analysis tool for checking compliance with Python
 docstring conventions.
 
 .. toctree::
