@@ -30,9 +30,9 @@ lintel - docstring style checker
 **Lintel** is a static analysis tool for checking compliance with Python
 docstring conventions.
 
-It started as a fork of `pydocstyle <https://github.com/PyCQA/pydocstyle>` with the goal to
-eventually also cover the functionality provided by `pylint's <https://github.com/PyCQA/pylint>`
-`docparams extension <https://pylint.pycqa.org/en/latest/user_guide/checkers/extensions.html#pylint-extensions-docparams>`.
+It started as a fork of `pydocstyle <https://github.com/PyCQA/pydocstyle>`_ with the goal to
+eventually also cover the functionality provided by `pylint's <https://github.com/PyCQA/pylint>`_
+`docparams extension <https://pylint.pycqa.org/en/latest/user_guide/checkers/extensions.html#pylint-extensions-docparams>`_.
 
 Read the docs at ...
 
