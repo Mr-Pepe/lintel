@@ -86,8 +86,6 @@ def test_skip_errors(tmp_path: Path) -> None:
         )
     expected_error_codes = {'D100', 'D205', 'D209', 'D210', 'D213', 'D417'}
 
-    # Passing a blank ignore here explicitly otherwise
-    # checkers takes the pep257 ignores by default.
     errors = tuple(
         check_source(
             test_file_path,
@@ -701,8 +699,8 @@ def test_overload_nested_function_valid(env: SandboxEnv) -> None:
     assert result.exit_code == 0
 
 
-def test_pep257_convention(env: SandboxEnv) -> None:
-    """Test that the 'pep257' convention options has the correct errors."""
+def test_default_convention(env: SandboxEnv) -> None:
+    """Test that the 'default' convention has the correct errors."""
     with env.open('example.py', 'wt') as example:
         example.write(
             textwrap.dedent(
@@ -730,7 +728,7 @@ def test_pep257_convention(env: SandboxEnv) -> None:
             )
         )
 
-    env.write_config(convention="pep257")
+    env.write_config(convention="default")
     result = env.invoke()
     assert result.exit_code == 1
     assert 'D100' in result.stdout

@@ -46,7 +46,7 @@ data_file = "reports/.coverage"
 source = ["src/", ".tox/*/lib/python*/site-packages/"]
 
 [tool.pydoclint]
-convention="pep257"
+convention="default"
 # Ignore hidden directories and some other directories
 match-dir = "(?!venv|\\.|build|dist|resources|checks).*"
 add-ignore = "D104,D105"

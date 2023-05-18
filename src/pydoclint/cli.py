@@ -50,7 +50,7 @@ def run(
         Optional[Convention],
         Option(
             help=f"The convention to use. Must be one of {[c.value for c in Convention]}. "
-            f"Defaults to '{Convention.PEP257.value}'. "
+            f"Defaults to '{Convention.DEFAULT.value}'. "
             "Add/remove error codes via the select/ignore options. "
             "The final set of error codes is determined by taking the error codes defined by the "
             "convention, then adding the error codes specified by the --select option and then "

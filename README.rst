@@ -38,7 +38,3 @@ Todos:
 - TODO: Add check for descriptive mood
 
 - Try out pre-commit
-
-- Rename pep257 to default
-
-- Create error table
